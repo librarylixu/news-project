@@ -10,4 +10,8 @@ hello world
 
 分支管理策略
 
+<<<<<<< Updated upstream
 BUG修改
+=======
+bug分支
+>>>>>>> Stashed changes
