@@ -1,0 +1,336 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+<form name="Form" verify-scope class="modal-body" style="clear:both;max-height:100%;overflow:visible;max-height:none;">
+    <div class="form-group" ng-if="Source.Action == 0||Source.Action == 2">
+        <label>客户名称</label>
+        <input type="text" id="customername" ng-readonly="Source.Action>1" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.name" ng-keyup="saveAddCustomer($event)" placeholder="请输入1~25个字符" />
+    </div>
+    <div class="profile-user-info profile-user-info-striped" style="min-height:44px;" ng-if="Source.Action!=2 && Source.Action != 0">
+        <div class="profile-info-row">
+            <div class="profile-info-name">
+                客户名称<span style="color: red; font-size: 150%; position: absolute; margin-left:1px;" title="必填">*</span>
+            </div>
+            <div class="profile-info-value">
+                <div class="col-sm-6">                 
+                    <div class="col-sm-9">
+                        <span class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA;"
+                              ng-if="Source.Action!==2&&Source.selectItem.idcustomerinfo"
+                              ng-click="hiddenmodal(1);Source.editType =1;"
+                              title="点击进入编辑模式"
+                              popover-placement='right'
+                              uib-popover-template="dynamicPopover.templateUrl"
+                              popover-title="{{dynamicPopover.title_name}}"
+                              popover-is-open="Source.isopen[1]">{{service.selectItem.name?service.selectItem.name:'点击进入编辑模式'}}</span>
+                        <span ng-show="Source.Action==2" ng-bind="service.selectItem.name"></span>
+                    </div>
+                </div>
+                <!--<div class="col-sm-5"  ng-if="Source.Action!==2&&Source.selectItem.idcustomerinfo">
+                    <label class="f-l"> 创建时间</label>
+                    <div class="f-l left-5">
+                        <i class="ace-icon orange fa fa-clock-o bigger-110"></i>
+                        <span ng-bind="service.formatDate(Source.selectItem.createtime)"></span>
+                    </div>
+                </div>-->
+               <div class="col-sm-6">
+                   <label class="col-sm-3 text-right">简称</label>
+                   <div class="col-sm-9">
+                       <span class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA"
+                             ng-click="hiddenmodal('abbreviationIsOpen');Source.editType =3;" title="点击进入编辑模式"
+                             ng-bind="service.selectItem.abbreviation?service.selectItem.abbreviation:'点击添加简称'"
+                             popover-placement='right'
+                             uib-popover-template="dynamicPopover.templateUrl"
+                             popover-title="{{dynamicPopover.title_abbreviation}}"
+                             popover-is-open="Source.isopen[3]"></span>
+                   </div>
+               </div>
+            </div>
+        </div>
+        <!--判断：1.如果是添加页面，添加完成后把新加项目的id，然后重新查数据赋值给service.selectItem并显示出来
+                 2.如果是编辑页面，则有相关数据取到，service.selectItem.idcustomerinfo不为空-->
+        
+        <div class="profile-info-row" ng-show="Source.Action!==2&&Source.selectItem.idcustomerinfo">
+            <div class="profile-info-name">
+                办公电话<span style="color: red; font-size: 150%; position: absolute; margin-left:1px;" title="必填">*</span>
+            </div>
+            <div class="profile-info-value">
+                <div class="col-sm-6">                  
+                    <div class="col-sm-9">
+                        <span class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA"
+                              ng-click="hiddenmodal('officephoneIsOpen');Source.editType =4;" title="点击进入编辑模式"
+                              ng-bind="service.selectItem.officephone?service.selectItem.officephone:'点击添加办公电话'"
+                              uib-popover-template="dynamicPopover.templateUrl"
+                              popover-placement='right'
+                              popover-title="{{dynamicPopover.title_officephone}}"
+                              popover-is-open="Source.isopen[4]"></span>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label class="col-sm-3 text-right">传真</label>
+                    <div class="col-sm-9">
+                        <span class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA"
+                              ng-click="hiddenmodal('faxIsOpen');Source.editType =5;" title="点击进入编辑模式"
+                              ng-bind="service.selectItem.fax?service.selectItem.fax:'点击添加传真'"
+                              uib-popover-template="dynamicPopover.templateUrl"
+                              popover-placement='right'
+                              popover-title="{{dynamicPopover.title_fax}}"
+                              popover-is-open="Source.isopen[5]"></span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <div class="profile-info-row" ng-show="Source.Action!==2&&Source.selectItem.idcustomerinfo">
+            <div class="profile-info-name">
+                网站
+            </div>
+            <div class="profile-info-value ">
+                <span class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA;margin-left:30px;"
+                      ng-click="hiddenmodal('faxIsOpen');Source.editType =7;" title="点击进入编辑模式"
+                      ng-bind="service.selectItem.url?service.selectItem.url:'点击添加网址'"
+                      uib-popover-template="dynamicPopover.templateUrl"
+                      popover-placement='right'
+                      popover-title="{{dynamicPopover.title_url}}"
+                      popover-is-open="Source.isopen[7]"></span>
+            </div>
+        </div>
+        <div class="profile-info-row" ng-show="Source.Action!==2&&Source.selectItem.idcustomerinfo">
+            <div class="profile-info-name">
+               地址<span style="color: red; font-size: 150%; position: absolute; margin-left:1px;" title="必填">*</span>
+            </div>
+
+            <div class="profile-info-value">
+                <span class="fa blue" ng-click="createmap(onlyone=true); mapshow=!mapshow" ng-show="!mapshow && service.selectItem.address == null" style="cursor: pointer; border-bottom: 1px dashed #478FCA;margin-left:30px;"  aria-hidden="true">点击添加地址</span>
+                <span ng-if="service.selectItem.address&&service.selectItem.address!==''&&!mapshow" style="margin-left:30px;"
+                      ng-click="mapshow=!mapshow" title="点击进入编辑模式" ng-bind="service.selectItem.address"></span>
+                <input style="width:300px;float:left;" type="text" ng-model="service.selectItem.address" ng-change="createmap();" id="suggestId" class="form-control" ng-show="mapshow" />
+                &nbsp;
+                <i class="fa fa-save blue" ng-show="Source.selectItem.address!=service.selectItem.address" style="cursor: pointer;" ng-click="Source.editType =6;save();mapshow=!mapshow"></i>
+                <i class="fa fa-reply blue" ng-show="Source.selectItem.address!=service.selectItem.address" style="cursor: pointer;" ng-click="service.selectItem.address=Source.selectItem.address;createmap();"></i>
+                &nbsp;
+                <i class="fa blue" ng-class="{'fa-chevron-circle-down':!mapshow,'fa-chevron-circle-up':mapshow}" ng-click="createmap(onlyone=true); mapshow=!mapshow" style="cursor: pointer; border-bottom: 1px dashed #478FCA" " aria-hidden=" true">&nbsp;<span>{{ !mapshow?'展开':'隐藏'}}地图</span></i>
+                <div>
+                    <div id="l-map" ng-show="mapshow;" style="width:300px;height:300px;margin-top:15px;"></div>
+                </div>
+            </div>
+            <br />
+        </div>
+        <!--<div class="profile-info-row" ng-show="false">
+            <div class="profile-info-name">
+                主要联系人
+            </div>
+            <div class="profile-info-value">
+                <span ng-if="service.selectItem.maincontact&&service.selectItem.maincontact!==''" class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA"
+                      ng-click="hiddenmodal(8);Source.editType =8;" title="点击进入编辑模式"
+                      ng-bind="service.selectItem.maincontact?service.selectItem.maincontact:'添加主要联系人'"
+                      uib-popover-template="dynamicPopover.templateUrl"
+                      popover-placement='right'
+                      popover-title="{{dynamicPopover.title_maincontact}}"
+                      popover-is-open="Source.isopen[8]"></span>
+            </div>
+            <br />
+        </div>-->
+
+        <div class="profile-info-row" ng-show="Source.Action!==2&&Source.selectItem.idcustomerinfo">
+            <div class="profile-info-name">
+                联系人<span style="color: red; font-size: 150%; position: absolute; margin-left:1px;" title="必填">*</span>
+            </div>
+            <div class="profile-info-value">
+                <div ng-include="'__MODULE__/Customerinfo/contactlist'"></div>
+            </div>
+        </div>
+        <div class="profile-info-row" ng-show="Source.Action!==2&&Source.selectItem.idcustomerinfo">
+            <div class="profile-info-name">
+                客户属性
+            </div>
+            <div class="profile-info-value">
+                <div class="clearfix">
+                    <div class="col-sm-4">
+                        <label class="f-l">客户类型</label>
+                        <div class="col-sm-9">
+                            <ui-select multiple ng-model="service.selectItem.reftypeData" on-select="Reftype($item, 0)" on-remove="Reftype($item, 1)">
+                                <ui-select-match>
+                                    <span ng-bind="$item.typename">
+                                    </span>
+                                </ui-select-match>
+                                <ui-select-choices repeat="item in (service.customertypeArrData | filter:$select.search) track by item.idcustomertype">
+                                    <div ng-bind-html="item.typename | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="f-l"> 客户等级</label>
+                        <div class="col-sm-9">
+                            <ui-select multiple ng-model="service.selectItem.reflevelData" on-select="Reflevel($item, 0)" on-remove="Reflevel($item, 1)">
+                                <ui-select-match>
+                                    <span ng-bind="$item.levelname">
+                                    </span>
+                                </ui-select-match>
+                                <ui-select-choices repeat="item in (service.customerlevelArrData| filter:$select.search) track by item.idcustomerlevel">
+                                    <div ng-bind-html="item.levelname | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="f-l">客户行业</label>
+                        <div class="col-sm-9">
+                            <ui-select multiple ng-model="service.selectItem.refindustryData" on-select="Refindustry($item, 0)" on-remove="Refindustry($item,1)">
+                                <ui-select-match>
+                                    <span ng-bind="$item.industryname">
+                                    </span>
+                                </ui-select-match>
+                                <ui-select-choices repeat="item in (service.customerindustryArrData| filter:$select.search) track by item.idcustomerindustry">
+                                    <div ng-bind-html="item.industryname | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                </div>
+                <div class="top-5 clearfix">
+                    <div class="col-sm-4">
+                        <label class="f-l">客户来源</label>
+                        <div class="col-sm-9">
+                            <ui-select multiple ng-model="service.selectItem.refsourceData" on-select="Refsource($item,0)" on-remove="Refsource($item,1)">
+                                <ui-select-match>
+                                    <span ng-bind="$item.name">
+                                    </span>
+                                </ui-select-match>
+                                <ui-select-choices repeat="item in (service.customersourceArrData | filter:$select.search)  track by item.idcustomersource">
+                                    <div ng-bind-html="item.name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="f-l">客户阶段</label>
+                        <div class="col-sm-9">
+                            <ui-select multiple ng-model="service.selectItem.refstageData" on-select="Refstage($item,0)" on-remove="Refstage($item, 1)">
+                                <ui-select-match>
+                                    <span ng-bind="$item.name">
+                                    </span>
+                                </ui-select-match>
+                                <ui-select-choices repeat="item in (service.customerstageArrData| filter:$select.search)  track by item.idcustomerstage">
+                                    <div ng-bind-html="item.name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="f-l">客户状态</label>
+                        <div class="col-sm-9">
+                            <ui-select multiple ng-model="service.selectItem.refstatusData" on-select="Refstatus ($item, 0)" on-remove="Refstatus ($item, 1)">
+                                <ui-select-match>
+                                    <span ng-bind="$item.status">
+                                    </span>
+                                </ui-select-match>
+                                <ui-select-choices repeat="item in (service.customerstatusArrData| filter:$select.search) track by item.idcustomerstatus">
+                                    <div ng-bind-html="item.status | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                </div>
+               <div class="top-5 clearfix">
+                   <div class="col-sm-4">
+                       <label class="f-l">信用等级</label>
+                       <div class="col-sm-9">
+                           <ui-select multiple ng-model="service.selectItem.refcreditData" on-select="Refcredit($item, 0)" on-remove="Refcredit($item, 1)">
+                               <ui-select-match>
+                                   <span ng-bind="$item.name">
+                                   </span>
+                               </ui-select-match>
+                               <ui-select-choices repeat="item in (service.customercreditArrData | filter:$select.search) track by item.idcustomercredit">
+                                   <div ng-bind-html="item.name | highlight: $select.search"></div>
+                               </ui-select-choices>
+                           </ui-select>
+                       </div>
+                   </div>
+                   <div class="col-sm-4">
+                       <label class="f-l">客户市场</label>
+                       <div class="col-sm-9">
+                           <ui-select multiple ng-model="service.selectItem.refmarketData" on-select="Refmarket($item,0)" on-remove="Refmarket($item,1)">
+                               <ui-select-match>
+                                   <span ng-bind="$item.name">
+                                   </span>
+                               </ui-select-match>
+                               <ui-select-choices repeat="item in (service.customermarketArrData| filter:$select.search) track by item.idcustomermarket">
+                                   <div ng-bind-html="item.name | highlight: $select.search"></div>
+                               </ui-select-choices>
+                           </ui-select>
+                       </div>
+                   </div>
+               </div>
+            </div>
+            
+        </div>        
+        <div class="profile-info-row" ng-show="Source.Action!==2&&Source.selectItem.idcustomerinfo">
+            <div class="profile-info-name">
+                抄送
+            </div>
+            <div class="profile-info-value">
+                <!--<span crm-bind-html="returnHtml(service.selectItem,5)"></span>-->
+                <div style="width:200px;">
+                    <ui-select multiple ng-model="service.selectItem.refuserData" on-select="Refuser($item, 0)" on-remove="Refuser($item, 1)">
+                        <ui-select-match>
+                            <span ng-bind="$item.username + ': ' + $item.description"></span>
+                        </ui-select-match>
+                        <ui-select-choices repeat="item in (service.usersArrData| filter:$select.search) track by item.idusers">
+                            <div><span ng-bind-html="item.username | highlight: $select.search"></span>:<span ng-bind="item.description"></span></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <!--<a ng-click="addUserClick()" ng-if="Source.userid == '1'" class="f-r" title="新建用户"><i class="fa fa-plus green f-16"></i></a>-->
+            </div>
+        </div>
+        <div class="profile-info-row" ng-show="Source.Action!==2&&Source.selectItem.idcustomerinfo&&false">
+            <div class="profile-info-name">
+                用户角色
+            </div>
+            <div class="profile-info-value" ng-init="returnHtml(service.selectItem,15)">
+                <!--<span crm-bind-html="returnHtml(service.selectItem,5)"></span>-->
+                <div style="width:200px;">
+                    <ui-select multiple ng-model="service.selectItem.refusertypeData" on-select="Refusertype($item, $model, 0,'usertype')" on-remove="Refusertype($item, $model, 1,'usertype')">
+                        <ui-select-match>
+                            <span ng-bind="$item.typename">
+                            </span>
+                        </ui-select-match>
+                        <ui-select-choices repeat="item in (service.usertypeArrData| filter:$select.search) track by item.idusertype">
+                            <div ng-bind-html="item.typename | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <a ng-click="addUsertypeClick()" ng-if="Source.userid == '1'" class="f-r" title="新建用户角色"><i class="fa fa-plus green f-16"></i></a>
+            </div>
+        </div>
+        <div class="profile-info-row" ng-show="Source.Action!==2&&Source.selectItem.idcustomerinfo&&false">
+            <div class="profile-info-name">
+                用户组
+            </div>
+            <div class="profile-info-value" ng-init="returnHtml(service.selectItem,16)">
+                <!--<span crm-bind-html="returnHtml(service.selectItem,5)"></span>-->
+                <div style="width:200px;">
+                    <ui-select multiple ng-model="service.selectItem.refusergroupData" on-select="Refusergroup($item, $model, 0, 'usergroup')" on-remove="Refusergroup($item, $model, 1,'usergroup')">
+                        <ui-select-match>
+                            <span ng-bind="$item.groupname">
+                            </span>
+                        </ui-select-match>
+                        <ui-select-choices repeat="item in (service.usergroupArrData| filter:$select.search) track by item.idusergroup">
+                            <div ng-bind-html="item.groupname | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <a ng-click="addUsergroupClick()" ng-if="Source.userid == '1'" class="f-r" title="新建用户组"><i class="fa fa-plus green f-16"></i></a>
+            </div>
+        </div>
+    </div>
+</form>
+ <!--评论组件-->
+    <!--<div page-comment />-->
+<div class="modal-footer" style="clear:both;">
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="saveAdd();Source.editType = 0;" ng-show="Source.Action==0">保存</button>
+    <button class="btn btn-primary btn-sm" type="button" ng-click="save(2)"  ng-show="Source.Action==2">删除</button>
+    <!--<button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>-->
+</div>

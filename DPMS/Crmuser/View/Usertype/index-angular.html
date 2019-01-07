@@ -1,0 +1,122 @@
+﻿<extend name="angular-base.html" />
+<block name="headcss">
+</block>
+<block name="headjs">
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-sanitize/{$Think.const.ANGULAR_VERSION}angular-sanitize.min.js"></script>
+</block>
+<block name="pageContent">
+    <!--页头-->
+    <main  class="js-canvi-content canvi-content">
+        <div class="page-header">
+            <page-btn></page-btn>
+        </div>
+        <!--快速检索-->
+        <div class="table-header">
+            {$MenuName}
+        </div>
+        <div class="mt-5">
+            <table class="table table-striped table-bordered table-hover table-condensed table-responsive">
+                <tbody>
+                    <tr>
+                        <td>ID</td>
+                        <td>角色名称</td>
+                        <td>关联用户</td>
+                        <td>关联用户组</td>
+                        <td>关联权限</td>
+                        <td>操作</td>
+                    </tr>
+                </tbody>
+                <tr ng-repeat="(key, value) in service.privateDateObj.usertypeData track by $index">
+                    <td ng-bind="key"></td>
+                    <td ng-bind="value.typename"></td>
+                    <td>
+                        <a class="addref top-5" title="用户" href="javascript:;">
+                            用户(<span ng-bind="value.__refusers.length?value.__refusers.length:0"></span>)
+                        </a>
+                    </td>
+                    <td>
+                        <a class="addref top-5" title="用户组" href="javascript:;">
+                            用户组(<span ng-bind="value.__refusergroup.length?value.__refusergroup.length:0"></span>)
+                        </a>
+                    </td>
+                    <td>
+                        <a class="addref top-5" title="权限" href="javascript:;">
+                            权限(<span ng-bind="value.__refauths.length?value.__refauths.length:0"></span>)
+                        </a>
+                    </td>
+                    <td>
+                        <a href="javascript:;" class="green top-5" ng-show="service.refedit" ng-click="updateInfo(value)">
+                            <i class="glyphicon glyphicon-pencil bigger-120"></i>
+                        </a>&nbsp;&nbsp;
+                        <a href="javascript:;" class="red top-5" ng-show="service.refdel" ng-click="remove(value)">
+                            <i class="glyphicon glyphicon-trash bigger-120"></i>
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </main>
+    <aside class="usertypemodaltemplate canvi-navbar">
+        <div class="canvi-user-info">
+            <div class="canvi-user-info__data">
+                <span class="canvi-user-info__title" ng-bind="usertypeModal.title"></span>
+                <!--<a href="#" class="canvi-user-info__meta">XXXX编辑</a>-->
+                <div class="canvi-user-info__close" ng-click="usertypeModal.toggle();"></div>
+            </div>
+            
+        </div>
+        <form name="Form" class="container" verify-scope>
+            <table class="table" style="margin-bottom:8px;">
+                <tr class="info">
+                    <td colspan="4">基本信息</td>
+                </tr>
+                <tr>
+                    <td class="text-right"><b class="c-red">*</b>角色名称</td>
+                    <td colspan="3"><input style="width:100%;" type="text" ng-model="selectItem.typename" /></td>
+                </tr>
+                <tr>
+                    <td class="text-right">用户组</td>
+                    <td colspan="3">
+                        <ui-select multiple ng-model="selectItem.__refgroupids" style="width:100%;">
+                            <ui-select-match placeholder="请选择关联用户组">
+                                <span ng-bind="$item.value.groupname" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.key  as (key,item) in service.privateDateObj.usergroupData | filter: { value: { groupname: $select.search }}">
+                                <div ng-if="item.value.pid!=0&&item.value.idusergroup!=Source.selectItem.idusergroup" ng-bind-html="item.value.__parentname+'->'+item.value.groupname | highlight: $select.search"></div>
+                                <div ng-if="item.value.pid==0&&item.value.idusergroup!=Source.selectItem.idusergroup" ng-bind-html="item.value.groupname | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+                </tr>              
+                <tr> 
+                    <td class="text-right">用户</td>
+                    <td colspan="3">
+                        <ui-select multiple ng-model="selectItem.__refusers" style="width:100%;">
+                            <ui-select-match placeholder="请选择关联用户">
+                                <span ng-bind="$item.value.description" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.value.idusers  as (key,item) in service.privateDateObj.usersData | filter: { value: { description: $select.search }}" style="max-height: 150px;">
+                                <div ng-bind-html="item.value.description | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+                </tr>
+            </table>
+            <div class="text-right">
+                <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save()">保存</button>
+                <button class="btn btn-warning btn-sm" type="button" ng-click="usertypeModal.close()">取消</button>
+            </div>
+        </form>
+    </aside>
+</block>
+
+<block name="scriptTemplate">
+
+</block>
+
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmuser/Usertype/index.js?v={$Think.const.CRM_VERSION}"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagebtn.js"></script>
+</block>

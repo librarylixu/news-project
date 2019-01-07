@@ -1,0 +1,357 @@
+﻿<extend name="angular-base.html" />
+<block name="headcss">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angular-bootstrap-colorpicker/3.0.32/css/colorpicker.min.css">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angularTree/css/tree-control.css" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angularTree/css/tree-control-attribute.css" />
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}my-tree-style.css" />
+    <link rel="stylesheet" href="{$Think.const.PAGE_URL}css/crmProject/my-project-info.css" />
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}my-gallery.css" />
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}upload.css" />
+</block>
+<block name="headjs">
+
+    <script src="{$Think.const.BOOTSTRAP_URL}angularTree/js/angular-tree-control.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-sanitize/{$Think.const.ANGULAR_VERSION}angular-sanitize.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular-bootstrap-colorpicker/3.0.32/js/bootstrap-colorpicker-module.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular/{$Think.const.ANGULAR_VERSION}angular-touch.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-file-upload/angular-file-upload.min.js"></script>
+    <!--上传功能-->
+    <style>
+        @media{
+             .modal-lg {
+                 width:80% !important;
+             }
+        }
+   
+    </style>
+    <script>
+        //初始化modal并定义service
+        //'ngTouch', 'ui.grid.expandable', 'ui.grid.selection', 'ui.grid.pinning'
+        appModuleInit(['ui.bootstrap', 'ngVerify', 'ui.select', 'colorpicker.module', 'treeControl', 'angularFileUpload']);
+
+        /*-------------------------产品主页面流程-------------------------------------*/
+        //1.获取产品型号数据
+        //  1.1.把获取到的产品型号的数据装换成数组形式的数据，多选框使用
+        //  1.2.获取产品类型数据        
+        //2.查询产品方法
+        //   2.1 把产品的数据留存一份，并转换成数组形式的，多选框要用
+        //   2.1 执行组建tree的数据
+        //3.查询产品类型的方法
+        //    3.1 查询产品的数据       
+        //4.组建tree数据方法
+        //  4.1 循环型号数据
+        //       4.1.1定义变量product用来存储符合当前型号的产品数据
+        //       4.1.2判断当前型号是否有类型(typeid)(如果没有，给类型数据中加一条未分组类型进行存储没有类型的但是有产品分类的型号数据，并吧当前型号的类型id设置成未分组数据的id)
+        //       4.1.3判断当前型号是否有产品（productid）(没有不做处理，返回，进行下一次循环)
+        //       4.1.4判断类型的children中是否存在product
+        //          4.1.4.1判断类型的中是否存在存储product数据的children属性,不存在的时候，给children赋值一个空对象，给选中项数据赋值一个空数组
+        //          4.1.4.1判断类型的中是否存在product数据
+        //             4.1.4.1.1不存在的时候， 
+        //                        a.给变量product赋值这条产品数据（这里赋值时需要copy一下，否则在下面类型分组出现该条产品数据时tree会认为点击的是同一条数据）
+        //                        b.给该条产品小家类型属性typeid，存储当前产品所属的类型的id
+        //                        c.判断product是否有children属性，没有在赋值为空数组
+        //                        d.判断product的children中是否有当前循环的型号数据，有的话不做处理，没有的话，添加该型号数据到product的children中去
+        //  4.2 循环类型数据，把类型的children转换成数组形式的数据
+        //  4.3 把类型数据本身准换成tree需要的数组形式的数据
+        //5.打开产品详情页方法
+        //6.批量导入按钮触发的方法
+        //7.刷新方法
+        //8.添加产品，产品型号，产品类型的方法(参数：row  当在tree上添加产品时，代表操作当前行的数据，别的情况不传)
+        //  5.1 添加类型时，设置service.addtype为0，在模态框中要使用（判断添加类型以显示相应的字段和保存成功后，刷新各自的数据源）
+        //  5.2 添加产品时，设置service.addtype为1，
+        //  5.3 添加产品型号时，设置service.addtype为2，
+        //9.修改（同添加）
+        //10.删除（同添加）
+        //主控制器
+        appModule.controller('crmProductController', ['$scope', 'dataService', 'alert', function ($scope, dataService, alert) {
+
+            $scope.service = dataService;//要显示到页面上的数据源
+            var params = new URLSearchParams();
+            params.append('$json', true);
+            //查询型号数据--页面数据
+            $scope.select = function () {
+                //产品型号
+                $scope.service.postData(__URL + 'Crmproduct/Productmodel/select_page_data', params).then(function (data) {
+                    //第一层状态，无序的数组  data
+                    $scope.service.productmodelData = data;
+                    $scope.service.productmodelArrData = P_objecttoarray($scope.service.productmodelData);
+                    //查询类型数据
+                    $scope.selectproducttype();
+                  
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+
+            //查看详细按钮
+            $scope.selectdetailed = function (row) {
+                //window.Win10_child.openUrl(__URL + 'Crmproduct/Product/selectdetailed?id=' + row.idproduct + '&guid=' + row.guid, row.name);
+                parent.YL.open('eimselectdetailed', {
+                    title: row.name,
+                    url: __URL + 'Crmproduct/Product/selectdetailed?id=' + row.idproduct + '&guid=' + row.guid
+                });
+            }
+
+            //批量导入按钮
+            $scope.uploadfile = function () {
+                $scope.service.title = '批量导入';
+                $scope.modalHtml = __URL + 'Crmbase/Baseinfo/uploadbtn';
+                $scope.modalController = 'modaluploadfileController';
+                $scope.service.type = 'product';
+                $scope.service.name = '产品';
+                $scope.service.selectItem = '';
+                publicControllerAdd($scope);
+            }
+            //刷新按钮
+            $scope.refresh = refresh;
+
+            //添加产品按钮
+            $scope.add = function (row) {
+                if (row) {
+                    $scope.service.title = '添加产品型号';
+                    $scope.service.addType = 2;
+                    $scope.service.selectItem = row;
+                   
+                } else{
+                    $scope.service.title = '添加产品';
+                    $scope.service.addType = 1;
+                    $scope.service.selectItem = '';
+                }
+                $scope.modalHtml = __URL + 'Crmproduct/Product/openmodal';
+                $scope.modalController = 'modelProductController';
+                //$scope.service.modalPlacement = "right";
+                //$scope.service.modalSize = "lg";
+               
+
+                publicControllerAdd($scope);
+            }
+
+            //修改产品按钮
+            $scope.updateInfo = function (row) {
+                if (row.idproductmodel) {
+                    $scope.service.title = '修改产品型号';
+                    $scope.service.addType = 2;
+                } else if (row.idproduct) {
+                    $scope.service.title = '修改产品';
+                    $scope.service.addType = 1;
+                } 
+                $scope.modalHtml = __URL + 'Crmproduct/Product/openmodal';
+                $scope.modalController = 'modelProductController';
+                $scope.service.modalPlacement = "right";
+                $scope.service.modalSize = "lg";
+                $scope.service.selectItem = row;
+                publicControllerUpdate($scope);
+            }
+            //修改产品按钮
+            $scope.service.updateInfo = function (row) {
+                if (row.idproductmodel) {
+                    $scope.service.title = '修改产品型号';
+                    $scope.service.addType = 2;
+                } else if (row.idproduct) {
+                    $scope.service.title = '修改产品';
+                    $scope.service.addType = 1;
+                }
+                $scope.modalHtml = __URL + 'Crmproduct/Product/openmodal';
+                $scope.modalController = 'modelProductController';
+                $scope.service.modalPlacement = "right";
+                $scope.service.modalSize = "lg";
+                $scope.service.selectItem = row;
+                publicControllerUpdate($scope);
+            }
+            //删除产品按钮
+            $scope.remove = function (row) {
+                if (row.idproductmodel) {
+                    $scope.service.title = '删除产品型号';
+                    $scope.service.addType = 2;
+                } else if (row.idproduct) {
+                    $scope.service.title = '删除产品';
+                    $scope.service.addType = 1;
+                } 
+                $scope.modalHtml = __URL + 'Crmproduct/Product/openmodal';
+                $scope.modalController = 'modelProductController';
+                $scope.service.selectItem = row;
+
+                publicControllerDel($scope);
+            }
+
+            //查询产品
+            $scope.selectproduct = function () {
+                //产品数据
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                $scope.service.postData(__URL + 'Crmproduct/Product/select_page_data', params).then(function (data) {
+                    $scope.service.productData = data;
+                    $scope.service.productArrData = P_objecttoarray($scope.service.productData);
+
+                    //组建tree数据
+                    $scope.service.pagedata();
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+
+            /*
+            查询产品类型数据
+            */
+            $scope.selectproducttype = function () {
+                dataService.postData(__URL + 'Crmproduct/Producttype/select_page_data', params).then(function (data) {
+                    $scope.service.producttypeData = data;
+
+                    //查询产品
+                    $scope.selectproduct();
+
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+            /*
+            查询用户数据
+            */
+            $scope.selectuser = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                dataService.postData(__URL + 'Crmuser/Users/select_page_data', params).then(function (data) {
+                    $scope.service.usersData = data;
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+            /*
+            查询用户角色数据
+            */
+            $scope.selectusertype = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                dataService.postData(__URL + 'Crmuser/Usertype/select_page_data', params).then(function (data) {
+                    $scope.service.usertypeData = data;
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+            /*
+            查询用户组数据
+            */
+            $scope.selectusergroup = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                dataService.postData(__URL + 'Crmuser/Usergroup/select_page_data', params).then(function (data) {
+                    $scope.service.usergroupData = data;
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+
+            $scope.service.pagedata = function () {
+
+                angular.forEach($scope.service.productmodelData, function (value, key) {                    
+                    //判断是否有productid
+                    if (!value.productid) {
+                        $scope.service.productData[0] = {
+                            idproduct: 0,
+                            name: '暂无产品分类',
+                            isParent: true
+                        };
+
+                        value.productid = 0;
+                    }
+                     if( $scope.service.productData[value.productid].children==undefined){
+                         $scope.service.productData[value.productid].children = [];
+                     }
+                     value.selected = $scope.service.productData[value.productid];
+                     $scope.service.productData[value.productid].children.push(value);
+                     //if ($scope.service.productData[value.productid].children.hasOwnProperty(value.productid)) {
+                         
+                     //}
+                });
+              
+                $scope.service.treedata = P_objecttoarray($scope.service.productData);
+            }
+            //页面加载完成后，查询数据
+            $scope.select();
+
+            /*
+     创建产品--点击事件
+     data 成功后得回调、
+     关闭模态框会返回'ok' 
+ */
+            $scope.service.addProductClick = function (row) {
+                $scope.service.title = "添加新的产品";
+
+                $scope.modalHtml = __URL + 'Crmproduct/Product/openoldmodel';
+                $scope.modalController = 'modelProductController';
+                $scope.service.Action = 0;
+                $scope.service.addType = 3;
+                if (row) {
+                    $scope.service.typeData = row;
+                }
+
+                $scope.service.openModal($scope.modalHtml, $scope.modalController).then(function (data) {
+                    if (data == 'ok') {
+                        var tempKeys = Object.keys($scope.service.productData);
+                        for (var i = tempKeys.length - 1; i >= 0; i--) {
+                            var key = tempKeys[i];
+                            if ($scope.Source.productData[key] == undefined) {
+                                $scope.Source.productData[key] = angular.copy($scope.service.productData[key]);
+                                continue;
+                            }
+                            break;
+                        }
+                        $scope.service.productArrData = P_objecttoarray($scope.service.productData);
+                    }
+                });
+            }
+
+
+
+
+        }]);
+    </script>
+</block>
+<block name="pageContent">
+    <!--页头-->
+    <div class="page-header clearfix">
+
+        <h1 class="col-xs-3 text-left">
+            {$MenuName}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {$PageName}
+            </small>
+        </h1>
+
+        <div class="col-xs-4 text-center">
+            <page-btn></page-btn>
+            <!--<button type="button" class="btn btn-sm" ng-click="selectdetailed()">详细信息</button>-->
+        </div>
+
+    </div>
+
+    <!--快速检索-->
+    <div class="table-header clearfix">
+        <div class="col-xs-6">{$MenuName}<small><i class="ace-icon fa fa-angle-double-right"></i>{$PageName}</small></div>
+    </div>
+    <div>
+        <treecontrol class="tree-light" tree-model="service.treedata">
+            <span ng-mouseenter="mouseenter=true" ng-mouseleave="mouseenter=false">               
+                <span ng-bind="node.name"></span><a href="javascript:;" ng-show="node.children">(<span ng-bind="node.children.length"></span>)</a>
+                <!--<i class="fa fa-plus green f-18" uib-popover="给[{{node.name}}]添加型号" popover-trigger="'mouseenter'" popover-placement="top-left" popover-append-to-body="true" style="white-space:nowrap;" ng-show="mouseenter&&(node.idproduct!==undefined)" ng-click="add(node)"></i>-->
+                <i class="fa fa-search green f-18" uib-popover="查看[{{node.name}}]详情" popover-trigger="'mouseenter'" popover-placement="top-left" popover-append-to-body="true" style="white-space:nowrap;" ng-show="mouseenter&&(node.idproduct!==undefined)" ng-click="selectdetailed(node)"></i>                               
+                <i class="fa fa-pencil pink f-18" uib-popover="编辑[{{node.name}}]" popover-trigger="'mouseenter'" popover-placement="top-left" popover-append-to-body="true" style="white-space:nowrap;" ng-show="service.refedit&&node.idproduct&&mouseenter" ng-click="updateInfo(node)"></i>
+                <i class="fa fa-edit orange f-18" uib-popover="编辑[{{node.name}}]" popover-trigger="'mouseenter'" popover-placement="top-left" popover-append-to-body="true" style="white-space:nowrap;" ng-show="service.refedit&&node.idproductmodel&&mouseenter" ng-click="updateInfo(node)"></i>
+                <i class="fa fa-trash red f-18" uib-popover="删除[{{node.name}}]" popover-trigger="'mouseenter'" popover-placement="top-left" popover-append-to-body="true" style="white-space:nowrap;" ng-show="mouseenter&&(node.children==undefined||node.children.length==0)&&service.refdel" ng-click="remove(node)"></i>
+            </span>
+        </treecontrol>
+    </div>
+</block>
+
+<block name="scriptTemplate">
+
+</block>
+
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Product/Product/uploadBtn.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Product/Product/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Product/Productmodel/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagebtn.js"></script>
+
+</block>

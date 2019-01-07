@@ -1,0 +1,171 @@
+﻿<extend name="angular-base.html" />
+<block name="headcss">
+</block>
+<block name="headjs">
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-sanitize/{$Think.const.ANGULAR_VERSION}angular-sanitize.min.js"></script>
+
+    <script>
+        //初始化modal并定义service
+        appModuleInit(['ui.bootstrap', 'ui.grid', 'ui.grid.emptyBaseLayer', 'ui.grid.pagination', 'ui.grid.resizeColumns', 'ui.grid.autoResize', 'ngVerify', 'datePicker', 'ui.select']);
+
+        //要在表格中显示的字段及名称，提取出来便于更改和查看
+        function columns(vm, uiGridConstants) {
+            return [{
+                name: 'idcustomercompany', displayName: '图标', enableFiltering: false, cellClass: 'text-center',
+                cellTemplate: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                    return '<i class="fa fa-newspaper-o bigger-120"></i>'
+                }
+            },
+             {
+                 name: 'brand', displayName: '经营品牌', width: '10%', enableFiltering: true,
+                 menuItems: [{
+                     title: '检索',
+                     icon: 'ui-grid-icon-search',
+                     action: function () {
+                         vm.toggleFiltering(vm, uiGridConstants);
+                     }
+                 }], cellClass: 'text-center'
+             },
+             {
+                 name: 'range', displayName: '经营范围', width: '30%', enableFiltering: true, cellClass: 'text-left',
+                 menuItems: [{
+                     title: '检索',
+                     icon: 'ui-grid-icon-search',
+                     action: function () {
+                         vm.toggleFiltering(vm, uiGridConstants);
+                     }
+                 }]
+             },
+             { name: 'description', displayName: '描述信息', enableFiltering: false, cellClass: 'text-left',},
+             {
+                 name: 'group_type', displayName: '操作', width: '10%', enableFiltering: false, cellClass: 'text-left',
+                 cellTemplate: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                     return '<a href="javascript:;" title="查看详细" class="green top-5" ng-show="grid.appScope.service.refedit"  ng-click="grid.appScope.selectdetailed(grid, row, col, rowRenderIndex, colRenderIndex)"><i class="glyphicon glyphicon-search bigger-120"></i></a>&nbsp;&nbsp;<a href="javascript:;" class="green top-5" ng-show="grid.appScope.service.refdel"  ng-click="grid.appScope.updateInfo(grid, row, col, rowRenderIndex, colRenderIndex)"><i class="glyphicon glyphicon-pencil bigger-120"></i></a>&nbsp;&nbsp;<a href="javascript:;" class="red top-5"  ng-click="grid.appScope.remove(grid, row, col, rowRenderIndex, colRenderIndex)"><i class="glyphicon glyphicon-trash bigger-120"></i></a> '
+                 }
+             }];
+        }
+        //主控制器
+        appModule.controller('crmCustomerrefcompanyController', ['$scope', 'i18nService', 'dataService', 'uiGridConstants', 'alert', function ($scope, i18nService, dataService, uiGridConstants, alert) {
+            // 国际化；
+            i18nService.setCurrentLang("zh-cn");
+            $scope.service = dataService;//要显示到页面上的数据源
+            //ui-grid改变高度方法
+            $scope.changeHeight = function () {
+                var newHeight = document.body.clientHeight - 115;
+                angular.element(document.getElementsByClassName('ui-grid')[0]).css('height', newHeight + 'px');
+            };
+            /*
+                查询用户（本页面使用）数据
+            */
+            $scope.select = function () {
+                $scope.service.postData(__URL + 'Crmcustomerinfo/Customerrefcompany/select_page_data', {}).then(function (data) {
+                    $scope.service.customerrefcompanyData = data;
+                    $scope.gridOptions.data = $scope.service.customerrefcompanyData;
+                    $scope.changeHeight();
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+            //显示到页面上的数据源
+            $scope.customerrefcompanyData = [];
+            //表格配置对象
+            $scope.gridOptions = publicControllerGridOptions($scope);
+            //显示、隐藏检索方法
+            $scope.toggleFiltering = function () {
+                $scope.gridOptions.enableFiltering = !$scope.gridOptions.enableFiltering;
+                $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
+            };
+            //表格列头
+            $scope.gridOptions.columnDefs = columns($scope, uiGridConstants);
+            //刷新按钮
+            $scope.refresh = refresh;
+            //添加按钮
+            $scope.add = function () {
+                $scope.service.title = '新建公司信息';
+                $scope.modalHtml = __URL + 'Crmcustomerinfo/Customerrefcompany/openmodal';
+                $scope.modalController = 'modelCustomerrefcompanyController';
+                $scope.service.selectItem = '';
+                publicControllerAdd($scope);
+            }
+            //修改按钮
+            $scope.updateInfo = function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                $scope.service.title = "修改公司信息";
+                $scope.modalHtml = __URL + 'Crmcustomerinfo/Customerrefcompany/openmodal';
+                $scope.modalController = 'modelCustomerrefcompanyController';
+                $scope.service.selectItem = row.entity;
+                publicControllerUpdate($scope);
+            }
+            //删除按钮
+            $scope.remove = function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                $scope.service.title = '删除公司信息';
+                $scope.modalHtml = __URL + 'Crmcustomerinfo/Customerrefcompany/openmodal';
+                $scope.modalController = 'modelCustomerrefcompanyController';
+                $scope.service.selectItem = row.entity;
+                publicControllerDel($scope);
+            }
+            /*
+            查询客户与公司信息关系数据
+            */
+            $scope.refselecttype = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                dataService.postData(__URL + 'Crmuser/RefutypeRefauth/select_page_data', params).then(function (data) {
+                    $scope.service.refusertypeData = data;
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+            /*
+            查询角色数据
+            */
+            $scope.selecttype = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                dataService.postData(__URL + 'Crmuser/Usertype/select_page_data', params).then(function (data) {
+                    $scope.service.usertypeData = data;
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+            //查看详细按钮
+            $scope.selectdetailed = function (grid, row, col, rowRenderIndex, colRenderIndex) {
+
+                parent.Win10.openUrl(__URL + 'Crmcustomerinfo/Customercompany/selectdetailed?id=' + row.entity.idcustomercompany, '<i class="fa fa-newspaper-o icon red"></i>' + row.entity.brand);
+            }
+            //页面加载完成后，查询数据
+            $scope.select();
+        }]);
+    </script>
+
+</block>
+<block name="pageContent">
+    <!--页头-->
+    <div class="page-header clearfix">
+        <h1 class="col-xs-3 text-left">
+            {$MenuName}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {$PageName}
+            </small>
+        </h1>
+        <div class="col-xs-4 text-center">
+            <page-btn></page-btn>
+        </div>
+    </div>
+    <!--快速检索-->
+    <div class="table-header clearfix">
+        <div class="col-xs-6">{$MenuName}<small><i class="ace-icon fa fa-angle-double-right"></i>{$PageName}</small></div> 
+    </div>
+    <div>
+        <div ui-grid="gridOptions"  ui-grid-auto-resize  ui-grid-empty-base-layer ui-grid-resize-columns ui-grid-pagination></div>
+    </div>
+</block>
+
+<block name="scriptTemplate">
+
+</block>
+
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customerrefcompany/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagebtn.js"></script>
+</block>

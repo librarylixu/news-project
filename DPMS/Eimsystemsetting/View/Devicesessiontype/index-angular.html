@@ -1,0 +1,482 @@
+﻿
+<div class="page-header clearfix">
+    <div class="col-xs-12 text-center">
+       
+        <a ng-click="select()" class="btn btn-success btn-sm">
+            <i class="glyphicon glyphicon-refresh"></i>刷新
+        </a>
+    </div>
+</div>
+
+<div class="top-5">
+    <div class="table-header">
+        设备会话类型
+    </div>
+    <table class="table table table-striped table-bordered table-hover table-condensed table-responsive">
+        <thead>
+            <tr>
+                <th>编号</th>
+                <th>名称</th>
+                <th>配置</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="(key,item) in service.privateDateObj.devicesessiontypeData">
+                <td ng-bind="item.iddevicesessiontype"></td>
+                <td><label ng-bind="item.typename"></label></td>
+                <td><button type="button" class="btn btn-link btn-xs" ng-click="btn_configinfo(item)">详细配置</button></td>
+                <td>
+                    <a href="javascript:;" title="编辑" class="green top-5" ng-click="btn_updateInfo(item)">
+                        <i class="glyphicon glyphicon-pencil fa-lg"></i>
+                    </a>
+                    &nbsp;&nbsp;
+                    <a href="javascript:;" title="删除" class="red top-5" ng-click="btn_deleteInfo(item)">
+                        <i class="glyphicon glyphicon-trash fa-lg"></i>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<script type="text/ng-template" id="Eimsystemsetting/Devicesessiontype/openmodal">
+    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+    <div class="modal-body">
+        <div class="form-container">
+            <form name="Form" verify-scope class="myform">              
+                <div class="form-group">
+                    <label>会话名称</label>
+                    <input type="text"  ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.typename" placeholder="请输入1~25个字符" />
+                </div>
+                <div class="form-group">
+                    <label>更换图标</label>
+                   <select ng-model="Source.selectItem.icon"> 
+                       <option value="session_vnc.png">VNC</option>
+                       <option value="session_telnet.png">TELNET</option>
+                       <option value="session_ssh.png">SSH</option>
+                       <option value="session_rdp_32.png">RDP</option>
+                       <option value="session_rdp.png">xPDP</option>
+                       <option value="session_kvm.png">kvm</option>                      
+                       <option value="iLO2.ico">iLO2</option>
+                       <option value="iLO4.ico">iLO4</option>
+                   </select>
+                    
+                </div>
+                <div class="form-group">
+                    <label></label>
+                    <img style="width:42px;height:42px; display:inline-block;" ng-src="{{'../../../DPMS/public/images/sessionIcon/'+Source.selectItem.icon}}" />
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save(0)">保存</button>       
+        <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+    </div>
+
+</script>
+
+<script type="text/ng-template" id="Eimsystemsetting/Devicesessiontype/openmodalvncconfig">
+        <form name="Form" verify-scope>
+            <table class="table" style="margin-bottom:8px;">
+                <tr class="info">
+                    <td colspan="4">基本配置</td>
+                </tr>
+                <tr>
+                    <td style="width:25%;" class="text-right">端口</td>
+                    <td style="width:25%;"><input type="text" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.setting.port" placeholder="请输入1~25个字符" /></td>
+                    <td style="width:25%;" class="text-right">编码方式</td>
+                    <td style="width:25%;">
+                        <select class="form-control" ng-model="Source.selectItem.setting.encoding">
+                            <option value="ZRLE" ng-selected="true">ZRLE</option>
+                            <option value="Raw">Raw</option>
+                            <option value="Tight">Tight</option>
+                            <option value="Hextile">Hextile</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">宽度</td>
+                    <td><input type="number" ng-verify class="form-control" ng-model="Source.selectItem.setting.width" placeholder="请输入1~25个字符" /></td>
+                    <td class="text-right">高度</td>
+                    <td style="width:25%;">
+                        <input type="number" ng-verify class="form-control" ng-model="Source.selectItem.setting.height" placeholder="请输入1~25个字符" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">图像质量</td>
+                    <td>
+                        <select class="form-control" ng-model="Source.selectItem.setting.quality">
+                            <option value="1">1 (Lowest quality)</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5" ng-selected="true">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9 (Best quality)</option>
+                        </select>
+                    </td>
+                    <td class="text-right">剪贴板</td>
+                    <td style="width:25%;">
+                        <input type="checkbox" ng-model="Source.selectItem.setting.mapClipboard" />启用
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">ZIP压缩</td>
+                    <td>
+                        <select ng-model="Source.selectItem.setting.compression">
+                            <option value="1">1(Little compression)</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6" ng-selected="true">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                        </select>
+                    </td>
+                    <td class="text-right">CopyReact编码</td>
+                    <td style="width:25%;">
+                        <input type="checkbox" ng-model="Source.selectItem.setting.UseCopyRect" /><br />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">颜色</td>
+                    <td>
+                        <select class="form-control" ng-model="Source.selectItem.setting.color">
+                            <option value="32">Full color(24bit)</option>
+                            <option value="8">256 color</option>
+                            <option value="16" ng-selected="true">Full color(16bit,Tight encoding only)</option>
+                        </select>
+                    </td>
+                    <td class="text-right">共享服务</td>
+                    <td style="width:25%;">
+                        <input type="checkbox" ng-model="Source.selectItem.setting.share" />共享
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">审计记录</td>
+                    <td>
+                        <select class="form-control" ng-model="Source.selectItem.setting.sessionRecord">
+                            <option value="0">禁用</option>
+                            <option value="1" ng-selected="true">仅录制图形</option>
+                        </select>
+                    </td>
+                    <td class="text-right"></td>
+                    <td style="width:25%;"></td>
+                </tr>
+            </table>
+            <div class="modal-footer">
+                <button class="btn btn-primary btn-sm" type="button" ng-click="btn_save()">保存</button>
+                <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+            </div>
+            </form>
+</script>
+<script type="text/ng-template" id="Eimsystemsetting/Devicesessiontype/openmodalrdpconfig">
+    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+    <div class="modal-body">
+        <form name="Form" verify-scope>
+            <table class="table" style="margin-bottom:8px;">
+                <tr class="info">
+                    <td colspan="4">基本配置</td>
+                </tr>
+                <tr>
+                    <td style="width:25%;" class="text-right">端口</td>
+                    <td style="width:25%;"><input type="text" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.setting.port" placeholder="请输入1~25个字符" /></td>
+                    <td style="width:25%;" class="text-right">域认证</td>
+                    <td style="width:25%;">
+                        <input type="text" ng-model="Source.selectItem.setting.domain" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;" class="text-right">管理模式</td>
+                    <td style="width:25%;">
+                        <input type="checkbox" ng-model="Source.selectItem.setting.console" /> 登录到主控会话或管理模式
+                    </td>
+                    <td style="width:25%;" class="text-right">兼容模式</td>
+                    <td style="width:25%;">
+
+                        <br />
+                        <input type="checkbox" ng-model="Source.selectItem.setting.legacyMode" /> xrdp 或 VirtualBox RDP
+                    </td>
+                </tr>
+                <tr class="info">
+                    <td colspan="4">显示配置</td>
+                </tr>
+                <tr>
+                    <td class="text-right">宽度</td>
+                    <td><input type="number" ng-verify class="form-control" ng-model="Source.selectItem.setting.width" placeholder="请输入1~25个字符" /></td>
+                    <td class="text-right">高度</td>
+                    <td>
+                        <input type="number" ng-verify class="form-control" ng-model="Source.selectItem.setting.height" placeholder="请输入1~25个字符" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">颜色深度</td>
+                    <td>
+                        <select class="form-control" ng-model="Source.selectItem.setting.server_bpp">
+                            <option value="8">256</option>
+                            <option value="16" ng-selected="true">高色彩(16位)</option>
+                            <option value="24">真彩色(24位)</option>
+                            <option value="32">最高质量(32位)</option>
+                        </select>
+                    </td>
+                    <td class="text-right">远程光标</td>
+                    <td>
+                        <input type="checkbox" ng-model="Source.selectItem.setting.nocursor" />禁用远程光标
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">桌面背景</td>
+                    <td>
+                        <input type="checkbox" ng-model="Source.selectItem.setting.background" />开启
+                    </td>
+                    <td class="text-right">字体平滑</td>
+                    <td>
+                        <input type="checkbox" ng-model="Source.selectItem.setting.smoothfont" />开启
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">桌面组成</td>
+                    <td>
+                        <input type="checkbox" ng-model="Source.selectItem.setting.composition" />开启
+                    </td>
+                    <td class="text-right">拖动时显示窗口内容</td>
+                    <td>
+                        <input type="checkbox" ng-model="Source.selectItem.setting.contents" />开启
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">菜单和窗口动画</td>
+                    <td>
+                        <input type="checkbox" ng-model="Source.selectItem.setting.animation" />开启
+                    </td>
+                    <td class="text-right">wingdows视觉风格</td>
+                    <td>
+                        <input type="checkbox" ng-model="Source.selectItem.setting.styles" />开启
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">持久性位图缓存</td>
+                    <td>
+                        <input type="checkbox" ng-model="Source.selectItem.setting.bitmap" />开启
+                    </td>
+                    <td class="text-right">网络级别认证CredSSP</td>
+                    <td>
+                        <select class="form-control" ng-model="Source.selectItem.setting.credSSP">
+                            <option value="0">启用</option>
+                            <option value="1" ng-selected="true">禁用</option>
+                            <option value="2">自动</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">(32位彩色和局域网)RemoteFX</td>
+                    <td>
+                        <input type="checkbox" ng-model="Source.selectItem.setting.remotefx" />（32位彩色和局域网）RemoteFX
+                    </td>
+                    <td class="text-right">会话审计</td>
+                    <td>
+                        <select class="form-control" ng-model="Source.selectItem.setting.sessionRecord">
+                            <option value="0">禁用</option>
+                            <option value="1" ng-selected="true">仅录制图形</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">RDP6.1解压</td>
+                    <td>
+                        <input type="checkbox" ng-model="Source.selectItem.setting.decompressingRDP61" />开启
+                    </td>
+                    <td class="text-right"></td>
+                    <td></td>
+                </tr>
+                <tr class="info">
+                    <td colspan="4">本地配置</td>
+                </tr>
+                <tr>
+                    <td class="text-right">远程音频播放</td>
+                    <td>
+                        <select class="form-control" style="width:120px;" ng-model="Source.selectItem.setting.playSound">
+                            <option value="0" ng-selected="true">启用</option>
+                            <option value="1">禁用</option>
+                            <option value="2">仅在远程电脑上播放</option>
+                        </select>
+                    </td>
+                    <td class="text-right">质量</td>
+                    <td>
+                        <select class="form-control" style="width:120px;" ng-model="Source.selectItem.setting.soundPref">
+                            <option value="0">低</option>
+                            <option value="1" ng-selected="true">高</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">剪贴板</td>
+                    <td>
+                        <input type="checkbox" ng-model="Source.selectItem.setting.mapClipboard" />启用
+                    </td>
+                    <td class="text-right">上传/下载</td>
+                    <td>
+                        <input type="checkbox" ng-model="Source.selectItem.setting.mapDisk" />启用
+                    </td>
+                </tr>
+                <!--<tr>
+                    <td class="text-right">远程打印机</td>
+                    <td>
+                        <input type="checkbox" ng-model="Source.selectItem.setting.mapPrinter" />打印机,名称<input type="text" value="0" /><br />
+                    </td>
+                    <td class="text-right"></td>
+                    <td></td>
+                </tr>-->
+                <tr class="info">
+                    <td colspan="4">远程程序配置</td>
+                </tr>
+                <tr>
+                    <td class="text-right">连接时启动程序</td>
+                    <td>
+                        <input type="radio" ng-model="Source.selectItem.setting.startProgram" value="shell" name="tab_program" />启用
+                    </td>
+                    <td class="text-right"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="text-right">程序路径</td>
+                    <td colspan="3">
+                        <input type="radio" ng-model="Source.selectItem.setting.startProgram" value="shell" name="tab_program" />启用
+                        程序路径和文件名称 <br />
+                        从以下文件夹开始<input type="text" ng-model="Source.selectItem.setting.directory" /><br />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">连接时启动发布程序</td>
+                    <td>
+                        <input type="radio" ng-model="Source.selectItem.setting.startProgram" value="app" name="tab_program" />
+                    </td>
+                    <td class="text-right"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="text-right">程序路径</td>
+                    <td colspan="3">
+                        <input type="text" ng-model="Source.selectItem.setting.exe" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">参数</td>
+                    <td colspan="3">
+                        参数<input type="text" ng-model="Source.selectItem.setting.args" /><br />
+                        <hr />
+                        <input type="radio" ng-model="Source.selectItem.setting.startProgram" ng-checked="true" value="noapp" name="tab_program" checked />没有
+                    </td>
+                </tr>
+            </table>
+        </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary btn-sm" type="button" ng-click="btn_save()">保存</button>
+            <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+        </div>
+</script>
+<script type="text/ng-template" id="Eimsystemsetting/Devicesessiontype/openmodalsshconfig">
+    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+    <div class="modal-body">
+        <form>
+            <table class="table" style="margin-bottom:8px;">
+                <tr class="info">
+                    <td colspan="4">基本配置</td>
+                </tr>
+                <tr>
+                    <td style="width:25%;" class="text-right">端口</td>
+                    <td style="width:25%;">
+                        <input type="text" ng-model="Source.selectItem.setting.port" /><br />
+                    </td>
+                    <td style="width:25%;" class="text-right">字体大小(px)</td>
+                    <td style="width:25%;">
+                        <input type="text" ng-model="Source.selectItem.setting.fontSize" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="text-right">宽度</td>
+                    <td><input type="number" ng-verify class="form-control" ng-model="Source.selectItem.setting.width" placeholder="请输入1~25个字符" /></td>
+                    <td class="text-right">高度</td>
+                    <td style="width:25%;">
+                        <input type="number" ng-verify class="form-control" ng-model="Source.selectItem.setting.height" placeholder="请输入1~25个字符" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">剪贴板</td>
+                    <td>
+                        <input type="checkbox" ng-model="Source.selectItem.setting.mapClipboard" />启用
+                    </td>
+                    <td class="text-right">SFTP</td>
+                    <td>
+                        <input type="checkbox" ng-model="Source.selectItem.setting.mapDisk" />启用
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary btn-sm" type="button" ng-click="btn_save()">保存</button>
+        <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+    </div>
+</script>
+<script type="text/ng-template" id="Eimsystemsetting/Devicesessiontype/openmodaltelnetconfig">
+    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+    <div class="modal-body">
+        <form>
+            <table class="table" style="margin-bottom:8px;">
+                <tr class="info">
+                    <td colspan="4">基本配置</td>
+                </tr>
+                <tr>
+                    <td style="width:25%;" class="text-right">端口</td>
+                    <td style="width:25%;">
+                        <input type="text" ng-model="Source.selectItem.setting.port" /><br />
+                    </td>
+                    <td style="width:25%;" class="text-right">字体大小(px)</td>
+                    <td style="width:25%;">
+                        <input type="text" ng-model="Source.selectItem.setting.fontSize" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="text-right">宽度</td>
+                    <td><input type="number" ng-verify class="form-control" ng-model="Source.selectItem.setting.width" placeholder="请输入1~25个字符" /></td>
+                    <td class="text-right">高度</td>
+                    <td style="width:25%;">
+                        <input type="number" ng-verify class="form-control" ng-model="Source.selectItem.setting.height" placeholder="请输入1~25个字符" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">剪贴板</td>
+                    <td>
+                        <input type="checkbox" ng-model="Source.selectItem.setting.mapClipboard" />启用
+                    </td>
+                    <td class="text-right"></td>
+                    <td></td>
+                </tr>
+            </table>
+            </form>
+        <div class="modal-footer">
+            <button class="btn btn-primary btn-sm" type="button" ng-click="btn_save()">保存</button>
+            <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+        </div>
+</script>

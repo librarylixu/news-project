@@ -1,0 +1,173 @@
+.bigger-125{
+   font-size: 125% !important;
+}
+.widget-box.transparent {
+    border-width: 0;
+    padding: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    margin: 3px 0;
+}
+.widget-box.transparent > .widget-header {
+        padding-left: 1px;
+    background: none;
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    border-width: 0;
+    border-bottom: 1px solid #DCE8F1;
+    color: #4383B4;
+    padding-left: 3px;
+}
+.widget-header:before, .widget-header:after {
+    content: "";
+    display: table;
+    line-height: 0;
+}
+.widget-header-small > .widget-title {
+    line-height: 30px;
+    padding: 0;
+    margin: 0;
+    display: inline;
+}
+h4.smaller {
+    font-size: 17px;
+}
+.blue{
+     color: #478FCA !important;
+}
+.orange {
+    color: #FF892A !important;
+}
+.pink {
+    color: #C6699F !important;
+}
+.ace-icon {
+    text-align: center;
+}
+.widget-header > .widget-title > .ace-icon {
+    margin-right: 5px;
+    font-weight: normal;
+    display: inline-block;
+}
+.widget-header-small > .widget-toolbar {
+    line-height: 29px;
+}
+.widget-toolbar {
+    display: inline-block;
+    padding: 0 10px;
+    line-height: 37px;
+    float: right;
+    position: relative;
+}
+    .widget-toolbar:before {
+        display: inline-block;
+        content: "";
+        position: absolute;
+        top: 3px;
+        bottom: 3px;
+        left: -1px;
+        border: 1px solid #D9D9D9;
+    }
+.widget-box > .widget-header > .widget-toolbar a{
+    color: #ACD392;
+  border-width: 0 1px 0 0;
+  transition: transform 0.1s;
+}
+.widget-toolbar > a{
+    font-size: 14px;
+    margin: 0 1px;
+    display: inline-block;
+    line-height: 24px;
+}
+  .widget-box.transparent > .widget-body {                                                                                                                                                                                                                                                                                                                                       
+    border-width: 0;
+    background-color: transparent;
+}
+
+.scroll-content {
+    position: static;
+    overflow: hidden;
+}
+.profile-activity:first-child{
+    border-top: 1px dotted transparent;
+}
+.profile-activity {
+    padding: 10px 4px;
+    border-bottom: 1px dotted #D0D8E0;
+    position: relative;
+    border-left: 1px dotted #FFF;
+    border-right: 1px dotted #FFF;
+}
+.profile-activity:first-child:hover {
+  border-top-color: #D0D8E0;
+}
+.profile-activity:hover {
+  background-color: #F4F9FD;
+  border-left: 1px dotted #D0D8E0;
+  border-right: 1px dotted #D0D8E0;
+}
+.profile-activity img {
+    border: 2px solid #C9D6E5;
+    border-radius: 100%;
+    max-width: 40px;
+    margin-right: 10px;
+    margin-left: 0px;
+    box-shadow: none;
+}
+.profile-activity a.user {
+    font-weight: bold;
+    color: #9585BF;
+}
+.profile-activity .time {
+    display: block;
+    margin-top: 4px;
+    color: #777;
+}
+.profile-activity .tools {
+    position: absolute;
+    right: 12px;
+    bottom: 8px;
+}
+.action-buttons a {
+  margin: 0 3px;
+  display: inline-block;
+  opacity: 0.85;
+  -webkit-transition: all 0.1s;
+  -o-transition: all 0.1s;
+  transition: all 0.1s;
+}
+.action-buttons a:hover {
+  text-decoration: none;
+  opacity: 1;
+  -moz-transform: scale(1.2);
+  -webkit-transform: scale(1.2);
+  -o-transform: scale(1.2);
+  -ms-transform: scale(1.2);
+  transform: scale(1.2);
+}
+.hr {
+    display: block;
+    height: 0;
+    overflow: hidden;
+    font-size: 0;
+    border-width: 1px 0 0 0;
+    border-top: 1px solid #E3E3E3;
+    margin: 12px 0;
+    border-top-color: rgba(0, 0, 0, 0.11);
+}
+.hr-2, .hr2 {
+    margin: 2px 0;
+}
+.hr-double {
+    height: 3px;
+    border-top: 1px solid #E3E3E3;
+    border-bottom: 1px solid #E3E3E3;
+    border-top-color: rgba(0, 0, 0, 0.11);
+    border-bottom-color: rgba(0, 0, 0, 0.11);
+}
+.space-6 {
+    max-height: 1px;
+    min-height: 1px;
+    overflow: hidden;
+    margin: 12px 0;
+    margin: 6px 0 5px;
+}

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myLogin">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8" />
+    <title>{$logintxt}</title>
+    <meta name="description" content="User login page" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <link rel="Bookmark" href="{$Think.const.IMG_URL}logo.ico">
+    <link rel="Shortcut Icon" href="{$Think.const.IMG_URL}logo.ico" />
+    <!-- bootstrap & fontawesome -->
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}bootstrap/css/bootstrap3.3.7.min.css" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angular-ace/css/ace.css" id="main-ace-style" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}/font-awesome/css/font-awesome.css" />
+    <!--表单验证11-->
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ngVerify/css/ngVerify.css">
+   
+    <!--[if lte IE 9]>
+        <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/ace-part2.min.css" />
+    <![endif]-->
+    <!--[if lte IE 9]>
+      <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/ace-ie.min.css" />
+    <![endif]-->
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="{$Think.const.BOOTSTRAP_URL}ace/js/html5shiv.min.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}ace/js/respond.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular/{$Think.const.ANGULAR_VERSION}angular.min.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-sanitize/{$Think.const.ANGULAR_VERSION}angular-sanitize.min.js"></script>  
+    <script src="{$Think.const.BOOTSTRAP_URL}ngVerify/js/ngVerify.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular/{$Think.const.ANGULAR_VERSION}angular.cookies.js"></script>
+    <style>
+        .connect-us {
+            background: url({$Think.const.IMG_URL}demo.png) no-repeat;
+            background-size: cover;
+            height: 345px;
+        }
+
+        .logo_content {
+            position: relative;
+            //background:#394557;
+            background: #7092BE;
+            height: 48px;
+        }
+
+        .logo {
+            position: absolute;
+            margin-left: 5px;
+            top: 1px;
+            width: 46px;
+            height: 46px;
+            background: url({$Think.const.IMG_URL}logo.png) no-repeat;
+            background-size: 100% auto;
+            background-position:center;
+        }
+
+        .com_name {
+            position: absolute;
+            top: 5px;
+            left: 4px;
+            margin-left: 60px;
+            height: 38px;
+            line-height: 38px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+    <script>
+        var _Info = "{$info}";
+    </script>
+    <script>
+
+    </script>
+
+</head>
+
+<body  ng-controller="loginController" class="login-layout {$_COOKIE['login_skin']}" ng-class="bodyClass">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1" style="margin-top:10%">
+                <h3 class="logo_content">
+                    <span class="logo"></span>
+                    <span class="white com_name" id="id-text2"><php>echo C("LOGIN_ENTERPRISE_NAME");</php></span>
+                </h3>
+                <div id="login-box" class="login-box visible widget-box no-border clearfix" style="height:357px;">
+                    <div class="col-md-8 connect-us hidden-xs hidden-sm" style="padding:0;"></div>
+                    <div class="col-md-4 col-sm-6 col-xs-7 widget-body" style="margin:0 auto;">
+                        <div class="widget-main" style="height:345px;margin:0 -15px 0">
+                            <h4 class="header blue lighter bigger">
+                                <!--<i class="ace-icon fa fa-coffee green"></i>-->
+                                {$logintxt}
+                            </h4>
+
+                            <div class="space-6"></div>
+
+                            <form name="Form" action="__MODULE__/Login/login" method="post" verify-scope>
+                                <fieldset>
+                                    <label class="block clearfix">
+                                        <span class="block input-icon input-icon-right">
+                                            <input type="text" name="username" ng-verify class="form-control"  placeholder="请输入账号" style="padding-left:7px;" />
+                                            <i class="ace-icon fa fa-user" style="right:7px;"></i>
+                                        </span>
+                                    </label>
+                                    <label class="block clearfix">
+                                        <span class="block input-icon input-icon-right">
+                                            <input type="password"  ng-verify  name="pwd" class="form-control" placeholder="请输入密码" style="padding-left:7px;" />
+                                            <i class="ace-icon fa fa-lock" style="right:7px;"></i>
+                                        </span>
+                                    </label>
+                                    <label class="clearfix block {$VERIFY} ">
+                                        <span class="block input-icon input-icon-right">
+                                            <input type="text" placeholder="验证码" name="verify" style="width:60%;padding-left:7px;" />
+                                            <img alt="验证码" src="__MODULE__/Login/verify_c" style="width:38%;height:32px;" onclick="this.src = '__MODULE__/Eimlogin/verify_c/' + Math.random()" title="点击刷新">
+                                        </span>
+                                    </label>
+                                    <label class="block clearfix hidden">
+                                        <span class="block input-icon input-icon-right">
+                                            <strong class="c-red">{$info}</strong>
+                                        </span>
+                                    </label>
+
+                                    <div class="space"></div>
+                                    <!--<div class="block clearfix">
+                                        <label class="inline">
+                                            <input type="checkbox" class="ace" name="udcs" id="checkbox-1" />
+                                            <span class="lbl"> 双因素认证</span>
+                                        </label>
+                                    </div>-->
+                                    <div class="block clearfix">
+                                        <button type="submit" ng-verify="control:'Form'" class="btn btn-xs btn-block btn-primary">
+
+                                            <span class="bigger-120">登&nbsp;录</span>
+                                        </button>
+                                    </div>
+                                    <div class="space-4"></div>
+                                </fieldset>
+                            </form>
+
+                            <div class="social-or-login center">
+                                <strong class="bigger-110 red">{$info}</strong>
+                            </div>
+
+                            <div class="space-6"></div>
+
+                        </div><!-- /.widget-main -->
+                        
+                    </div><!-- /.widget-body -->
+                </div><!-- /.login-box -->                               
+                <div class="navbar-fixed-top align-right">
+                    <br />
+                    &nbsp;
+                    <a id="btn-login-dark" ng-click="changeBckgroud('login-layout')" href="#">黑色</a>
+                    &nbsp;
+                    <span class="blue">/</span>
+                    &nbsp;
+                    <a id="btn-login-blur"  ng-click="changeBckgroud('blur-login')"  href="#">模糊</a>
+                    &nbsp;
+                    <span class="blue">/</span>
+                    &nbsp;
+                    <a id="btn-login-light"  ng-click="changeBckgroud('light-login')"  href="#">亮色</a>
+                    &nbsp; &nbsp; &nbsp;
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Home/Index/login.js"></script>
+
+</body>
+</html>

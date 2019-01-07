@@ -1,0 +1,132 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+<div class="modal-body">
+    <div class="form-container">
+        <form name="Form" verify-scope class="myform">
+            <div class="form-group">
+                <label>页面名称</label>
+                <input type="text" ng-readonly="Source.Action==2 || Source.Action==3" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.name" placeholder="输入1~25位名称" />
+            </div>
+           
+            <div ng-show="Source.Action==0||Source.Action==1" style="min-height:30px;">
+                <div class="text-right col-xs-12">
+                    <a href="javascript:;" title="点击隐藏/显示其余属性" ng-click="hideOther=!hideOther">
+                        <i class="fa" ng-class="{'fa-chevron-circle-down':hideOther,'fa-chevron-circle-up':!hideOther}" aria-hidden="true"></i>
+                        <span>{{hideOther?'展开其他':'隐藏'}}属性</span>
+                    </a>
+                </div>
+            </div>
+            <!--其他属性-->
+            <div ng-show="!hideOther&&(Source.Action==0 || Source.Action==1)">
+                <div class="form-group">
+                    <label>页面描述</label>
+                    <textarea ng-readonly="Source.Action==2" ng-verify="pattern:/[\u4e00-\u9fa5]/, required:false, errmsg:'需要输入中文' " type="text" class="form-control" ng-model="Source.selectItem.description" placeholder="输入中文（非必填）"></textarea>
+                </div>
+                <div class="form-group" >
+                    <label>所在域</label>
+                    <input type="text" ng-verify="min:1, max:50" class="form-control" ng-model="Source.selectItem.module" placeholder="输入1~50位所在域" />
+                </div>
+                <div class="form-group">
+                    <label>控制器</label>
+                    <input type="text" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.controller" placeholder="输入1~25位控制器" />
+                </div>
+                <div class="form-group">
+                    <label>方法</label>
+                    <input type="text" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.function" placeholder="输入1~25位方法" />
+                </div>
+                <div class="form-group">
+                    <label>app图标</label>
+                    <input ng-verify="{required:false}" type="text" class="form-control" ng-model="Source.selectItem.image" placeholder="输入app图标（非必填）" />
+                </div>
+                <div class="form-group">
+                    <label>分配权限</label>
+                    <div class="mycheckbox">
+                        <div class="radio">
+                            <label style="text-align:left;">
+                                <input type="radio" name="opentype" ng-value="0" ng-model="Source.selectItem.opentype" ng-checked="Source.selectItem.opentype == 0">跟随统一设置
+                            </label>
+                        </div>
+                        <div class="radio">
+                            <label style="text-align:left;">
+                                <input type="radio" name="opentype" ng-value="1" ng-model="Source.selectItem.opentype" ng-checked="Source.selectItem.opentype == 1">内部弹窗
+                            </label>
+                        </div>
+                        <div class="radio">
+                            <label style="text-align:left;">
+                                <input type="radio" name="opentype" ng-value="2" ng-model="Source.selectItem.opentype" ng-checked="Source.selectItem.opentype == 2">弹出浏览器新标签
+                            </label>
+                        </div>                       
+                    </div>
+                </div>               
+                <div class="form-group">
+                    <label>界面标题</label>
+                    <input ng-verify="{required:false}" type="text" class="form-control" ng-model="Source.selectItem.apptitle" placeholder="输入界面标题（非必填）" />
+                </div>
+                <div class="form-group">
+                    <label>divclass属性</label>
+                    <input ng-verify="{required:false}" type="text" class="form-control" ng-model="Source.selectItem.appclass" placeholder="输入divclass属性（非必填）" />
+                </div>
+                <div class="form-group">
+                    <label>选择展示方式</label>
+                    <input ng-verify="{required:false}" type="text" class="form-control" ng-model="Source.selectItem.appinfindex" placeholder="123表示3个位置都放、120表示桌面和磁贴都放、100表示放在桌面、23表示磁贴和菜单都放、20表示放在磁贴中、3表示放在开始菜单中（非必填）" />
+                </div>
+                <div class="form-group">
+                    <label>是否显示url</label>
+                    <input type="radio" ng-model="Source.selectItem.isshowurl" value="1" name="isshowurl" />是
+                    <input type="radio" ng-model="Source.selectItem.isshowurl" value="0" name="isshowurl" />否
+                </div>
+                <div class="form-group">
+                    <label>是否开启后置模式</label>
+                    <input type="radio" ng-model="Source.selectItem.background" value="1" name="background" />是
+                    <input type="radio" ng-model="Source.selectItem.background" value="0" name="background" />否
+                </div>
+                <div class="form-group">
+                    <label>图标类型</label>
+                    <input ng-verify="{required:false}" type="text" class="form-control" ng-model="Source.selectItem.icontype" placeholder="图标类型,str,img,fa（非必填）" />
+                </div>
+                <div class="form-group">
+                    <label>是否插件窗口</label>
+                    <input type="radio" ng-model="Source.selectItem.plugin" value="1" name="plugin" />是
+                    <input type="radio" ng-model="Source.selectItem.plugin" value="0" name="plugin" />否
+                </div>
+                <div class="form-group">
+                    <label>是否可变尺寸</label>
+                    <input type="radio" ng-model="Source.selectItem.resizable" value="1" name="resizable" />是
+                    <input type="radio" ng-model="Source.selectItem.resizable" value="0" name="resizable" />否
+                </div>
+                <div class="form-group">
+                    <label>是否单例模式</label>
+                    <input type="radio" ng-model="Source.selectItem.single" value="1" name="single" />是
+                    <input type="radio" ng-model="Source.selectItem.single" value="0" name="single" />否
+                </div>
+            </div>
+            <div ng-show="Source.Action==3">
+                <div class="form-group">
+                    <label>关联按钮</label>
+
+                    <div class="mycheckbox">
+                        <div class="checkbox" ng-repeat="btns in Source.btnsData track by $index">
+                            <label style="text-align:left;">
+                                <input type="checkbox" ng-model="btns.checked" ng-change="Refbtns(btns)" />{{btns.bname}}
+                            </label>
+                        </div>
+                        <a ng-click="addContactClick()" title="新建按钮"><i class="fa fa-plus green f-16"></i></a>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save(1)" ng-show="Source.Action==0">连续保存</button>
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save(0)" ng-show="Source.Action==0||Source.Action==1">保存</button>
+    <button class="btn btn-primary btn-sm" type="button" ng-click="save(2)" ng-show="Source.Action==2">删除</button>
+    <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+</div>
+

@@ -1,0 +1,254 @@
+﻿<extend name="angular-base.html" />
+<block name="headcss">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angular-bootstrap-colorpicker/3.0.32/css/colorpicker.min.css">
+    <style>
+        .icon-box img {
+            width: 30px;
+        }
+    </style>
+    <style>
+        .dataTables_footer {
+            border-bottom: 1px solid #e0e0e0;
+            padding-top: 12px;
+            padding-bottom: 12px;
+            background-color: #EFF3F8;
+            margin-top: -18px;
+        }
+
+        .orderColor {
+            color: red;
+        }
+
+        .closebtn {
+            float: right;
+            display: inline-block;
+            font-size: 16px;
+            width: 10px;
+            height: 10px;
+            line-height: 10px;
+            margin-right: 5px;
+        }
+
+        .no-data {
+            background: #f9f9f9;
+            line-height: 24px;
+            margin-top: -18px;
+        }
+    </style>
+</block>
+<block name="headjs">
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-sanitize/{$Think.const.ANGULAR_VERSION}angular-sanitize.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular-bootstrap-colorpicker/3.0.32/js/bootstrap-colorpicker-module.js"></script>
+    <script>
+        //初始化modal并定义service
+        appModuleInit(['ui.bootstrap', 'ngVerify', 'datePicker', 'ui.select', 'colorpicker.module', 'ngSanitize']);
+
+        //主控制器
+        appModule.controller('crmPageController', ['$scope', '$q', 'dataService', 'alert', function ($scope, $q, dataService, alert) {
+            _$scope = $scope;
+            _$q = $q;
+            $scope.service = dataService;//要显示到页面上的数据源
+
+            /*
+                查询页面（本页面使用）数据
+            */
+            $scope.select = function () {
+
+                select_user_apppinfo().then(function (res) {
+                    $scope.selectbtns();
+                });
+            }
+            //显示到页面上的数据源
+            $scope.appinfoData = [];
+
+            //获取关联之后得名称
+            $scope.getTypeRefSouceLength = function (row, type) {
+                //按钮
+                if (refCount == undefined) {
+                    var refCount = 0;
+                    angular.forEach($scope.service.refbtnsData, function (value, key) {
+                        if (value.appid == row.idappinfo) {
+                            refCount++;
+                        }
+                    });
+                    return refCount;
+                }
+            };
+            //此处根据页面表中appinfoindex字段去筛选掉内置页面
+            $scope.addorupdatebtns = function (row) {
+                return (row.appinfindex == 1) ? '<a href="javascript:;" class="green top-5" ng-show="service.refedit" ng-click="updateInfo(row)"><i class="glyphicon glyphicon-pencil bigger-120"></i></a>&nbsp;&nbsp;<a href="javascript:;" class="red top-5" ng-show="service.refdel"  ng-click="remove(row)"><i class="glyphicon glyphicon-trash bigger-120"></i></a> ' : '';
+            }
+            //此处做打开方式的展示
+            $scope.getLabelClass = function (row, status) {
+                //获取class
+                if (status == 0) {
+                    if (row.opentype == 0) {
+                        return { "background-color": '#5661c9' }
+                    } else if (row.opentype == 1) {
+                        return { "background-color": '#c95694' }
+                    } else {
+                        return { "background-color": '#075900' }
+                    }
+                } else if (status == 1) {
+                    //获取值
+                    if (row.opentype == 0) {
+                        return '跟随统一设置';
+                    } else if (row.opentype == 1) {
+                        return '内部弹窗';
+                    } else if (row.opentype == 2) {
+                        return '弹出浏览器新标签';
+                    } else {
+                        return '暂无设置';
+                    }
+                }
+            }
+            //刷新按钮
+            $scope.refresh = refresh;
+            //添加按钮
+            $scope.add = function () {
+                $scope.service.title = '新建页面';
+                $scope.modalHtml = __URL + 'Crmuser/Appinfo/openmodal';
+                $scope.modalController = 'modelAppinfoController';
+                $scope.service.selectItem = '';
+                publicControllerAdd($scope);
+            }
+            //修改按钮
+            $scope.updateInfo = function (row) {
+                $scope.service.title = "修改页面";
+                $scope.modalHtml = __URL + 'Crmuser/Appinfo/openmodal';
+                $scope.modalController = 'modelAppinfoController';
+                $scope.service.selectItem = row;
+                publicControllerUpdate($scope);
+            }
+            //删除按钮
+            $scope.remove = function (row) {
+                $scope.service.title = '删除页面';
+                $scope.modalHtml = __URL + 'Crmuser/Appinfo/openmodal';
+                $scope.modalController = 'modelAppinfoController';
+                $scope.service.selectItem = row;
+                publicControllerDel($scope);
+            }
+            //分配权限按钮
+            $scope.refbtns = function (row) {
+                $scope.service.title = '分配页面';
+                $scope.modalHtml = __URL + 'Crmuser/Appinfo/openmodal';
+                $scope.modalController = 'modelAppinfoController';
+                $scope.service.selectItem = row;
+                $scope.service.Action = 3;
+                publicControllerRef($scope);
+            }
+            /*
+            查询按钮数据
+            */
+            $scope.selectbtns = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                select_user_btns(params).then(function (res) {
+                    //此处查询关系和按钮数据
+                    $scope.refselectbtns();
+                });
+            }
+            /*
+            查询与联系人关系数据
+            */
+            $scope.refselectbtns = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                dataService.postData(__URL + 'Crmuser/RefmenuRefbtn/select_page_data', params).then(function (data) {
+                    $scope.service.refbtnsData = data;
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+            //页面加载完成后，查询数据
+            $scope.select();
+        }]);
+    </script>
+    <script>
+        var __URL = '__APP__/Crmuser/AppUserPreference/';
+        var _dt_pagelength = parseInt("{$_SESSION['PagedataCount']}");
+    </script>
+</block>
+<block name="pageContent">
+    <!--页头-->
+    <div class="page-header clearfix">
+        <h1 class="col-xs-3 text-left">
+            {$MenuName}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {$PageName}
+            </small>
+        </h1>
+        <div class="col-xs-4 text-center">
+            <page-btn></page-btn>
+        </div>
+    </div>
+    <!--快速检索-->
+    <div class="table-header clearfix">
+        <div class="col-xs-6">{$MenuName}<small><i class="ace-icon fa fa-angle-double-right"></i>{$PageName}</small></div>
+
+    </div>
+    <div id="main-container" class="main-container" ng-controller="crmController">
+        <div class="main-content">
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="page-header clearfix">
+                            <h1 class="col-xs-3 text-left">
+                                {$MenuName}
+                                <small>
+                                    <i class="ace-icon fa fa-angle-double-right"></i>
+                                    {$PageName}
+                                </small>
+                            </h1>
+                            <div class="col-xs-4 text-center">
+                                <page-btn></page-btn>
+                            </div>
+                        </div>
+                        <div class="table-header clearfix">
+                            <div class="col-xs-6">{$MenuName}<small><i class="ace-icon fa fa-angle-double-right"></i>{$PageName}</small></div>
+                            <div class="col-xs-6 text-right" style="line-height:38px; ">
+                                快速检索:<input type="text" ng-model="search" style="height:24px; " />
+                            </div>
+                        </div>
+                        <table class="table table-condensed table-hover table-striped table-sort table-bordered ">
+                            <thead class="text-center">
+                                <tr>
+                                    <th></th>
+                                    <th>高度</th>
+                                    <th>宽度</th>
+                                </tr>
+                            </thead>
+                            <caption class="text-center" ng-show="tableSource.length==0">没有数据</caption>
+                            <tbody class="text-center">
+
+                                <tr ng-repeat="app in tableSource |filter:search">
+                                    <td>
+                                        <i class="fa fa-user font" aria-hidden="true"></i>
+                                    </td>
+                                    <td ng-bind="app.height"></td>
+                                    <td ng-bind="app.width"></td>
+                                    <td>
+                                        <a title="修改" class="update green" ng-click="update(app)"><i class="update glyphicon glyphicon-pencil bigger-120 "></i></a>&nbsp;&nbsp;
+                                        <a title="删除" class="delete red" ng-click="del(app)" href="javascript:;">
+                                            <i class="delete glyphicon glyphicon-trash bigger-120 "></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</block>
+
+<block name="scriptTemplate">
+
+</block>
+
+<block name="footjs">
+    <script src="{$Think.const.JS_URL}CrmPublicModal.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagebtn.js"></script>
+</block>

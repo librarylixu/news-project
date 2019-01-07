@@ -1,0 +1,36 @@
+﻿<!doctype html>
+<html ng-app="demo">
+<head>
+
+</head>
+<body>
+
+    
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular/{$Think.const.ANGULAR_VERSION}angular.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular-baidu-map/angular-baidu-map.min.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=zpVzOQ0lYreh1hZELnPhHGbGLvVvzjnk"></script>
+    <script>
+        var app = angular.module("demo", ['angular-baidu-map']);
+
+        app.controller('test', ['$scope', function ($scope) {
+
+            $scope.mapReady = function (map) {
+                map.enableScrollWheelZoom();
+                map.addControl(new BMap.NavigationControl());
+                map.addControl(new BMap.ScaleControl());
+                map.addControl(new BMap.OverviewMapControl());
+                map.addControl(new BMap.MapTypeControl());
+
+                var point = new BMap.Point(116.404, 39.915);
+                map.centerAndZoom(point, 15);
+                var marker = new BMap.Marker(point);
+                map.addOverlay(marker);
+            };
+        }]);
+    </script>
+
+    <div baidu-map="your baidu ak" map-ready="mapReady(map)" style="height: 300px">
+
+    </div>
+</body>
+</html>

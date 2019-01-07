@@ -1,0 +1,2 @@
+Crmhistorymessageboard域
+Crm历史信息，留言板等

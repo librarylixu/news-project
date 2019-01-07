@@ -1,0 +1,55 @@
+2018年8月7日 09:18:35
+介绍：PHP同步设备及操作虚拟机开关：由PHP在服务器端创建文件，写入指定命令，服务器端main服务器监控文件夹获取命令并执行相应的操作，将执行结果写到***.result文件中
+临时目录：C:\xcqh\tempfile\
+步骤：
+	1、PHP在C:\xcqh\tempfile\目录中创建文件[时间戳.common]文件，写入指定命令，定时获取执行结果[时间戳.result]文件
+	2、main服务实时监控C:\xcqh\tempfile\，获取文件内容并执行对应操作
+	3、将执行结果写入到文件并修改文件名称为[时间戳.result]
+	4、PHP获取到执行结果文件内容并展示到页面
+命令：
+一、同步KVM设备
+	格式：
+		synckvm [synckvm:同步全部KVM设备，syncmpu:同步MPU设备，syncacs:同步ACS设备]
+		[parameter1][设备id]
+		[parameter2]
+		...
+	例：
+	1.同步mpu设备ID为23的设备，
+		syncmpu
+		23
+	2.同步所有KVM设备
+		synckvm
+二、同步ESXi设备
+	格式：
+		syncesxi
+		[parameter1][设备id]
+		[parameter2]
+		...
+	例：
+	1.同步esxi设备ID为23的设备，
+		syncesxi
+		23
+	2.同步所有esxi设备
+		syncesxi
+三、同步PDU设备
+	格式：
+		syncpdu
+		[parameter1][设备id]
+		[parameter2]
+		...
+	例：
+	1.同步pdu设备ID为23的设备，
+		syncpdu
+		23
+	2.同步所有pdu设备
+		syncpdu
+四、操作虚拟机开关挂起
+	格式：
+	executeesxi
+	[parameter1][设备id]
+	[parameter2][状态码：PowerOn,PowerOff,Suspend]
+	...
+五、审计操作
+	格式：
+	audit
+	[parameter1][工单编号]

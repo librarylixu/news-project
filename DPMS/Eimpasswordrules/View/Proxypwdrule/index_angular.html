@@ -1,0 +1,259 @@
+﻿<!--页头-->
+<div class="page-header clearfix">
+
+    <div class="col-xs-12">
+        <a ng-click="add()" class="btn btn-success btn-sm">
+            <i class="glyphicon glyphicon-plus"></i>添加
+        </a>
+        <a ng-click="select(1)" class="btn btn-success btn-sm">
+            <i class="glyphicon glyphicon-refresh"></i>刷新
+        </a>
+
+    </div>
+</div>
+<div class="table-header">
+    密码规则管理
+    <a href="javascript:;" class="f-r" style="padding-right:20px;text-decoration:underline;color:#fff">
+        <i class="fa fa-download"></i>导出
+    </a>
+</div>
+<table class="table table table-striped table-bordered table-hover table-condensed table-responsive">
+    <thead>
+        <tr>
+            <th>序号</th>
+            <th>规则名称</th>
+            <th>创建人</th>
+            <th>编辑时间</th>
+            <th>过期时间</th>
+            <th>概要</th>
+            <th>状态</th>
+            <th>备注</th>           
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="item in service.proxypwdruleData">
+            <td ng-bind="item.idproxypwdrule"></td>
+            <td ng-bind="item.name"></td>
+            <td>
+                <span class="label label-info" ng-bind="service.usersData[item.createuserid].description?service.usersData[item.createuserid].description:service.usersData[item.createuserid].username"></span>
+            </td>
+            <td ng-bind="!item.updatetime||item.updatetime==''||item.updatetime=='0'?'暂无':service.formatDate(item.updatetime,'yyyy-mm-dd')"></td>
+            <td ng-bind="!item.invalidtime||item.invalidtime==''||item.invalidtime=='0'?'暂无':service.formatDate(item.invalidtime,'yyyy-mm-dd')"></td> 
+            <td>
+                <a href="javascript:;"  ng-click="btn_refgroup(item)" title="关联用户组">用户组(<b ng-bind="item.refugroups?item.refugroups.length:'0'"></b>)</a><br />        
+                <a href="javascript:;" ng-click="btn_refuser(item)" title="关联用户">用户(<b ng-bind="item.refusers?item.refusers.length:'0'"></b>)</a><br />      
+                <a href="javascript:;" ng-click="btn_refdevicegroup(item)" title="关联设备组">设备组(<b ng-bind="item.refdgroupids?item.refdgroupids.length:'0'"></b>)</a><br />    
+                <a href="javascript:;" ng-click="btn_refpwd(item)" title="托管账号">托管账号(<b ng-bind="item.refpwdids?item.refpwdids.length:'0'"></b>)</a><br />                                
+                <a href="javascript:;" ng-click="btn_refdevice(item)" title="关联设备">设备(<b ng-bind="item.__deviceids?item.__deviceids.length:'0'"></b>)</a>
+            </td>           
+            <td>
+                <span class="label label-warning" ng-if="item.status=='1'">禁用</span>
+                <span class="label label-success" ng-if="item.status=='0'">启用</span>
+            </td>
+            <td ng-bind="item.remark"></td>           
+            <td>
+                <a href="javascript:;" title="详情" class="orange top-5" ng-click="detail(item)">
+                    <i class="fa fa-search fa-lg"></i>
+                </a>
+                <a href="javascript:;" title="编辑" class="green top-5" ng-click="update(item)">
+                    <i class="fa fa-pencil fa-lg"></i>
+                </a>
+                <a href="javascript:;" title="删除" class="red top-5" ng-click="del(item)">
+                    <i class="fa fa-trash fa-lg"></i>
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<script type="text/ng-template" id="Eimpasswordrules/Proxypwdrule/openmodal">
+    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+    <div class="modal-body" style="padding:0;">
+        <form name="Form" class="container-fluid" verify-scope>
+            <table class="table" style="margin-bottom:8px;">
+                <tr class="info">
+                    <td colspan="4">基本信息</td>
+                </tr>
+                <tr>
+                    <td class="text-right" style="width:25%"><b class="c-red">*</b>规则名称</td>
+                    <td  style="width:25%"><input type="text" style="width:100%" ng-verify="min:1, max:25" ng-if="!service.ref" class="form-control" ng-model="Source.selectItem.name" placeholder="请输入1~25个字符" /></td>
+                    <td style="width:25%" class="text-right">状态</td>
+                    <td style="width:25%">
+                        <select class="form-control" ng-model="Source.selectItem.status">
+                            <option value="0" ng-selected="Source.selectItem.status==0">启用</option>
+                            <option value="1" ng-selected="Source.selectItem.status==1">禁用</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right"><b class="c-red">*</b>规则到期时间</td>
+                    <td colspan="3">
+                        <p class="input-group">
+                            <input style="border-radius:0;" ng-click="open()" type="text" class="form-control" current-text="今天" clear-text="清空" close-text="关闭" uib-datepicker-popup ng-model="dt" ng-readonly="true" is-open="popup.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-sm btn-warning" ng-click="open()"><i class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+                        </p>
+                        <!--<input type="text" class="form-control" ng-model="Source.selectItem.invalidtime" />-->
+                    </td>
+                </tr>               
+                <tr>
+                    <td class="text-right"><b class="c-red">*</b>关联用户</td>
+                    <td colspan="3">
+                        <ui-select multiple ng-model="Source.selectItem.refusers" style="width:100%;">
+                            <ui-select-match placeholder="请选择关联用户">
+                                <span ng-bind="$item.value.description" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.value.idusers  as (key,item) in service.privateDateObj.usersData | filter: { value: { description: $select.search }}" style="max-height: 150px;">
+                                <div ng-bind-html="item.value.description | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right" style="width:25%;"><b class="c-red">*</b>关联用户组</td>
+                    <td colspan="3" style="width:50%;">
+                        <ui-select multiple ng-model="Source.selectItem.refugroups" style="width:100%;">
+                            <ui-select-match placeholder="请选择关联用户组">
+                                <span ng-bind="$item.value.__parentname" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.value.idusergroup  as (key,item) in service.privateDateObj.usergroupData | filter: { value: { groupname: $select.search }}" style="max-height: 150px;">
+                                <div ng-bind-html="item.value.__parentname | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right"><b class="c-red">*</b>关联设备</td>
+                    <td colspan="3">
+                        
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right"><b class="c-red">*</b>关联设备组</td>
+                    <td colspan="3">
+                        <ui-select multiple ng-model="Source.selectItem.refdgroupids" style="width:100%;">
+                            <ui-select-match placeholder="请选择关联设备组">
+                                <span ng-bind="$item.value.groupname" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.value.iddevicegroup  as (key,item) in service.privateDateObj.devicegroupData | filter: { value: { groupname: $select.search }}" style="max-height: 150px;">
+                                <div ng-bind-html="item.value.groupname | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right" style="width:25%;"><b class="c-red">*</b>关联托管账号</td>
+                    <td colspan="3" style="width:50%;">
+                        <ui-select multiple ng-model="Source.selectItem.refpwdids" style="width:100%;">
+                            <ui-select-match placeholder="请选择托管密码">
+                                <span ng-bind="$item.value.login" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.value.idproxypassword  as (key,item) in service.privateDateObj.proxypasswordData | filter: { value: { login: $select.search }}" style="max-height: 150px;">
+                                <div ng-bind-html="item.value.login | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right" >备注</td>
+                    <td colspan="3">
+                        <textarea style="width:100%;" class="form-control" rows="3"  ng-model="Source.selectItem.remark" />
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <div style="clear:both;"></div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save()">保存</button>
+        <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+    </div>
+</script>
+<script type="text/ng-template" id="Eimpasswordrules/Proxypwdrule/opendetailmodal">
+    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+    <div class="modal-body" style="padding:0;">
+        <form  class="container-fluid">
+            <table class="table" style="margin-bottom:8px;">                
+                <tr>
+                    <td class="text-right" style="width:25%">规则名称</td>
+                    <td colspan="3" class="text-center" ng-bind="Source.selectItem.name"></td>                   
+                </tr>
+                <tr>
+                    <td class="text-right">创建时间</td>
+                    <td colspan="3" class="text-center" ng-bind="service.formatDate(Source.selectItem.createtime,'yyyy-mm-dd')"></td>
+                </tr>
+                <tr>
+                    <td class="text-right">过期时间</td>
+                    <td colspan="3" class="text-center" ng-bind="service.formatDate(Source.selectItem.invalidtime,'yyyy-mm-dd')">                      
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">关联用户</td>
+                    <td class="text-center">
+                        用户（<span ng-bind="Source.selectItem.refusers.length"></span>）
+                    </td>
+                    <td colspan="2">
+                        <span ng-repeat="item in Source.selectItem.refusers" ng-bind="service.privateDateObj.usersData[item].description+';'"></span>                       
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">关联用户组</td>
+                    <td class="text-center" style="width:25%">
+                        用户组（<span ng-bind="Source.selectItem.refugroups.length"></span>）
+                    </td>
+                    <td colspan="2">
+                        <span ng-repeat="item in Source.selectItem.refugroups" ng-bind="service.privateDateObj.usergroupData[item].__parentname+';'"></span>                       
+                    </td>                   
+                </tr>
+                <tr>
+                    <td class="text-right">关联设备</td>
+                    <td class="text-center">
+                        设备（<span ng-bind="Source.selectItem.refdevices?Source.selectItem.refdevices.length:'0'"></span>）
+                    </td>
+                    <td colspan="2">
+                        <span ng-repeat="item in Source.selectItem.refdevices" ng-bind="service.privateDateObj.deviceData[item].devicename+';'"></span>
+                    </td> 
+                </tr>
+                <tr>
+                    <td class="text-right">关联设备组</td>
+                    <td class="text-center">
+                        设备组（<span ng-bind="Source.selectItem.refdgroupids?Source.selectItem.refdgroupids.length:'0'"></span>）
+                    </td>
+                    <td colspan="2">
+                        <span ng-repeat="item in Source.selectItem.refdgroupids" ng-bind="service.privateDateObj.devicegroupData[item].groupname+';'"></span>
+                    </td>                   
+                </tr>
+                <tr>
+                    <td class="text-right">关联托管账号</td>
+                    <td class="text-center">
+                        托管账号（<span ng-bind="Source.selectItem.refpwdids?Source.selectItem.refpwdids.length:'0'"></span>）
+                    </td>
+                    <td colspan="2">
+                        <span ng-repeat="item in Source.selectItem.refpwdids" ng-bind="service.privateDateObj.proxypasswordData[item].login+';'"></span>
+                    </td>                      
+                </tr>
+                <tr>
+                    <td class="text-right">备注</td>
+                    <td colspan="3">
+                         <span ng-bind="Source.selectItem.remark"></span>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <div style="clear:both;"></div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-warning btn-sm"  type="button" onclick="window.print()">打印</button>
+    </div>
+</script>

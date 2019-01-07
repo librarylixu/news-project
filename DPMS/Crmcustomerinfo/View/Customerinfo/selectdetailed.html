@@ -1,0 +1,258 @@
+﻿<extend name="angular-base.html" />
+<block name="momentjs">
+    <link  rel="stylesheet" href="{$Think.const.CSS_URL}my-comments.css"/>
+</block>
+<block name="headcss">
+
+    <style>
+        .table tr td {
+            border: 1px solid #ccc;
+            background-color: #fff;
+            padding-left: 12px;
+            padding-right: 12px;
+            padding-top: 6px;
+            padding-bottom: 6px;
+            box-sizing: border-box;
+            word-break: break-all;
+            line-height: 20px;
+            color: #666;
+        }
+
+        i {
+            font-style: normal;
+        }
+
+            i b {
+                font-style: italic;
+            }
+    </style>
+</block>
+<block name="headjs">
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-sanitize/{$Think.const.ANGULAR_VERSION}angular-sanitize.min.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-file-upload/angular-file-upload.min.js"></script>
+    <script src='{$Think.const.BOOTSTRAP_URL}textAngular/textAngular-rangy.min.js'></script>
+    <script src='{$Think.const.BOOTSTRAP_URL}textAngular/textAngular-sanitize.min.js'></script>
+    <script src='{$Think.const.BOOTSTRAP_URL}textAngular/textAngular.min.js'></script>
+    <script>
+        var _id = '{$id}';
+        //存一份userid
+        var _userid = "{$userid}";
+    </script>
+</block>
+<block name="pageContent">
+    <!--页头-->
+    <div class="container" style="font-family: 微软雅黑;width:1040px;">
+        <div class="row">
+            <div class="page-header clearfix col-xs-12" style="padding:30px 30px; border-bottom-style: solid; ">
+                <h1 class="col-xs-3 text-left" style="width:100%;">
+                    <span ng-bind="customerinfo.name"></span>
+                    <small>
+                        <i class="ace-icon fa fa-angle-double-right"></i>
+                        客户负责人：<span ng-bind="service.privateDateObj.usersData[customerinfo.userid].description"></span>
+                    </small>
+                </h1>
+                <div class="col-xs-4 text-right noprint f-r">
+                    <a ng-click="print()" class="btn btn-warning btn-sm">
+                        <!-- 此处可暂时保留原方法（防止带有编辑/添加/删除等按钮） -->
+                        <i class="ace-icon fa fa-print"></i>&nbsp;打印
+                    </a>
+                    <a ng-click="refresh()" class="btn btn-success btn-sm">
+                        <!-- 此处可暂时保留原方法（防止带有编辑/添加/删除等按钮） -->
+                        <i class="glyphicon glyphicon-refresh"></i>&nbsp;刷新
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <table class="table" style="width:1040px;">
+                <tr class="info">
+                    <td colspan="4">基本信息</td>
+                </tr>
+                <tr>
+                    <td class="text-right" style="width:150px"><b style="color: red;">*</b> 客户名称</td>
+                    <td style="width:370px">
+                        <span ng-bind="customerinfo.name"></span>
+                    </td>
+                    <td class="text-right" style="width:150px">简称</td>
+                    <td style="width:370px">
+                        <span ng-bind="customerinfo.abbreviation"></span>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td class="text-right">办公电话</td>
+                    <td>
+                        <span ng-bind="customerinfo.officephone"></span>
+                    </td>
+                    <td class="text-right">传真</td>
+                    <td>
+                        <span ng-bind="customerinfo.fax"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">网址</td>
+                    <td colspan="3">
+                        <span ng-bind="customerinfo.url"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right"><b style="color: red;">*</b> 联系地址</td>
+                    <td colspan="3">
+                        <span ng-bind="customerinfo.address"></span>
+                    </td>
+                </tr>
+
+                <tr class="info">
+                    <td colspan="4">属性信息</td>
+                </tr>
+                <tr>
+                    <td class="text-right" style="width:150px">客户类型</td>
+                    <td style="width:370px" class="text-center">
+                        <span ng-bind="service.privateDateObj.customertypeData[customerinfo.reftypeids].typename"></span>
+                    </td>
+                    <td class="text-right" style="width:150px">客户等级</td>
+                    <td style="width:370px" class="text-center">
+                        <span ng-bind="service.privateDateObj.customerlevelData[customerinfo.reflevelids].levelname"></span>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td class="text-right">客户行业</td>
+                    <td class="text-center">
+                        <span ng-bind="service.privateDateObj.customerindustryData[customerinfo.refindustryids].industryname"></span>
+                    </td>
+                    <td class="text-right">客户来源</td>
+                    <td class="text-center">
+                        <span ng-bind="service.privateDateObj.customersourceData[customerinfo.refsourceids].name"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">客户市场</td>
+                    <td class="text-center">
+                        <span ng-bind="service.privateDateObj.customermarketData[customerinfo.refmarketids].name"></span>
+                    </td>
+                    <td class="text-right">信用等级</td>
+                    <td class="text-center">
+                        <span ng-bind="service.privateDateObj.customercreditData[customerinfo.refcreditids].name"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">客户状态</td>
+                    <td class="text-center">
+                        <span ng-bind="service.privateDateObj.customerstatusData[customerinfo.refstatusids].status"></span>
+                    </td>
+                    <td class="text-right"><!--当前阶段--></td>
+                    <td class="text-center">
+                        <!--<span ng-bind="service.privateDateObj.customerstageData[customerinfo.refstageids].name"></span>-->
+                    </td>
+                </tr>
+
+                <tr class="info">
+                    <td colspan="4">客户联系人信息</td>
+                </tr>
+                <tr ng-if="contactData.length > 0">
+                    <td class="text-right" rowspan="{{contactData.length +1}}">联系人</td>
+                </tr>
+                <tr ng-repeat="value in contactData track by $index">
+                    <td colspan="3">
+                        <span>
+                            <span ng-bind="value.name"></span>
+                            (职位：<span ng-bind="value.position"></span>;&nbsp;联系方式：
+                            <span ng-bind="value.mobilephone"></span>)
+                        </span>
+                    </td>
+                </tr>
+                <tr ng-if="contactData.length == 0">
+                    <td colspan="4">暂无联系人</td>
+                </tr>
+
+                <tr class="info">
+                    <td colspan="4" ng-if="projectData.length > 0">项目信息</td>
+                </tr>
+                <tr ng-if="projectData.length > 0">
+                    <td class="text-right" rowspan="{{projectData.length+1}}">项目名称</td>
+                </tr>
+
+                <tr ng-repeat="item in projectData">
+
+                    <td colspan="3">
+                        <span class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA" ng-click="openproject(item)" ng-bind="item.name"></span>
+                        (<span ng-bind="service.formatDate(item.createtime,'yyyy-mm-dd')"></span>&nbsp;
+                        <span ng-bind="service.privateDateObj.projectstatusData[item.statusid].name"></span>)
+                    </td>
+                </tr>
+
+                <tr ng-if="projectData.length<0">
+                    <td colspan="4">暂无项目</td>
+                </tr>
+
+                <tr class="info">
+                    <td colspan="4">客户跟进记录</td>
+                </tr>
+                <tr ng-repeat="(key,item) in recordData | orderBy:'-createtime'">
+                    <td>
+                        <span ng-bind="formatDate(item.createtime,'yyyy-mm-dd')"></span>
+                    </td>
+                    <td colspan="3">
+                        <span style="cursor:pointer;border-bottom:1px dashed #478FCA" class="blue" ng-bind="item.title" ng-click="openrecord(item)"></span>
+                    </td>
+                </tr>
+                <tr ng-if="!isnullproject(recordData)">
+                    <td colspan="4">暂无跟进</td>
+                </tr>
+
+                <tr class="info">
+                    <td colspan="4">工单信息</td>
+                </tr>
+                <tr ng-repeat="(userid,item) in workorderData">
+                    <td class="text-right" ng-bind="service.privateDateObj.usersData[userid].description"></td>
+                    <td colspan="3">
+                        <span ng-repeat="valueitem in item">
+                            <span class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA"
+                                  ng-click="openwork(valueitem)" ng-bind="valueitem.title">
+                            </span>
+                            (<span ng-bind="service.formatDate(valueitem.createtime,'yyyy-mm-dd')"></span>
+                            &nbsp;&nbsp;
+                            <span class="label" ng-class="service.privateDateObj.workerorderStatus[valueitem.status].type"
+                                  ng-bind="service.privateDateObj.workerorderStatus[valueitem.status].name"></span>
+                            )<span ng-if="item.length>1">
+                                ;&nbsp;&nbsp;
+                            </span>
+                        </span>
+                    </td>
+                </tr>
+                <tr ng-if="!isnullproject(workorderData)">
+                    <td colspan="4">暂无工单</td>
+                </tr>
+
+                <tr class="info">
+                    <td colspan="4">其他信息</td>
+                </tr>
+                <tr>
+                    <td class="text-right">抄送人</td>
+                    <td colspan="3">
+                        <span ng-repeat="item in customerinfo.refusers.split(',')">
+                            <span ng-bind="service.privateDateObj.usersData[item].description"></span>
+                            <i ng-if="customerinfo.refusers.split(',').length>1 && item != customerinfo.refusers.split(',')[customerinfo.refusers.split(',').length-1]">；</i>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <!--评论组件-->
+    <div page-comment />
+</block>
+
+<block name="scriptTemplate">
+
+</block>
+
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customerinfo/detailmodal.js"></script>
+    <!-- 配置文件 -->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}ueditor/1.4.3.3/ueditor.config.js"></script>
+    <!-- 编辑器源码文件 -->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}ueditor/1.4.3.3/ueditor.all.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagecomment.js"></script>
+</block>

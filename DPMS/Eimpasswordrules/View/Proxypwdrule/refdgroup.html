@@ -1,0 +1,11 @@
+﻿<div ng-controller="ruleRefdgroupController">
+    <ui-select multiple ng-model="Source.selectItem.refdgroupData" on-select="refdgroupSave($item, 0)" on-remove="refdgroupSave($item, 1)">
+        <ui-select-match>
+            <span ng-bind="$item.groupname">
+            </span>
+        </ui-select-match>
+        <ui-select-choices repeat="item in service.devicegroupArrData">
+            <div ng-bind-html="item.groupname"></div>
+        </ui-select-choices>
+    </ui-select>
+</div>

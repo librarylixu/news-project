@@ -1,0 +1,103 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>XinChen View (RDP)</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width = device-width, initial-scale = 1.0, user-scalable = yes, minimum-scale = 0.1, maximum-scale = 8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="XinChen RDP" />
+    <meta name="application-name" content="XinChen View" />
+    <meta name="description" content="Remotely view and contrl your computer with SSH protocol" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/hi5.css" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/rdp.css" />
+
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/resource.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/appcfg.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/hi5core_min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/hi5_min.js"></script>
+
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}jquery/2.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}EIMPublicTools.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}layer/3.0/layer.js"></script>
+    <script type="text/javascript">
+        var __URL = '__APP__/';
+        var _workid = "{$id}";
+        var _USERID = "{$_SESSION['userinfo']['idusers']}";
+    </script>
+</head>
+<body>
+
+    <div style="position: relative; clear: both">
+        <canvas id="remotectrl" width="1" height="1"></canvas>
+        <div class="toolbar" id="svToolbar" tabindex="999" style="display: none;">
+            <textarea id="svTouchInput"></textarea>
+            <img src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/cloud.png" title="My Files" id="svCloud">
+            <img src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/info.png" title="Information" id="svInfo">
+        </div>
+        <div id="pc_key">
+            <span>Ctrl</span><span>Alt</span><span>Shift</span><span>Del</span><span>Esc</span><span>...</span>
+            <div id="pc_key_more">
+                <span>F1</span><span>&larr;</span><span>&uarr;</span><span>&rarr;</span><span>&darr;</span><span>Start</span><span>Alt+F4</span><span>Ctrl+Alt+Del</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- filecontainer is used for file share -->
+    <div id="filecontainer" style="overflow:auto;display:none; width:80%">
+    </div>
+    <div id="appinfo" class="appdlg">
+        <img alt="" src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/info.png" style="float:left">
+        <table>
+            <tbody>
+                <tr><td align="right"><b>连接到:</b></td><td><span id="connectingTo"></span>&nbsp;&nbsp;<input type="button" value="Disconnect" id="disconnect"><br></td></tr>
+                <tr><td align="right"><b>会话ID:</b></td><td><span id="numericId"></span><br></td></tr>
+            </tbody>
+            <tbody id="shadowing">
+                <tr>
+                    <td align="right"><b>加入模式:</b></td>
+                    <td>
+                        <select id="joinSelect">
+                            <option value="0">每个人都可以控制</option>
+                            <option value="1">只有一个人可以控制</option>
+                            <option value="2">只有一个可以控制(其他人可以移动鼠标)</option>
+                        </select><br>
+                    </td>
+                </tr>
+                <tr><td></td><td><input type="checkbox" id="joinOpen">关闭时断开加入的会话</td></tr>
+                <tr><td colspan="2"><b>通过以下链接加入本次会议:</b><br><a id="joinLink" target="_blank"></a></td></tr>
+                <tr><td></td><td align="right"><input type="button" id="requestControl" value="Request Control" disabled="disabled" /></td></tr>
+            </tbody>
+        </table>
+        <div id="ssParent"><input type="checkbox" id="saveSession">将会话保留并从其他设备重新连接.</div>
+        <div id="keyParent"><input type="checkbox" id="shortcuts">键盘快捷键</div>
+        <div style="overflow:auto;height:150px;display:none" id="touchGesture">
+            <div id="tmContainer">
+                <input type="checkbox" name="touchpad" id="touchpadMode" />触摸板模式(相对鼠标移动)
+                <input type="checkbox" name="extKeyboard" id="extKBD" />外部键盘
+            </div>
+            Tap <img src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/kbd.png" align="middle"> 启动软键盘。IE不支持3个手指手势和2个手指滚动(鼠标滚轮).
+            <table>
+                <tr><td><img src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/longpress.png"></td><td>长按</td><td>右键点击</td></tr>
+                <tr><td><img src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/flick.png"></td><td>Flick</td><td>如果远程桌面分辨率较大，请滚动屏幕, <br>否则，拖动</td></tr>
+                <tr><td><img src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/pan.png"></td><td>Pan</td><td>拖动</td></tr>
+                <tr><td><img src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/2tap.png"></td><td>2 finger tap</td><td>右键点击</td></tr>
+                <tr><td><img src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/2scroll.png"></td><td>2 finger scroll</td><td>鼠标滚轮</td></tr>
+                <tr><td><img src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/3tap.png"></td><td>3 finger tap</td><td>显示软件键盘(仅适用于iOS)</td></tr>
+                <tr><td><img src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/3open.png"></td><td>3 finger pinch open</td><td>最大化窗口</td></tr>
+                <tr><td><img src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/3close.png"></td><td>3 finger pinch close</td><td>还原窗口</td></tr>
+                <tr><td><img src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/3left.png"></td><td>3 finger flick left</td><td>上一个窗口</td></tr>
+                <tr><td><img src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/3right.png"></td><td>3 finger flick right</td><td>下一个窗口</td></tr>
+                <tr><td><img src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/3down.png"></td><td>3 finger flick down</td><td>最小化所有窗口</td></tr>
+                <tr><td><img src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/3up.png"></td><td>3 finger flick up</td><td>恢复所有窗口</td></tr>
+            </table>
+        </div>
+    </div>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/surface_min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/rdpcore_min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/rdp_min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/recording_min.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Eimsessiontools/sessiontool/rdp.js"></script>
+</body>
+</html>

@@ -1,0 +1,876 @@
+{
+    "configs": {
+        "topTaskBar": false,
+        "sound": false,
+        "wallpaper": "./res/img/wallpapers/bg13.jpg",
+        "wallpaperBlur": true,
+        "wallpaperSlide": true,
+        "wallpaperSlideRandom": true,
+        "wallpaperSlideItv": 1,
+        "wallpaperSlideTime": 1532080065223,
+        "wallpaperSlideIndex": 8,
+        "openMax": 9,
+        "idCounter": 384,
+        "themeColor": "rgba(68,89,91,1)",
+        "autoThemeColor": true,
+        "wallpapers": [
+            {
+                "image": "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="
+            },
+            {
+                "image": "./res/img/wallpapers/bg1.jpg",
+                "preview": "./res/img/wallpapers/bg1_1.jpg"
+            },
+            {
+                "image": "./res/img/wallpapers/bg2.jpg",
+                "preview": "./res/img/wallpapers/bg2_1.jpg"
+            },
+            {
+                "image": "./res/img/wallpapers/bg3.jpg",
+                "preview": "./res/img/wallpapers/bg3_1.jpg"
+            },
+            {
+                "image": "./res/img/wallpapers/bg5.jpg",
+                "preview": "./res/img/wallpapers/bg5_1.jpg"
+            },
+            {
+                "image": "./res/img/wallpapers/bg6.jpg",
+                "preview": "./res/img/wallpapers/bg6_1.jpg"
+            },
+            {
+                "image": "./res/img/wallpapers/bg10.jpg",
+                "preview": "./res/img/wallpapers/bg10_1.jpg"
+            },
+            {
+                "image": "./res/img/wallpapers/bg11.jpg",
+                "preview": "./res/img/wallpapers/bg11_1.jpg"
+            },
+            {
+                "image": "./res/img/wallpapers/bg13.jpg",
+                "preview": "./res/img/wallpapers/bg13_1.jpg"
+            },
+            {
+                "image": "https://unsplash.it/1920/1080/?random",
+                "preview": ""
+            }
+        ],
+        "highPerformance": false,
+        "highPerformanceOnMobile": true,
+        "pathRes": "./res",
+        "shortcutsSortAuto": true,
+        "debug": true,
+        "winBlur": true
+    },
+    "apps": {
+        "yl-system": {
+            "addressBar": false,
+            "autoRun": 1,
+            "background": false,
+            "badge": 0,
+            "desc": "系统设置",
+            "icon": {
+                "type": "fa",
+                "bg": "rgb(#000000)",
+                "content": "cog fa-spin"
+            },
+            "openMode": "normal",
+            "plugin": false,
+            "position": {
+                "x": "x*0.1",
+                "y": "y*0.000001",
+                "left": true,
+                "top": true,
+                "autoOffset": true
+            },
+            "version": "v1.1.0.2",
+            "poweredBy": "CRM",
+            "resizable": true,
+            "single": true,
+            "size": {
+                "width": "1072",
+                "height": "590"
+            },
+            "title": "系统设置",
+            "url": "./res/apps/yl-system/index.html",
+            "customTile": "",
+            "urlRandomToken": true,
+            "resizeable": true
+        },
+        "yl-color-picker": {
+            "addressBar": false,
+            "autoRun": 0,
+            "background": false,
+            "badge": 0,
+            "desc": "Color Picker",
+            "icon": {
+                "type": "fa",
+                "bg": "rgb(#000000)",
+                "content": "eyedropper"
+            },
+            "openMode": "normal",
+            "plugin": false,
+            "position": {
+                "x": "(x-207)/2",
+                "y": "(y-239)/2",
+                "left": true,
+                "top": true,
+                "autoOffset": false
+            },
+            "version": "v1.1.0.2",
+            "poweredBy": "CRM",
+            "resizable": true,
+            "single": true,
+            "size": {
+                "width": "207",
+                "height": "239"
+            },
+            "title": "Color Picker",
+            "url": "./res/apps/colorPicker/colorPicker.html",
+            "customTile": "",
+            "urlRandomToken": true,
+            "resizeable": false
+        },
+        "yl-browser": {
+            "addressBar": true,
+            "autoRun": 0,
+            "background": false,
+            "badge": 0,
+            "desc": "Internet Explorer",
+            "icon": {
+                "type": "fa",
+                "content": "internet-explorer",
+                "bg": "rgb(#000000)"
+            },
+            "openMode": "normal",
+            "plugin": false,
+            "position": {
+                "autoOffset": true,
+                "left": true,
+                "top": true,
+                "x": "x*0.1",
+                "y": "y*0.1"
+            },
+            "version": "v1.1.0.2",
+            "poweredBy": "CRM",
+            "resizable": true,
+            "single": true,
+            "size": {
+                "height": "y*0.8-80",
+                "width": "x*0.8"
+            },
+            "title": "Internet Explorer",
+            "url": "./res/apps/browser/index.html",
+            "customTile": "",
+            "urlRandomToken": false,
+            "resizeable": true
+        },
+        "yl-app-store": {
+            "addressBar": false,
+            "autoRun": 0,
+            "background": false,
+            "badge": 0,
+            "desc": "",
+            "icon": {
+                "type": "fa",
+                "content": "shopping-bag",
+                "bg": "#b36aba"
+            },
+            "openMode": "normal",
+            "plugin": false,
+            "position": {
+                "autoOffset": true,
+                "left": true,
+                "top": true,
+                "x": "x*0.1",
+                "y": "y*0.1"
+            },
+            "version": "1.1.0.2",
+            "poweredBy": "CRM",
+            "resizable": true,
+            "single": true,
+            "size": {
+                "height": "y*0.8-80",
+                "width": "x*0.8"
+            },
+            "title": "App Store",
+            "url": "http://www.qhoa.net",
+            "customTile": "",
+            "urlRandomToken": true,
+            "resizeable": true
+        },
+        "yl-server": {
+            "addressBar": false,
+            "autoRun": 0,
+            "background": false,
+            "badge": 0,
+            "desc": "Svchost",
+            "icon": {
+                "type": "fa",
+                "content": "yoast",
+                "bg": "#6b96cf"
+            },
+            "openMode": "min",
+            "plugin": true,
+            "position": {
+                "autoOffset": false,
+                "left": false,
+                "top": false,
+                "x": "4",
+                "y": "4"
+            },
+            "version": "1.0.0",
+            "poweredBy": "Yuri2",
+            "resizable": true,
+            "single": true,
+            "size": {
+                "height": "y*0.8-80",
+                "width": "x*0.8"
+            },
+            "title": "YLUI-Svchost",
+            "url": "https://server.ylui.yuri2.cn",
+            "customTile": "",
+            "urlRandomToken": true,
+            "resizeable": true
+        },
+        "QQ": {
+            "addressBar": false,
+            "autoRun": 0,
+            "background": false,
+            "badge": 0,
+            "desc": "QQ Online",
+            "icon": {
+                "type": "fa",
+                "content": "qq",
+                "bg": "#e352e3"
+            },
+            "openMode": "normal",
+            "plugin": false,
+            "position": {
+                "autoOffset": true,
+                "left": true,
+                "top": true,
+                "x": "x*0.05",
+                "y": "y*0.05"
+            },
+            "version": "2.0.4",
+            "poweredBy": "Tim Chan",
+            "resizable": true,
+            "single": true,
+            "size": {
+                "height": "589",
+                "width": "344"
+            },
+            "title": "QQ",
+            "url": "https://web2.qq.com/",
+            "customTile": "",
+            "urlRandomToken": true
+        },
+        "WeChat": {
+            "addressBar": false,
+            "autoRun": 0,
+            "background": false,
+            "badge": 0,
+            "desc": "WeChat for Web",
+            "icon": {
+                "type": "fa",
+                "content": "wechat",
+                "bg": "#fa43fa"
+            },
+            "openMode": "normal",
+            "plugin": false,
+            "position": {
+                "autoOffset": true,
+                "left": true,
+                "top": true,
+                "x": "x*0.05",
+                "y": "y*0.01"
+            },
+            "version": "2.0.4",
+            "poweredBy": "Tim Chan",
+            "resizable": true,
+            "single": true,
+            "size": {
+                "height": "600",
+                "width": "1040"
+            },
+            "title": "WeChat",
+            "url": "https://wx.qq.com/?lang=en_US",
+            "customTile": "",
+            "urlRandomToken": false
+        },
+        "app-155": {
+            "addressBar": false,
+            "autoRun": 0,
+            "background": false,
+            "badge": 0,
+            "desc": "My Blog",
+            "icon": {
+                "type": "fa",
+                "content": "wordpress",
+                "bg": "rgb(#000000)"
+            },
+            "openMode": "normal",
+            "plugin": false,
+            "position": {
+                "autoOffset": true,
+                "left": true,
+                "top": true,
+                "x": "x*0.05",
+                "y": "y*0.05"
+            },
+            "version": "2.0.4",
+            "poweredBy": "Tim Chan",
+            "resizable": true,
+            "single": true,
+            "size": {
+                "height": "y*0.8-80",
+                "width": "x*0.8"
+            },
+            "title": "My Blog",
+            "url": "./wordpress",
+            "customTile": "./banner",
+            "urlRandomToken": false
+        },
+        "app-156": {
+            "addressBar": false,
+            "autoRun": 0,
+            "background": false,
+            "badge": 0,
+            "desc": "CPU-Z 64",
+            "icon": {
+                "type": "fa",
+                "content": "microchip",
+                "bg": "rgb(#000000)"
+            },
+            "openMode": "normal",
+            "plugin": false,
+            "position": {
+                "autoOffset": true,
+                "left": true,
+                "top": true,
+                "x": "x*0.05",
+                "y": "y*0.05"
+            },
+            "version": "1.0.0",
+            "poweredBy": "Tim Chan",
+            "resizable": true,
+            "single": true,
+            "size": {
+                "height": "y*0.8-80",
+                "width": "x*0.8"
+            },
+            "title": "CPU-Z 64",
+            "url": "https://monitor.9366333.cn",
+            "customTile": "",
+            "urlRandomToken": false
+        },
+        "app-157": {
+            "addressBar": false,
+            "autoRun": 0,
+            "background": false,
+            "badge": 0,
+            "desc": "Synology Download",
+            "icon": {
+                "type": "fa",
+                "content": "download",
+                "bg": "rgb(#000000)"
+            },
+            "openMode": "normal",
+            "plugin": false,
+            "position": {
+                "autoOffset": true,
+                "left": true,
+                "top": true,
+                "x": "x*0.05",
+                "y": "y*0.05"
+            },
+            "version": "2.0.5",
+            "poweredBy": "Tim Chan",
+            "resizable": true,
+            "single": true,
+            "size": {
+                "height": "y*0.8-80",
+                "width": "x*0.8"
+            },
+            "title": "Synology Download",
+            "url": "https://dl.9366333.cn",
+            "customTile": "",
+            "urlRandomToken": false
+        },
+        "Aria2": {
+            "addressBar": false,
+            "autoRun": 0,
+            "background": false,
+            "badge": 0,
+            "desc": "Aria2 Downloader",
+            "icon": {
+                "type": "fa",
+                "content": "arrow-circle-down",
+                "bg": "rgb(#000000)"
+            },
+            "openMode": "normal",
+            "plugin": false,
+            "position": {
+                "autoOffset": true,
+                "left": true,
+                "top": true,
+                "x": "x*0.05",
+                "y": "y*0.05"
+            },
+            "version": "2.0.4",
+            "poweredBy": "Tim Chan",
+            "resizable": true,
+            "single": true,
+            "size": {
+                "height": "y*0.8-80",
+                "width": "x*0.8"
+            },
+            "title": "Aria2",
+            "url": "./aria2",
+            "customTile": "",
+            "urlRandomToken": false
+        },
+        "Weather": {
+            "addressBar": false,
+            "autoRun": 1,
+            "background": true,
+            "badge": 0,
+            "desc": "Weather Forecast",
+            "icon": {
+                "type": "fa",
+                "content": "sun-o",
+                "bg": "rgb(#000000)"
+            },
+            "openMode": "normal",
+            "plugin": true,
+            "position": {
+                "autoOffset": false,
+                "left": false,
+                "top": true,
+                "x": "4",
+                "y": "4"
+            },
+            "version": "2.0.4",
+            "poweredBy": "Tim Chan",
+            "resizable": true,
+            "single": true,
+            "size": {
+                "height": "600",
+                "width": "250"
+            },
+            "title": "Weather",
+            "url": "//www.seniverse.com/weather/weather.aspx?uid=U6D2FFFCCC&cid=CHGD000000&l=en&p=SMART&a=1&u=C&s=13&m=1&x=1&d=5&fc=FFFFFF&bgc=&bc=&ti=0&in=0&li=",
+            "customTile": "//www.seniverse.com/weather/weather.aspx?uid=U6D2FFFCCC&cid=CHGD140200&l=en&p=SMART&a=1&u=C&s=1&m=2&x=1&d=3&fc=FFFFFF&bgc=&bc=&ti=0&in=1&li=",
+            "urlRandomToken": false
+        },
+        "Interpreting": {
+            "addressBar": false,
+            "autoRun": 0,
+            "background": false,
+            "badge": 0,
+            "desc": "Interpreting",
+            "icon": {
+                "type": "fa",
+                "content": "language",
+                "bg": "rgb(#00000)"
+            },
+            "openMode": "normal",
+            "plugin": false,
+            "position": {
+                "autoOffset": true,
+                "left": true,
+                "top": true,
+                "x": "10",
+                "y": "10"
+            },
+            "version": "2.0.4",
+            "poweredBy": "Tim Chan",
+            "resizable": true,
+            "single": true,
+            "size": {
+                "height": "y*0.8-80",
+                "width": "x*0.8"
+            },
+            "title": "Interpreting",
+            "url": "https://fanyi.baidu.com/",
+            "customTile": "",
+            "urlRandomToken": false
+        },
+        "app-174": {
+            "addressBar": false,
+            "autoRun": 0,
+            "background": false,
+            "badge": 0,
+            "desc": "Picture Upload",
+            "icon": {
+                "type": "fa",
+                "content": "upload",
+                "bg": "rgb(#000000)"
+            },
+            "openMode": "normal",
+            "plugin": false,
+            "position": {
+                "autoOffset": true,
+                "left": true,
+                "top": true,
+                "x": "x*0.05",
+                "y": "y*0.05"
+            },
+            "version": "2.0.4",
+            "poweredBy": "Tim Chan",
+            "resizable": true,
+            "single": true,
+            "size": {
+                "height": "y*0.8-80",
+                "width": "x*0.8"
+            },
+            "title": "Picture Upload",
+            "url": "https://www.chuantu.biz/",
+            "customTile": "",
+            "urlRandomToken": false
+        },
+        "Stars": {
+            "addressBar": false,
+            "autoRun": 0,
+            "background": false,
+            "badge": 0,
+            "desc": "100,000 Stars",
+            "icon": {
+                "type": "fa",
+                "content": "star-o fa-spin",
+                "bg": "rgb(#000000)"
+            },
+            "openMode": "max",
+            "plugin": false,
+            "position": {
+                "autoOffset": true,
+                "left": true,
+                "top": true,
+                "x": "x*0.05",
+                "y": "y*0.05"
+            },
+            "version": "2.0.4",
+            "poweredBy": "Tim Chan",
+            "resizable": true,
+            "single": true,
+            "size": {
+                "height": "y*0.8-80",
+                "width": "x*0.8"
+            },
+            "title": "Stars",
+            "url": "https://stars.chromeexperiments.com/",
+            "customTile": "",
+            "urlRandomToken": false
+        },
+        "K2P": {
+            "addressBar": false,
+            "autoRun": 0,
+            "background": false,
+            "badge": 0,
+            "desc": "K2P router",
+            "icon": {
+                "type": "fa",
+                "content": "sitemap",
+                "bg": "rgb(#000000)"
+            },
+            "openMode": "max",
+            "plugin": false,
+            "position": {
+                "autoOffset": true,
+                "left": true,
+                "top": true,
+                "x": "x*0.05",
+                "y": "y*0.05"
+            },
+            "version": "2.0.5",
+            "poweredBy": "Tim Chan",
+            "resizable": true,
+            "single": false,
+            "size": {
+                "height": "y*0.8-80",
+                "width": "x*0.8"
+            },
+            "title": "K2P",
+            "url": "https://k2p.9366333.cn/cgi-bin/luci",
+            "customTile": "",
+            "urlRandomToken": false
+        }
+    },
+    "shortcuts": [
+        {
+            "app": "yl-browser",
+            "title": "Internet Explorer",
+            "params": {},
+            "hash": ""
+        },
+        {
+            "app": "app-155",
+            "title": "My Blog",
+            "params": {},
+            "hash": ""
+        },
+        {
+            "app": "app-156",
+            "title": "CPU-Z 64",
+            "params": {},
+            "hash": ""
+        },
+        {
+            "title": "DownLoad",
+            "children": [
+                {
+                    "app": "app-157",
+                    "title": "Synology Download",
+                    "params": {},
+                    "hash": ""
+                },
+                {
+                    "app": "Aria2",
+                    "title": "Aria2",
+                    "params": {},
+                    "hash": ""
+                }
+            ]
+        },
+        {
+            "title": "My Films",
+            "children": []
+        },
+        {
+            "title": "通讯",
+            "children": [
+                {
+                    "app": "QQ",
+                    "title": "QQ",
+                    "params": {},
+                    "hash": ""
+                },
+                {
+                    "app": "WeChat",
+                    "title": "WeChat",
+                    "params": {},
+                    "hash": ""
+                }
+            ]
+        },
+        {
+            "app": "K2P",
+            "title": "K2P",
+            "params": {},
+            "hash": ""
+        },
+        {
+            "app": "Stars",
+            "title": "Stars",
+            "params": {},
+            "hash": ""
+        }
+    ],
+    "tiles": [
+        {
+            "title": "Daily",
+            "data": [
+                {
+                    "x": 0,
+                    "y": 0,
+                    "w": 6,
+                    "h": 3,
+                    "app": "app-155",
+                    "title": "My Blog",
+                    "i": "201",
+                    "params": {},
+                    "hash": ""
+                },
+                {
+                    "x": 0,
+                    "y": 5,
+                    "w": 2,
+                    "h": 1,
+                    "app": "QQ",
+                    "title": "QQ",
+                    "i": "202",
+                    "params": {},
+                    "hash": ""
+                },
+                {
+                    "x": 0,
+                    "y": 3,
+                    "w": 2,
+                    "h": 2,
+                    "app": "WeChat",
+                    "title": "WeChat",
+                    "i": "203",
+                    "params": {},
+                    "hash": ""
+                },
+                {
+                    "x": 4,
+                    "y": 3,
+                    "w": 2,
+                    "h": 2,
+                    "app": "Weather",
+                    "title": "",
+                    "i": "208",
+                    "params": {},
+                    "hash": ""
+                }
+            ]
+        },
+        {
+            "title": "System",
+            "data": [
+                {
+                    "x": 0,
+                    "y": 0,
+                    "w": 2,
+                    "h": 2,
+                    "app": "yl-system",
+                    "title": "Control Panel",
+                    "i": "218",
+                    "params": {},
+                    "hash": ""
+                },
+                {
+                    "x": 5,
+                    "y": 0,
+                    "w": 1,
+                    "h": 1,
+                    "app": "app-156",
+                    "title": "CPU-Z 64",
+                    "i": "220",
+                    "params": {},
+                    "hash": ""
+                },
+                {
+                    "x": 5,
+                    "y": 1,
+                    "w": 1,
+                    "h": 1,
+                    "app": "yl-browser",
+                    "title": "IE",
+                    "i": "221",
+                    "params": {},
+                    "hash": ""
+                },
+                {
+                    "x": 2,
+                    "y": 0,
+                    "w": 2,
+                    "h": 1,
+                    "app": "app-157",
+                    "title": "Synology Download Station",
+                    "i": "222",
+                    "params": {},
+                    "hash": ""
+                },
+                {
+                    "x": 2,
+                    "y": 1,
+                    "w": 1,
+                    "h": 1,
+                    "app": "Aria2",
+                    "title": "Aria2",
+                    "i": "223",
+                    "params": {},
+                    "hash": ""
+                }
+            ]
+        },
+        {
+            "title": "Favorite",
+            "data": [
+                {
+                    "x": 4,
+                    "y": 0,
+                    "w": 1,
+                    "h": 1,
+                    "app": "app-174",
+                    "title": "Upload",
+                    "i": "237",
+                    "params": {},
+                    "hash": ""
+                },
+                {
+                    "x": 5,
+                    "y": 0,
+                    "w": 1,
+                    "h": 1,
+                    "app": "Interpreting",
+                    "title": "Interpreting",
+                    "i": "239",
+                    "params": {},
+                    "hash": ""
+                }
+            ]
+        },
+        {
+            "title": "Entertainment",
+            "data": []
+        }
+    ],
+    "startMenu": {
+        "sidebar": [
+            {
+                "app": "yl-browser",
+                "title": "Internet Explorer",
+                "params": {},
+                "hash": ""
+            },
+            {
+                "app": "yl-system",
+                "title": "Control Panel"
+            }
+        ],
+        "menu": {
+            "itemPushed-180": {
+                "title": "Tools",
+                "children": {
+                    "itemPushed-172": {
+                        "app": "yl-color-picker",
+                        "title": "Color Picker",
+                        "params": {},
+                        "hash": ""
+                    },
+                    "itemPushed-173": {
+                        "app": "Interpreting",
+                        "title": "Interpreting",
+                        "params": {},
+                        "hash": ""
+                    },
+                    "itemPushed-175": {
+                        "app": "app-174",
+                        "title": "Picture Upload",
+                        "params": {},
+                        "hash": ""
+                    }
+                }
+            },
+            "itemPushed-181": {
+                "title": "Games",
+                "children": {}
+            },
+            "itemPushed-186": {
+                "title": "My Films",
+                "children": {}
+            },
+            "itemPushed-190": {
+                "app": "QQ",
+                "title": "QQ",
+                "params": {},
+                "hash": ""
+            },
+            "itemPushed-191": {
+                "app": "WeChat",
+                "title": "WeChat",
+                "params": {},
+                "hash": ""
+            },
+            "itemPushed-195": {
+                "app": "app-155",
+                "title": "My Blog",
+                "params": {},
+                "hash": ""
+            }
+        }
+    }
+}

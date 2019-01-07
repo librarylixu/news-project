@@ -1,0 +1,19 @@
+<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+<!--  设置这个div的大小，超出部分显示滚动条style="max-height:200px;overflow:auto;" -->
+<div class="modal-body">
+    <div class="form-container">
+        <h3>建议内容</h3>
+        <div ng-bind-html="Source.selectItem.message"></div>
+    </div>
+    <hr />
+    <div class="form-container" ng-if="Source.selectItem.result != undefined">
+        <h3>处理结果</h3>
+        <div ng-bind-html="Source.selectItem.result==undefined?'':Source.selectItem.result"></div>
+    </div>
+</div>
+<div class="modal-footer">
+    
+</div>

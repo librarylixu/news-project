@@ -1,0 +1,53 @@
+<!--页头-->
+<div class="page-header clearfix">
+    <div class="col-xs-12 text-center">
+        <a ng-click="dates._stime = 0;dates._etime = 0;on_query_data();" class="btn btn-success btn-sm">
+            <i class="glyphicon glyphicon-refresh"></i>刷新
+        </a>
+    </div>
+</div>
+<div class="container-fluild">
+    <div class="row">
+        <div class="col-xs-10 text-center">
+            <!--快速检索-->
+            <form>
+                <label>日期范围：</label>
+                <div style="display:inline-block;">
+                    <input type="text" ng-model="dates._stime" class="input-text radius" date-time id="pickerMaxDate" view="date" min-view="minutes" timezone="Asia/Hong_Kong" format="YYYY-MM-DD HH:mm" watch-direct-changes="true" style="width: 140px;" />
+                </div>
+                -
+                <div style="display:inline-block;">
+                    <input type="text" ng-model="dates._etime" class="input-text radius" date-time id="pickerEnd" view="date" min-view="minutes" timezone="Asia/Hong_Kong" format="YYYY-MM-DD HH:mm" watch-direct-changes="true" style="width: 140px;" />
+                </div>
+                <label>PDU名称:</label>
+                <ui-select multiple ng-model="query_data_parms.dpuarr" on-select="savepduname($item, $model, 1);" on-remove="savepduname($item, $model, 0);" style="width: 200px; display: inline-block;">
+                    <ui-select-match>
+                        <span ng-bind="$item.devicename">
+                        </span>
+                    </ui-select-match>
+                    <ui-select-choices repeat="item in (service.dpulistarrData | filter:$select.search) track by $index">
+                        <div ng-bind-html="item.devicename| highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+                <div class="f-r">
+                    <button type="button" class="btn btn-success btn-sm" ng-disabled="query_data_parms.dpuarr.length>1" ng-click="on_query_data();"><i class="fa fa-search"></i> 查询</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-xs-12 text-center">
+            <div id="pduenergychart" style="width:1000px;min-height:400px;"></div>
+        </div>
+    </div>
+</div>          
+<div>
+    <!--<p ng-repeat="(k,v) in service.pduenergylogData">
+        DPU名称：<label ng-bind="service.dpulistData[v.dpuid].dpuname"></label>&nbsp;,&nbsp;
+        总电流：<label ng-bind="v.currentvalue"></label>&nbsp;,&nbsp;
+        总电能：<label ng-bind="v.energyvalue"></label>&nbsp;,&nbsp;
+        总电压：<label ng-bind="v.voltagevalue"></label>&nbsp;,&nbsp;
+        总功率：<label ng-bind="v.powervalue"></label>&nbsp;,&nbsp;
+        功率因素：<label ng-bind="v.powerfactorvalue"></label>&nbsp;,&nbsp;
+        时间：<label ng-bind="v.time"></label>
+    </p>-->
+</div>
+

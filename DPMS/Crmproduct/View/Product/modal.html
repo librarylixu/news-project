@@ -1,0 +1,271 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+
+<form name="Form" verify-scope class="modal-body" style="clear:both;max-height:100%;overflow:visible;max-height:none;">
+    <div class="form-group" ng-if="Source.Action == 0">
+        <label ng-bind="Source.addType==1?'产品名称':'产品型号名称'"></label>
+        <input type="text" id="projectname"  ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.name"  placeholder="请输入1~25个字符" />
+    </div>
+   
+    <div class="profile-user-info profile-user-info-striped" ng-if="Source.Action != 0" style="min-height:44px;">        
+        <div class="profile-info-row" ng-if="Source.selectItem.idproduct&&service.addType==1">
+            <div class="profile-info-name">
+                产品名称
+            </div>
+            <div class="profile-info-value">                
+                <span class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA"
+                      ng-show="Source.Action==1||Source.selectItem.idproduct"
+                      ng-click="popoverisopen(1);Source.editType=1;"
+                      title="点击进入编辑模式"
+                      popover-placement='right'
+                      uib-popover-template="dynamicPopover.templateUrl"
+                      popover-title="{{dynamicPopover.title_product}}"
+                      popover-is-open="Source.popoverisopens[1]"
+                      ng-bind="service.selectItem?service.selectItem.name:'点击添加名称'"></span>
+                <span ng-show="Source.Action==2" ng-bind="service.selectItem.name"></span>
+            </div>
+        </div>
+        <div class="profile-info-row" ng-if="Source.selectItem.idproduct&&service.addType == 1&&service.Action!==2">
+            <div class="profile-info-name">
+                产品型号
+            </div>
+            <div class="profile-info-value">
+
+                <div style="width:500px;">
+                  <ui-select multiple ng-model="selected_model" on-select="refSave($item,0)" on-remove="refSave($item,1)">
+                        <ui-select-match>
+                            <span ng-bind="$item.name">
+                            </span>
+                        </ui-select-match>
+
+                        <ui-select-choices repeat="item in (service.productmodelArrData | filter:$select.search) track by $index">
+                            <div ng-bind-html="item.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <!--<a ng-click="addProductmodelClick()" class="f-r" title="新建产品型号"><i class="fa fa-plus green f-16"></i></a>-->
+            </div>
+
+        </div>
+        <div class="profile-info-row" ng-show="Source.selectItem.idproduct&&service.addType==1&&Source.Action!==2">
+            <div class="profile-info-name">
+                简称
+            </div>
+
+            <div class="profile-info-value">
+               
+                <span class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA"
+                      ng-click="popoverisopen(2);Source.editType=2;" title="点击进入编辑模式"
+                      ng-bind="service.selectItem.abbreviation?service.selectItem.abbreviation:'点击添加简称'"
+                      popover-placement='right'
+                      uib-popover-template="dynamicPopover.templateUrl"
+                      popover-title="{{dynamicPopover.title_abbreviation}}"
+                      popover-is-open="Source.popoverisopens[2]"></span>
+            </div>
+        </div>
+        <div class="profile-info-row" ng-show="Source.selectItem.idproduct&&service.addType==1&&Source.Action!==2">
+            <div class="profile-info-name">
+                产品描述
+            </div>
+
+            <div class="profile-info-value">
+               
+                <span ng-if="service.selectItem.description&&service.selectItem.description!==''" class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA"
+                      ng-click="popoverisopen(3);Source.editType=3;" title="点击进入编辑模式"
+                      ng-bind="service.selectItem.description?service.selectItem.description:'点击添加描述'"
+                      popover-placement='right'
+                      uib-popover-template="dynamicPopover.templateUrl"
+                      popover-title="{{dynamicPopover.title_description}}"
+                      popover-is-open="Source.popoverisopens[3]"></span>
+            </div>
+        </div>
+
+        <div class="profile-info-row" ng-if="service.addType==2&&Source.selectItem.idproductmodel">
+            <div class="profile-info-name">
+                产品型号
+            </div>
+
+            <div class="profile-info-value">
+               
+                <span  class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA"
+                      ng-click="popoverisopen(4);Source.editType=1;" title="点击进入编辑模式" ng-bind="service.selectItem.name"
+                      uib-popover-template="dynamicPopover.templateUrl"
+                      popover-placement='right'
+                      popover-title="{{dynamicPopover.title_typename}}"
+                      popover-is-open="Source.popoverisopens[4]"></span>
+                <span ng-show="Source.Action==2" ng-bind="service.selectItem.name?service.selectItem.name:'点击添加型号名称'"></span>
+            </div>
+            <br />
+        </div>
+        <div class="profile-info-row" ng-if="service.addType==2&&Source.Action!==2&&Source.selectItem.idproductmodel">
+            <div class="profile-info-name">
+                产品
+            </div>
+            <div class="profile-info-value">
+                <div>
+                    <ui-select ng-model="selected_product" on-select="refSave($item, 0)">
+                        <ui-select-match>
+                            <span ng-bind="$select.selected.name">
+                            </span>
+                        </ui-select-match>
+
+                        <ui-select-choices repeat="item in (service.treedata | filter:$select.search) track by $index">
+                            <div ng-bind-html="item.name| highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+
+        </div>
+        <div class="profile-info-row" ng-show="service.addType==2&&Source.Action!==2&&Source.selectItem.idproductmodel">
+            <div class="profile-info-name">
+                制造商
+            </div>
+
+            <div class="profile-info-value">
+              
+                <span class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA"
+                      ng-click="popoverisopen(5);Source.editType=5;" title="点击进入编辑模式"
+                      ng-bind="service.selectItem.manufacturers?service.selectItem.manufacturers:'点击添加制造商'"
+                      popover-placement='right'
+                      uib-popover-template="dynamicPopover.templateUrl"
+                      popover-title="{{dynamicPopover.title_manufacturers}}"
+                      popover-is-open="Source.popoverisopens[5]"></span>
+            </div>
+        </div>
+        <div class="profile-info-row" ng-show="service.addType==2&&Source.Action!==2&&Source.selectItem.idproductmodel">
+            <div class="profile-info-name">
+                型号描述
+            </div>
+            <div class="profile-info-value">
+                <textarea ng-model="Source.selectItem.description" style="width:500px;max-width:500px;min-width:500px;"></textarea>
+                <button class="btn btn-xs btn-success" ng-show="Source.selectItem.description!=service.selectItem.description" ng-click="Source.editType=6;save();">保存</button>
+            </div>
+            <br />
+        </div>
+        <div class="profile-info-row" ng-show="service.addType==2&&Source.Action!==2&&Source.selectItem.idproductmodel">
+            <div class="profile-info-name">
+                列表价
+            </div>
+
+            <div class="profile-info-value">
+               
+                <span class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA"
+                      ng-click="popoverisopen(7);Source.editType=7" title="点击进入编辑模式"
+                       ng-bind="service.selectItem.plist?service.selectItem.plist:'点击添加列表价'"
+                      uib-popover-template="dynamicPopover.templateUrl"
+                      popover-placement='right'
+                      popover-title="{{dynamicPopover.title_plist}}"
+                      popover-is-open="Source.popoverisopens[7]"></span>
+            </div>
+            <br />
+        </div>
+        <div class="profile-info-row" ng-show="service.addType==2&&Source.Action!==2&&Source.selectItem.idproductmodel">
+            <div class="profile-info-name">
+                EU底价
+            </div>
+
+            <div class="profile-info-value">               
+                <span  class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA"
+                      ng-click="popoverisopen(8);Source.editType=8;" title="点击进入编辑模式"
+                       ng-bind="service.selectItem.peu?service.selectItem.peu:'点击添加EU地址'"
+                      uib-popover-template="dynamicPopover.templateUrl"
+                      popover-placement='right'
+                      popover-title="{{dynamicPopover.title_peu}}"
+                      popover-is-open="Source.popoverisopens[8]"></span>
+            </div>
+            <br />
+        </div>
+        <div class="profile-info-row" ng-show="service.addType==2&&Source.Action!==2&&Source.selectItem.idproductmodel">
+            <div class="profile-info-name">
+                SI底价
+            </div>
+
+            <div class="profile-info-value">
+               
+                <span class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA"
+                      ng-click="popoverisopen(9);Source.editType=9;" title="点击进入编辑模式"
+                       ng-bind="service.selectItem.psi?service.selectItem.psi:'点击添加SI底价'"
+                      uib-popover-template="dynamicPopover.templateUrl"
+                      popover-placement='right'
+                      popover-title="{{dynamicPopover.title_psi}}"
+                      popover-is-open="Source.popoverisopens[9]"></span>
+            </div>
+            <br />
+        </div>
+        <div class="profile-info-row" ng-show="service.addType==2&&Source.Action!==2&&Source.selectItem.idproductmodel">
+            <div class="profile-info-name">
+                内部核算价
+            </div>
+
+            <div class="profile-info-value">
+              
+                <span class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA"
+                      ng-click="popoverisopen(10);Source.editType=10;" title="点击进入编辑模式" 
+                     ng-bind="service.selectItem.pinter?service.selectItem.pinter:'点击添加内部核算价'"
+                       uib-popover-template="dynamicPopover.templateUrl"
+                      popover-placement='right'
+                      popover-title="{{dynamicPopover.title_pinter}}"
+                      popover-is-open="Source.popoverisopens[10]"></span>
+            </div>
+            <br />
+        </div>
+        <div class="profile-info-row" ng-show="Source.selectItem.idproduct&&service.addType==1&&Source.Action!==2">
+            <div class="profile-info-name">
+                附件
+            </div>
+
+            <div class="profile-info-value">
+                <ul class="ace-thumbnails clearfix">
+                    <li ng-repeat="item in productAnnx track by $index" ng-show="close{{item.idannex}}==undefined">
+                        <div>
+                            <img width="150" height="60" alt="150x60" ng-src="{{publicFilterAnnexName(item.name)}}" />
+                            <div class="tags">
+                                <span ng-bind="item.name.length>5?item.name.slice(0,5)+'...':item.name"></span>
+                                <span ng-bind="(item.filesize/1024/1024).toFixed(1)"></span>MB
+                            </div>
+                            <div class="text" ng-attr-title="{{item.name}}">
+                                <div class="inner">
+                                    <span ng-bind="item.name.length>9?item.name.slice(0,9)+'...':item.name"></span>
+                                    <br />
+
+                                    <a href="#" ng-click="downLoad(item.idannex)">
+                                        <i class="ace-icon fa fa-download"></i>
+                                    </a>
+
+                                    <a href="#">
+                                        <i class="ace-icon fa fa-pencil"></i>
+                                    </a>
+
+                                    <a href="#" ng-click="service.refAnnex(item.idannex,1);">
+                                        <i class="ace-icon fa fa-times red"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li style="border:none;">
+                        <div style="width:150px;height:60px;border:2px dashed #ccc;line-height:60px;color:#ccc;font-size:18px;font-weight:400;text-align:center">
+                            <i class="fa fa-plus"></i> 点击上传附件
+                            <div class="text" style="cursor:pointer;" ng-click="upLoad()">
+
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+
+            </div>
+            <br />
+        </div>
+
+    </div>
+
+</form>
+
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" type="button" ng-click="save()" ng-show="Source.Action==0">保存</button>
+    <button class="btn btn-primary btn-sm" type="button" ng-click="save()" ng-show="Source.Action==2">删除</button>
+</div>
+

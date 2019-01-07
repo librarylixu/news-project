@@ -1,0 +1,58 @@
+﻿/*评论展示面板样式*/
+
+.comment-title-box .comment-title{
+    font-size:20px;
+    font-weight:400;
+    font-family:'微软雅黑';
+    color:#2679B5;
+    
+}
+.comment-title-box .comment-title-line{
+    width:100%;
+    height:2px;
+    background:#2679B5;
+    margin-bottom:20px;
+}
+.comment-box{
+    padding-bottom:10px;
+}
+.first-level{
+    display:flex;
+    align-items:center;
+    justify-content: center;
+}
+.first-level .img-box {
+    width:22px;
+    height:22px;
+    border-radius:11px;
+    border:1px solid #ccc;
+}
+.first-level .img-box .avater{
+    width:20px;
+    width:20px;
+    border-radius:10px;
+}
+.first-level  .content{
+    margin-left:10px;
+    width:928px;   
+    line-height:22px;
+}
+.second-level{
+    border:1px solid #ccc;
+    background:#eee;
+    padding:6px;
+    margin-left: 50px;
+}
+.second-level div{
+    padding:2px 0 2px 0;
+}
+b p{
+    display:inline-block;
+    width:auto;
+}
+h5{
+    font-weight:normal;
+    color:#2679B5;
+    border-bottom:1px solid #2679B5;
+    line-height:30px;
+}

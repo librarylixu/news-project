@@ -1,0 +1,84 @@
+<div ng-controller="modelProductlistController">
+    <a href="javascript:;" class="btn btn-sm btn-info f-r" ng-click="addProduct()"><i class="fa fa-plus"></i>添加产品型号</a>
+    <table class="table">
+        <tr>
+            <th>序号</th>
+            <th>产品名称</th>
+            <th>型号</th>
+            <th >数量</th>
+            <th>列表价</th>
+            <!--<th>折扣</th>-->
+            <th >总价</th>
+            <th>产品描述</th>  
+            <th>操作</th>            
+        </tr>
+        <tr ng-repeat="(key,item) in service.projectlistData">
+            <td ng-bind="$index+1" style="width:5%">1</td>           
+            <td style="max-width:25%;min-width:300px;" ng-init="item._selectProcuctObj=_productData[service.productmodelData[item.productmodelid].productid];changeProduct(item._selectProcuctObj, item);">
+                <span ng-if="!item._edit" ng-bind="item._selectProcuctObj?item._selectProcuctObj.name:_productData[service.productmodelData[item.productmodelid].productid].name"></span>
+                <ui-select ng-if="item._edit" ng-model="item._selectProcuctObj" on-select="changeProduct($item, item); item._selectModelObj = item.refModelObjList[0]; item.money = item.number * (item.plist ? item.plist : item._selectModelObj.plist);">
+                    <ui-select-match>
+                        <span ng-bind="$select.selected.name">
+                        </span>
+                    </ui-select-match>
+                    <ui-select-choices repeat="item in (_productArrData | filter:$select.search ) track by $index">
+                        <div ng-bind-html="item.name| highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </td>            
+            <td style="width:10%" ng-init="item._selectModelObj=service.productmodelData[item.productmodelid];">
+                <span ng-if="!item._edit" ng-bind="item._selectModelObj?item._selectModelObj.name:service.productmodelData[item.productmodelid].name"></span>
+                <ui-select ng-if="item._edit" ng-model="item._selectModelObj" on-select="item.money = item.number * (item.plist ? item.plist : item._selectModelObj.plist);">
+                    <ui-select-match>
+                        <span ng-bind="$select.selected.name"></span>
+                    </ui-select-match>
+
+                    <ui-select-choices repeat="model in (item.refModelObjList | filter:$select.search) track by $index">
+                        <div ng-bind-html="model.name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </td>
+            <td style="min-width:10%">
+                <span ng-if="!item._edit" ng-bind="item.number"></span>
+                <input ng-if="item._edit" type="text" style="width:40px;" ng-model="item.number" ng-keyup="item.money=item.number*(item.plist?item.plist:item._selectModelObj.plist);" />
+            </td>
+           
+            <td style="min-width:10%">
+                <span ng-bind="item._selectModelObj?item._selectModelObj.plist:service.productmodelData[item.productmodelid].plist"></span>
+
+            </td>
+            <!--<td ng-if="item.productmodelid">
+                <input type="text" ng-model="item.money/(productmodelData[item.productmodelid].plist*item.number)"/>
+            </td>-->
+            <td style="min-width:10%" >
+                <span ng-if="!item._edit" ng-bind="item.money"></span>
+                <input ng-if="item._edit" style="width:150px;" type="text" ng-model="item.money" />
+            </td>
+            <td style="width:30%" ng-bind="item._selectModelObj?item._selectModelObj.description:service.productmodelData[item.productmodelid].description">              
+            </td>
+            <td>
+                <button class="btn  btn-xs btn-success" type="button" ng-show="!item._edit" ng-click="item._edit=true;item._selectProcuctObj=_productData[service.productmodelData[item.productmodelid].productid];item._selectModelObj=service.productmodelData[item.productmodelid];changeProduct(item._selectProcuctObj, item);"><i class="fa fa-edit"></i></button>
+                <button class="btn  btn-xs btn-info" type="button" ng-show="item._edit" ng-click="saveData(item,1);item._edit=false;"><i class="fa fa-save"></i></button>
+                <button class="btn  btn-xs btn-warning" type="button" ng-click="saveData(item,2)"><i class="fa fa-trash"></i></button>
+            </td>
+        </tr>
+        <tr>
+            <th></th>
+            <th>
+                
+            </th>
+            <th></th>
+            <th></th>
+            <th class="text-right">合计:</th>
+            <th class="text-left">
+                <span ng-bind="sumMoney| currency:'￥':'0'"></span>
+            </th>
+            <th>
+           
+            </th>
+            <th>
+                <button type="button" class="btn btn-success btn-sm" title="点击此处导出报价单">导出Excel</button>
+            </th>
+        </tr>
+    </table>
+</div>

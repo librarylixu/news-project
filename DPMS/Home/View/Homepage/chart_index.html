@@ -1,0 +1,94 @@
+﻿<div class="page-header">
+    <h1>
+        {$MenuName}
+        <small>
+            <i class="ace-icon fa fa-angle-double-right"></i>
+            {$PageName}
+        </small>
+
+        <a href="javascript:_reload();"><i class="api fa  fa-undo  smaller-80"></i></a>
+        <!--<a href="__MODULE__/Question/event_list_log_instr_page" target="_blank"><i class="api fa fa-question-circle-o "></i></a>-->
+    </h1>
+</div>
+
+<div class="col-xs-12">
+    <!--服务器实时信息-->
+    <div class="col-sm-6 box">
+        <div class="title">
+            <h5>
+                <i class="ace-icon fa fa-signal"></i>
+                <span>服务器详细信息</span>
+            </h5>
+        </div>
+        <div class="main">
+            <table class="table table-border " style="margin-bottom: 0px">
+                <tbody>
+                    <tr>
+                        <td><label>当前时间:</label><label v-text="baseinfo.labservertime"></label></td>
+                        <td><label>运行时间:</label><label v-text="baseinfo.labserverruntime"></label></td>
+                    </tr>
+                    <tr>
+                        <td><label>全部空间:</label><label v-text="baseinfo.labdiskspace"></label>GB</td>
+                        <td><label>剩余空间:</label><label v-text="baseinfo.lblfreeSpace"></label>GB</td>
+                    </tr>
+
+                    <tr>
+                        <td><label>物理内存:</label><label v-text="baseinfo.lblTotalMemory"></label></td>
+                        <td><label>真实内存:</label><label v-text="baseinfo.lblmemRealUsed"></label></td>
+                    </tr>
+
+                    <tr>
+                        <td><label>网络流量:</label><label v-text="baseinfo.NetInput2"></label>GB</td>
+                        <td><label>授权类型:</label><label>{$_SESSION['S_type']}</label></td>
+                    </tr>
+
+                    <tr>
+                        <td><label>授权设备:</label><label>{$_SESSION['S_device_num']}台</label></td>
+                        <td><label>已使用设备:</label><label>{$_SESSION['S_device_num_has']}台</label><span class="c-red">{$_SESSION['S_device_num_has_txt']}</span></td>
+                    </tr>
+                    <tr><td><label>授权用户:</label><label>{$_SESSION['S_task']}</label></td><td></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!--设备数量-->
+    <div class="col-sm-6 box">
+        <div class="title">
+            <h5>
+                <i class="ace-icon fa fa-signal"></i>
+                <span> 设备统计--<small>资产设备统计</small></span>
+            </h5>
+        </div>
+        <div class="main">
+            <div id="deviceCount" style="width:100%;height:100%"></div>
+        </div>
+    </div>
+            
+</div>
+<div class="col-xs-12">
+    <!--系统用户信息-->
+    <div class="col-sm-6 box">
+        <div class="title">
+            <h5>
+                <i class="ace-icon fa fa-signal"></i>
+                <span>系统用户信息</span>
+            </h5>
+        </div>
+        <div class="main">
+            <div id="userInfo" style="width:100%;height:100%"></div>
+        </div>
+    </div>
+    <!--磁盘使用率-->
+    <div class="col-sm-6 box">
+        <div class="title">
+            <h5>
+                <i class="ace-icon fa fa-signal"></i>
+                <span> 磁盘使用率--<small>服务器磁盘</small></span>
+            </h5>
+        </div>
+        <div class="main">
+            <div id="diskUsage" style="width:100%;height:100%"></div>
+        </div>
+    </div>
+
+</div>

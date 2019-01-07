@@ -1,0 +1,31 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{service.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="$dismiss()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+<div class="modal-body" style="padding-top:10px;">
+    <form name="Form" class="container-fluid" verify-scope="tipStyle: 0">       
+        <div class="row top-10" >                             
+            <textarea class="col-xs-12"  ng-verify="min:1, max:100" ng-model="mark" placeholder="{{service.placeholder}}"></textarea>
+        </div>      
+    </form>
+</div>
+<div class="modal-footer"> 
+    <div ng-if="service.datatype=='4'">
+        <button class="btn btn-primary btn-sm"  type="button" ng-click="$close({'mark':mark})">
+            确认结单
+        </button>
+        <button class="btn btn-warnning btn-sm" type="button" ng-click="$dismiss()">取消结单</button>      
+    </div>    
+    <div ng-if="service.datatype=='3'">
+        <button class="btn btn-primary btn-sm"  type="button" ng-click="$close({'mark':mark})">
+            确认中止
+        </button>
+        <button class="btn btn-warnning btn-sm" type="button" ng-click="$dismiss()">取消中止</button>       
+    </div> 
+    <div ng-if="service.datatype=='2'">
+        <button class="btn btn-primary btn-sm"  type="button" ng-click="$close({'mark':mark})">
+            确认驳回
+        </button>
+        <button class="btn btn-warnning btn-sm" type="button" ng-click="$dismiss()">取消驳回</button>
+    </div> 
+</div>

@@ -1,0 +1,162 @@
+﻿            
+<div>
+   
+    <form name="Form" verify-scope >
+        <div ng-if="Source.Action==0&&Source.editType==0">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <input type="text" ng-verify="min:1, max:25" ng-model="Source.selectItem.name" />
+                </div>
+                <button ng-verify="control:'Form'" class="btn btn-xs btn-success" ng-click="save();popoverisopen()">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="popoverisopen();service.selectItem.name=Source.selectItem.name;">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+        </div>
+        <!--改名字-->
+        <div ng-if="Source.Action==1&&Source.editType==1">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <input type="text" ng-verify="min:1, max:25" ng-model="Source.selectItem.name" />
+                </div>
+                <button ng-verify="control:'Form'" class="btn btn-xs btn-success" ng-click="save();popoverisopen()">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="javascript:;" class="btn btn-xs btn-warning" 
+                   ng-click="popoverisopen();Source.selectItem.name=service.selectItem.name">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+        </div>
+        <!--改简称-->
+        <div ng-if="Source.Action==1&&Source.editType==2">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <input type="text" ng-verify="min:1, max:25" ng-model="Source.selectItem.abbreviation" />
+                </div>
+                <button ng-verify="control:'Form'" class="btn btn-xs btn-success" ng-click="save();popoverisopen()">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="popoverisopen();Source.selectItem.abbreviation=service.selectItem.abbreviation;">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+          
+
+        </div>
+        <!--改产品描述-->
+        <div ng-if="Source.Action==1&&Source.editType==3">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <input type="text" ng-verify="min:1, max:25" ng-model="Source.selectItem.description" />
+                </div>
+                <button ng-verify="control:'Form'" class="btn btn-xs btn-success" ng-click="save();popoverisopen()">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="popoverisopen();Source.selectItem.description=service.selectItem.description;">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+
+        </div>
+        <!--改制造商-->
+        <div ng-if="Source.Action==1&&Source.editType==5">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <input type="text" ng-verify="min:1, max:25" ng-model="Source.selectItem.manufacturers" />
+                </div>
+                <button ng-verify="control:'Form'" class="btn btn-xs btn-success" ng-click="save();popoverisopen();">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="popoverisopen();Source.selectItem.manufacturers=service.selectItem.manufacturers;">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+
+
+        </div>
+        <!--改型号描述-->
+        <div ng-if="Source.Action==1&&Source.editType==6">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <input type="text" ng-verify="min:1, max:50" ng-model="Source.selectItem.description" />
+                </div>
+                <button ng-verify="control:'Form'" class="btn btn-xs btn-success" ng-click="save();popoverisopen();">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="popoverisopen();Source.selectItem.description=service.selectItem.description;">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+
+
+        </div>
+        <!--改列表价-->
+        <div ng-if="Source.Action==1&&Source.editType==7">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <input type="text" ng-verify="pattern:/(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/, required:false, errmsg:'请输入正确的金额' " ng-model="Source.selectItem.plist" />
+                </div>
+                <button ng-verify="control:'Form'" class="btn btn-xs btn-success" ng-click="save();popoverisopen()">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="popoverisopen();Source.selectItem.plist=service.selectItem.plist;">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+
+
+        </div>
+        <!--改EU底价-->
+        <div ng-if="Source.Action==1&&Source.editType==8">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <input type="text" ng-verify="pattern:/(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/, required:false, errmsg:'请输入正确的金额' " ng-model="Source.selectItem.peu" />
+                </div>
+                <button ng-verify="control:'Form'" class="btn btn-xs btn-success" ng-click="save();popoverisopen();">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="popoverisopen();Source.selectItem.peu=service.selectItem.peu;">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+
+
+        </div>
+        <!--改SI底价-->
+        <div ng-if="Source.Action==1&&Source.editType==9">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <input type="text" ng-verify="pattern:/(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/, required:false, errmsg:'请输入正确的金额' " ng-model="Source.selectItem.psi" />
+                </div>
+                <button ng-verify="control:'Form'" class="btn btn-xs btn-success" ng-click="save();popoverisopen();">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="popoverisopen();Source.selectItem.psi=service.selectItem.psi;">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+
+
+        </div>
+        <!--改内部核算价-->
+        <div ng-if="Source.Action==1&&Source.editType==10">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <input type="text" ng-verify="pattern:/(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/, required:false, errmsg:'请输入正确的金额' " ng-model="Source.selectItem.pinter" />
+                </div>
+                <button ng-verify="control:'Form'" class="btn btn-xs btn-success" ng-click="save();popoverisopen();">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="popoverisopen();Source.selectItem.pinter=service.selectItem.pinter;">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+
+
+        </div>
+</form>
+        
+</div>

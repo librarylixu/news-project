@@ -1,0 +1,3 @@
+Crmprojectmain域
+Crm项目信息管理
+如：项目管理、数据库初始化功能

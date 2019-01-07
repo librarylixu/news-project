@@ -1,0 +1,37 @@
+<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+
+<div class="modal-body">
+    <div class="form-container">
+        <form name="Form" verify-scope class="myform">
+            <div class="form-group">
+                <label><span class="red">*</span>中心名称</label>
+                <input type="text"  ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.name" placeholder="default" />
+            </div>
+            <div class="form-group" >
+                <label><span class="red">*</span>中心地址</label>
+                <input type="text" ng-verify="min:5, max:15" class="form-control" ng-model="Source.selectItem.ip" placeholder="请输入1~15个字符" />
+            </div>
+            <div class="form-group" >
+                <label><span class="red">*</span>通讯端口</label>
+                <input type="text" ng-readonly="Source.Action==2" ng-verify="min:1, max:9" class="form-control" ng-model="Source.selectItem.port" placeholder="请输入1~9个字符" />
+            </div>
+            <div class="form-group">
+                <label>并发数量</label>
+                <select ng-model="Source.selectItem.licensecount"
+                         ng-options="item for item in service.licensedata" >          
+                </select>
+            </div>
+            <div class="form-group">
+                <label>备注</label>
+                <textarea  class="form-control" rows="3" ng-model="Source.selectItem.mark" />
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save()">保存</button>
+    <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+</div>

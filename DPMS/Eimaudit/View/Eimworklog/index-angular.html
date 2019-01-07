@@ -1,0 +1,74 @@
+  <!--页头-->
+<div class="page-header clearfix" style="height:50px;">
+    <div class="col-xs-12">
+        <div style="float:left;width:240px;">
+            <p class="input-group">
+                <input style="border-radius:0;" ng-click="open1()" type="text" class="form-control" current-text="今天" clear-text="清空" close-text="关闭" uib-datepicker-popup ng-model="start" ng-readonly="true" is-open="popup1.opened" datepicker-options="dateOptions1" ng-required="true" close-text="Close" />
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-sm btn-warning" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
+            </p>
+        </div>
+        <span style="float:left;line-height:36px;margin:0 8px;">至</span>
+        <div style="float:left;width:240px;">
+            <p class="input-group">
+                <input style="border-radius:0;" ng-click="open2()" type="text" class="form-control" current-text="今天" clear-text="清空" close-text="关闭" uib-datepicker-popup ng-model="end" ng-readonly="true" is-open="popup2.opened" datepicker-options="dateOptions2" ng-required="true" close-text="Close" />
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-sm btn-warning" ng-click="open2()"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
+            </p>
+        </div>
+        <button class="btn btn-sm btn-info" style="float:left; margin-left:8px;" ng-click="select(1)">查询</button>
+        <button ng-click="select(2)" class="btn btn-success btn-sm" style="float:left; margin-left:8px;">
+            刷新
+        </button>        
+    </div> 
+</div>
+<div>
+    <table class="table table table-striped table-bordered table-hover table-condensed table-responsive">
+        <thead>
+            <tr>
+                <th>图标</th>
+                <th>设备名称</th>
+                <th>会话类型</th>
+                <th>状态</th>
+                <th>会话控制中心</th>
+                <th>操作人</th>
+                <th>开始时间</th>
+                <th>结束时间</th>
+                <th>备注</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in service.eimworklogData track by $index">
+                <td><i class="fa fa-file fa-lg"></i></td>
+                <td ng-bind="item.olddevicename"></td>
+                <td ng-bind="item.sessiontypename"></td>
+                <td >
+                    <span ng-if="item.status==0" class="label label-warning">待连接</span>
+                   <span  ng-if="item.status==1" class="label label-default">待审批</span>
+                   <span  ng-if="item.status==2" class="label label-info">已连接</span>
+                    <span  ng-if="item.status==3" class="label label-success">任务已结束</span>
+                </td>
+                <td ng-bind="service.sessioncenterData[item.sessioncenterid].name"></td>
+                <td ng-bind="service.usersData[item.userid].description"></td>
+                <td ng-bind="formatDate(item.starttime)"></td>
+                <td ng-bind="item.endtime?formatDate(item.endtime):'无结束时间'"></td>
+                <td ng-bind="item.remark"></td>
+                <td>
+                    <a href="javascript:;" title="查看审计记录" ng-click="openAuthrecord(item);"><i class="fa fa-search fa-lg green"></i></a> 
+                </td>
+            </tr>        
+        </tbody>
+    </table>
+    <div>
+        <div style="float:right; margin-left:10px;">
+            当前<b class="blue" ng-bind="bigTotalItems"></b>条日志
+            共<b class="blue" ng-bind="num"></b>页
+        </div>   
+        <div style="float:right;margin-top:-26px;">
+            <ul uib-pagination total-items="bigTotalItems" items-per-page="maxSize"  max-size="2"  boundary-link-numbers="true"  first-text="首页" last-text="末页" next-text="下一页" previous-text="上一页"  ng-model="bigCurrentPage" num-pages="num"  class="pagination-sm" ng-click="select(1,bigCurrentPage)" boundary-links="true" force-ellipses="true"></ul>
+        </div>  
+    </div>    
+</div>

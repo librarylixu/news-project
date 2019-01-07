@@ -1,0 +1,1622 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>ECharts</title>
+    <!-- 引入 echarts.js -->
+    <link rel="stylesheet" href="../../../DPMS/public/lib/ace/css/font-awesome4.7.0.css" />
+    <script src="{$Think.const.APP_PUBLIC}echarts/4.0.3/echarts.min.js"></script>
+	<script src="{$Think.const.APP_PUBLIC}echarts/map/js/china.js"></script>
+    <style type="text/css">
+
+        html, body {
+            height: 100%;
+        }
+
+        body, ul, li, a, p, div {
+            padding: 0px;
+            margin: 0px;
+            font-size: 14px;
+        }
+        ul li{
+            list-style:none;
+        }
+        #wrap {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+        }
+
+        #mainBox {
+             width: 100%;
+            height: 100%;
+            top: 0;
+            position: relative;
+        }
+        #float_banner {
+            width: 95px;
+            height: auto;
+            z-index: 99;
+            right: 2px;
+            bottom: 5px;
+            position: fixed;
+            _position: absolute;
+            _margin-top: expression(document.documentElement.clientHeight-this.style.pixelHeight+document.documentElement.scrollTop);
+            font-family: "宋体";
+        }
+
+        
+        .mj_nav_list {
+            width: 42px;
+            height: 50px;            
+            padding:1px;
+            text-align: center;
+            color: #fde399;
+            margin-bottom: 20px;
+        }
+        #float_banner:before {
+            content: "";
+            display: block;
+            position: absolute;
+            left: 21px;
+            top: 1px;
+            bottom: 25px;
+            border: 1px solid #E2E3E7;
+            /*background-color: #E7EAEF;*/
+            width: 4px;
+            border-width: 0 1px;
+        }
+        .nav_span {
+            display:block;
+            width: 42px;
+            height: 42px;
+            line-height:42px;
+            font-size:26px;
+            position:relative;
+            background:#91c7ae;
+            border-radius:100%;
+            border: 1px solid #AAA;
+            padding:1px;
+            text-align: center;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        
+      
+</style>
+<script language="javascript">
+var speed = 100;
+var scrollTop = null;
+var hold = 0;
+var float_banner;
+var pos = null;
+var timer = null;
+var moveHeight = null;
+float_banner = document.getElementById("float_banner");
+window.onscroll=scroll_ad;
+function scroll_ad(){
+ scrollTop = document.documentElement.scrollTop+document.body.scrollTop;
+ pos = scrollTop - float_banner.offsetTop;
+ pos = pos/10
+ moveHeight = pos>0?Math.ceil(pos):Math.floor(pos);
+ if(moveHeight!=0){
+  float_banner.style.top = float_banner.offsetTop+moveHeight+"px";
+  setTimeout(scroll_ad,speed);
+ }
+//alert(scrollTop);
+}
+</script>
+</head>
+<body>
+    <div>
+        <div  id="float_banner" class="mj_nav">
+           
+            <div class="mj_nav_list" onclick="play('2')">
+                <span title="办事处分布图" class="nav_span"><i class="fa fa-home"></i></span>      
+            </div>
+            <div class="mj_nav_list" onclick="play('1')">
+                <span title="产品销售额分析" class="nav_span"><i class="fa fa-bar-chart-o"></i></span>                           
+            </div>
+            <div class="mj_nav_list" onclick="play('3')">
+                <span  title="办事处销售额分析" class="nav_span"><i class="fa fa-credit-card"></i></span>
+            </div>
+            <div class="mj_nav_list" onclick="play('4')">
+                <span title="办事处自有产品销售额分析" class="nav_span"><i class="fa fa-users"></i></span>
+            </div>
+            <div class="mj_nav_list" onclick="play('5')">
+                <span title="销售人员销售额分析" class="nav_span"><i class="fa fa-user"></i></span>
+            </div>
+        </div>
+    </div> 
+   
+   <div id="wrap">
+       <div id="mainBox">
+           <div id="main1"  style="width:100%;height:100%"></div>
+       </div>
+   </div>
+
+    <!--1-->
+    <script>
+        var m_key = ["UDCS", "LOGSYS", "AIS", "NTS", "IPHM", "DRA", "EIM", "DPMS", "OMSA", "XDBA"];
+        var m_x_money = [320, 332, 301, 334, 390, 330, 320, 100, 109, 110];
+        var m_h_money = [120, 132, 101, 134, 190, 130, 120, 10, 19, 11];
+        //返回给饼图的数据
+        function getPieData() {
+            var d = [];
+            m_key.forEach(function (value, index) {
+                d.push({
+                    value: m_x_money[index],
+                    name: value
+                });
+            });
+            return d;
+        }
+        var option1 = {
+            color:['#91c7ae','#749f83',  '#ca8622', '#bda29a','#6e7074', '#546570', '#c4ccd3'],
+            backgroundColor: '#404a59',
+            
+            "title": {
+                "text": "2017年1月-12月各产品销售额分析(销售总额:600.48万,回款总额:260万)",
+                "subtext": "昕辰清虹",
+                textStyle: {
+                    color: '#fff',
+                    fontSize: '22'
+                },
+            },
+            "grid": {
+                "left": "5%", //柱形图的位置
+                containLabel: true
+            },
+            "yAxis": [{
+                type: 'value',
+                "axisLine": {
+                    lineStyle: {
+                        color: '#90979c'
+                    }
+                }
+            }],
+
+            xAxis: [{
+                type: 'category',
+                data: m_key,
+                "axisLine": {
+                    lineStyle: {
+                        color: '#90979c'
+                    }
+                }
+            }],
+            "legend": {
+                "orient": "vertical",
+                "bottom": "bottom",
+                data: ['回款额', '销售额'],
+                textStyle: {
+                    color: '#90979c',
+                },
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                    type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+                }
+
+            },
+            "series": [{
+                "radius": "25%", //饼图的大小
+                "type": "pie",
+                "name": "销售额占比",
+                "center": ["85%", "25%"], //饼图的位置
+                "data": getPieData(),
+                "tooltip": {
+                    "formatter": "{a} <br/>{b} : {c} ({d}%)",
+                    "trigger": "item"
+                },
+                "itemStyle": {
+                    "emphasis": {
+                        "shadowOffsetX": 0,
+                        "shadowBlur": 10,
+                        "shadowColor": "rgba(0, 0, 0, 0.5)"
+                    }
+                }
+            },
+                {
+                    name: '销售额',
+                    type: 'bar',
+                    "itemStyle": {
+                        "normal": {
+                            "color": "rgba(25,140,128,1)",
+                        }
+                    },
+                    data: m_x_money
+                },
+                {
+                    name: '回款额',
+                    type: 'bar',
+                    data: m_h_money
+                }
+            ],
+        };
+    </script>
+    <!-- 2 -->
+    <script>
+        var geoCoordMap = {
+
+            '成都办': [103.9526, 30.7617],
+            '上海办': [121.4648, 31.2891],
+            '沈阳办': [123.1238, 42.1216],
+            '西安办': [109.1162, 34.2004],
+            '深圳办': [114.5435, 22.5439],
+            '武汉办': [114.3896, 30.6628],
+            '北京办': [116.4551, 40.2539],
+            '昕辰公司': [116.4551, 40.2539],
+        };
+        var BJData = [
+            [{ name: '成都办', value: 1 }, { name: '昕辰公司' }],
+            [{ name: '沈阳办', value: 3 }, { name: '昕辰公司' }],
+            [{ name: '上海办', value: 3 }, { name: '昕辰公司' }],
+            [{ name: '西安办', value: 5 }, { name: '昕辰公司' }],
+            [{ name: '深圳办', value: 9 }, { name: '昕辰公司' }],
+            [{ name: '武汉办', value: 10 }, { name: '昕辰公司' }],
+            [{ name: '北京办', value: 13 }, { name: '昕辰公司' }],
+        ];
+        var mData = {
+            '成都办': { value: 150000, },
+            '沈阳办': { value: 80000, },
+            '上海办': { value: 600000, },
+            '西安办': { value: 600000, },
+            '深圳办': { value: 500000, },
+            '武汉办': { value: 600000, },
+            '北京办': { value: 3000000, }
+        }
+        var convertData = function (data) {
+            var res = [];
+            for (var i = 0; i < data.length; i++) {
+                var dataItem = data[i];
+                var fromCoord = geoCoordMap[dataItem[0].name];
+                var toCoord = geoCoordMap[dataItem[1].name];
+                if (fromCoord && toCoord) {
+                    res.push([{
+                        coord: fromCoord,
+                        value: dataItem[0].value
+                    }, {
+                        coord: toCoord,
+                    }]);
+                }
+            }
+            return res;
+        };
+
+        var color = ['#a6c84c', '#ffa022', '#46bee9'];
+        var series = [];
+        [
+            ['昕辰公司', BJData]
+        ].forEach(function (item, i) {
+            series.push(
+
+                {
+                    type: 'lines',
+                    zlevel: 2,
+                    effect: {
+                        show: true,
+                        period: 4, //箭头指向速度，值越小速度越快
+                        trailLength: 0.02, //特效尾迹长度[0,1]值越大，尾迹越长重
+                        symbol: 'arrow', //箭头图标
+                        symbolSize: 5, //图标大小
+                    },
+                    lineStyle: {
+                        normal: {
+                            width: 1, //尾迹线条宽度
+                            opacity: 0, //尾迹线条透明度
+                            curveness: 0 //尾迹线条曲直度
+                        }
+                    },
+
+                    data: convertData(item[1])
+                }, {
+                    type: 'effectScatter',
+                    coordinateSystem: 'geo',
+                    zlevel: 2,
+                    rippleEffect: { //涟漪特效
+                        period: 4, //动画时间，值越小速度越快
+                        brushType: 'stroke', //波纹绘制方式 stroke, fill
+                        scale: 4//波纹圆环最大限制，值越大波纹越大
+                    },
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'right', //显示位置
+                            offset: [5, 0], //偏移设置
+                            formatter: '{b}' //圆环显示文字
+                        },
+                        emphasis: {
+                            show: true
+                        }
+                    },
+                    symbol: 'circle',
+                    symbolSize: function (val) {
+                        return 5 + val[2]; //圆环大小，百万位单位
+                    },
+                    itemStyle: {
+                        normal: {
+                            show: false,
+                            color: '#f00'
+                        }
+                    },
+                    data: item[1].map(function (dataItem) {
+                        return {
+                            name: dataItem[0].name,
+                            value: geoCoordMap[dataItem[0].name].concat([dataItem[0].value])
+                        };
+                    }),
+                },
+                //被攻击点
+                {
+                    type: 'scatter',
+                    coordinateSystem: 'geo',
+                    zlevel: 2,
+                    rippleEffect: {
+                        period: 4,
+                        brushType: 'stroke',
+                        scale: 4
+                    },
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'right',
+                            //			                offset:[5, 0],
+
+                            color: '#00ffff',
+                            formatter: '{b}',
+                            textStyle: {
+                                color: "#00ffff"
+                            }
+                        },
+                        emphasis: {
+                            show: true
+                        }
+                    },
+                    symbol: 'pin',
+                    symbolSize: 30,
+                    itemStyle: {
+                        normal: {
+                            show: true,
+                            color: '#9966cc'
+                        }
+                    },
+                    data: [{
+                        name: item[0],
+                        value: geoCoordMap[item[0]].concat([100]),
+                    }],
+                }
+            );
+        });
+
+        var option2 = {
+            backgroundColor: '#404a59',
+            title: {
+                text: '昕辰公司各地办事处分布图 ',
+                textStyle: {
+                    color: '#fff',
+                    fontSize: 20
+                },
+                x: 'center',
+                padding: [20, 20, 20, 20]
+            },
+            tooltip: {
+                trigger: 'item',
+                backgroundColor: 'rgba(12, 204, 104, 0.92)',
+                borderColor: '#FFFFCC',
+                showDelay: 0,
+                hideDelay: 0,
+                enterable: true,
+                transitionDuration: 0,
+                extraCssText: 'z-index:100',
+                formatter: function (params, ticket, callback) {
+                    //根据业务自己拓展要显示的内容
+                    var res = "";
+                    var name = params.name;
+                    var value = params.value;
+                    res = "<span style='color:red;'>" + name + "</span><br/>销售额：" + mData[name].value;
+                    return res;
+                }
+            },
+            visualMap: { //图例值控制
+                min: 0,
+                max: 20,
+                calculable: true,
+                color: ['#ff3333', 'orange', 'yellow', 'lime', 'aqua'],
+                textStyle: {
+                    color: '#fff'
+                }
+            },
+            geo: {
+                map: 'china',
+                label: {
+                    emphasis: {
+                        show: false
+                    }
+                },
+                roam: true, //是否允许缩放
+                layoutCenter: ['50%', '50%'], //地图位置
+                layoutSize: "125%",
+                itemStyle: {
+                    normal: {
+                        color: 'rgba(51, 69, 89, .5)', //地图背景色
+                        borderColor: 'rgba(100,149,237,1)' //省市边界线
+                    },
+                    emphasis: {
+                        color: 'rgba(37, 43, 61, .5)' //悬浮背景
+                    }
+                }
+            },
+
+            series: series
+        };
+    </script>
+    <!-- 3 -->
+    <script>
+        var Data3 = function () {
+            var data = ['北京办', '上海办', '成都办', '沈阳办', '西安办', '深圳办', '武汉办'];
+
+            return data;
+        }();
+        var option3 = {
+            backgroundColor: '#404a59',
+            "title": {
+                "text": "2017年1月-12月各办事处销售额分析",
+                "subtext": "昕辰清虹",
+                x: "1%",
+
+                textStyle: {
+                    color: '#fff',
+                    fontSize: '22'
+                },
+                subtextStyle: {
+                    color: '#90979c',
+                    fontSize: '16',
+
+                },
+            },
+            "tooltip": {
+                "trigger": "axis",
+                "axisPointer": {
+                    "type": "shadow",
+                    textStyle: {
+                        color: "#fff"
+                    }
+
+                },
+            },
+            "grid": {
+                "borderWidth": 0,
+                "top": 110,
+                "bottom": 95,
+                textStyle: {
+                    color: "#fff"
+                }
+            },
+            "legend": {
+                x: '4%',
+                top: '11%',
+                textStyle: {
+                    color: '#90979c',
+                },
+                "data": ['自有软件', '代理软件', 'AvocentKVM', '自有硬件', '总']
+            },
+
+
+            "calculable": true,
+            "xAxis": [{
+                "type": "category",
+                "axisLine": {
+                    lineStyle: {
+                        color: '#90979c'
+                    }
+                },
+                "splitLine": {
+                    "show": false
+                },
+                "axisTick": {
+                    "show": false
+                },
+                "splitArea": {
+                    "show": false
+                },
+                "axisLabel": {
+                    "interval": 0,
+
+                },
+                "data": Data3,
+            }],
+            "yAxis": [{
+                "type": "value",
+                "splitLine": {
+                    "show": false
+                },
+                "axisLine": {
+                    lineStyle: {
+                        color: '#90979c'
+                    }
+                },
+                "axisTick": {
+                    "show": false
+                },
+                "axisLabel": {
+                    "interval": 0,
+
+                },
+                "splitArea": {
+                    "show": false
+                },
+
+            }],
+            "dataZoom": [{
+                "show": true,
+                "height": 30,
+                "xAxisIndex": [
+                    0
+                ],
+                bottom: 30,
+                "start": 0,
+                "end": 100,
+                handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
+                handleSize: '110%',
+                handleStyle: {
+                    color: "#d3dee5",
+
+                },
+                textStyle: {
+                    color: "#fff"
+                },
+                borderColor: "#90979c"
+
+
+            }, {
+                "type": "inside",
+                "show": true,
+                "height": 15,
+                "start": 1,
+                "end": 35
+            }],
+            "series": [{
+                "name": "自有软件",
+                "type": "bar",
+                "stack": "总量",
+                "barMaxWidth": 35,
+                "barGap": "10%",
+                "itemStyle": {
+                    "normal": {
+                        "color": "rgba(10,100,100,10)",
+                        "label": {
+                            "show": true,
+                            "textStyle": {
+                                "color": "#fff"
+                            },
+                            "position": "insideTop",
+                            formatter: function (p) {
+                                return p.value > 0 ? (p.value) : '';
+                            }
+                        }
+                    }
+                },
+                "data": [
+                    198.66,
+                    330.81,
+                    151.95,
+                    160.12,
+                    222.56,
+                    229.05,
+                    128.53,
+                    250.91,
+                    224.47,
+                    473.99,
+                    126.85,
+                    260.50
+                ],
+            },
+        {
+            "name": "代理软件",
+            "type": "bar",
+            "stack": "总量",
+            "itemStyle": {
+                "normal": {
+                    "color": "rgba(100,10,80,10)",
+                    "barBorderRadius": 0,
+                    "label": {
+                        "show": true,
+                        "position": "insideTop",
+                        formatter: function (p) {
+                            return p.value > 0 ? (p.value) : '';
+                        }
+                    }
+                }
+            },
+            "data": [
+                82.89,
+                67.54,
+                62.07,
+                59.43,
+                67.02,
+                67.09,
+                35.66,
+                71.78,
+                81.61,
+                78.85,
+                79.12,
+                72.30
+            ]
+        },
+                {
+                    "name": "AvocentKVM",
+                    "type": "bar",
+                    "stack": "总量",
+                    "itemStyle": {
+                        "normal": {
+                            "color": "rgba(52,130,8,1)",
+                            "barBorderRadius": 0,
+                            "label": {
+                                "show": true,
+                                "position": "insideTop",
+                                formatter: function (p) {
+                                    return p.value > 0 ? (p.value) : '';
+                                }
+                            }
+                        }
+                    },
+                    "data": [
+                        82.89,
+                        67.54,
+                        62.07,
+                        59.43,
+                        67.02,
+                        67.09,
+                        35.66,
+                        71.78,
+                        81.61,
+                        78.85,
+                        79.12,
+                        72.30
+                    ]
+                },
+                {
+                    "name": "自有硬件",
+                    "type": "bar",
+                    "stack": "总量",
+                    "itemStyle": {
+                        "normal": {
+                            "color": "rgba(0,191,183,1)",
+                            "barBorderRadius": 0,
+                            "label": {
+                                "show": true,
+                                "position": "insideTop",
+                                formatter: function (p) {
+                                    return p.value > 0 ? (p.value) : '';
+                                }
+                            }
+                        }
+                    },
+                    "data": [
+                        82.89,
+                        67.54,
+                        62.07,
+                        59.43,
+                        67.02,
+                        67.09,
+                        35.66,
+                        71.78,
+                        81.61,
+                        78.85,
+                        79.12,
+                        72.30
+                    ]
+                }, {
+                    "name": "总",
+                    "type": "line",
+                    "stack": "总量",
+                    symbolSize: 20,
+                    symbol: 'circle',
+                    "itemStyle": {
+                        "normal": {
+                            "color": "rgba(252,230,48,1)",
+                            "barBorderRadius": 0,
+                            "label": {
+                                "show": true,
+                                "position": "top",
+                                formatter: function (p) {
+                                    return p.value > 0 ? (p.value) : '';
+                                }
+                            }
+                        }
+                    },
+                    "data": [
+                        281.55,
+                        398.35,
+                        214.02,
+                        219.55,
+                        289.57,
+                        296.14,
+                        164.18,
+                        322.69,
+                        306.08,
+                        552.84,
+                        205.97,
+                        332.79
+                    ]
+                },
+            ]
+        }
+    </script>
+    <!-- 4 -->
+    <script>
+        var Data4 = function () {
+            var data = ['北京办', '上海办', '成都办', '沈阳办', '西安办', '深圳办', '武汉办'];
+
+            return data;
+        }();
+        var option4 = {
+            backgroundColor: '#404a59',
+            "title": {
+                "text": "2017年1月-12月各办事处自有产品销售额分析",
+                "subtext": "昕辰清虹",
+                x: "1%",
+
+                textStyle: {
+                    color: '#fff',
+                    fontSize: '22'
+                },
+                subtextStyle: {
+                    color: '#90979c',
+                    fontSize: '16',
+
+                },
+            },
+            "tooltip": {
+                "trigger": "axis",
+                "axisPointer": {
+                    "type": "shadow",
+                    textStyle: {
+                        color: "#fff"
+                    }
+
+                },
+            },
+            "grid": {
+                "borderWidth": 0,
+                "top": 110,
+                "bottom": 95,
+                textStyle: {
+                    color: "#fff"
+                }
+            },
+            "legend": {
+                x: '4%',
+                top: '11%',
+                textStyle: {
+                    color: '#90979c',
+                },
+                "data": ['NTS', 'LOGSYS', 'UDCS', 'EIM', 'IPHM', 'AIS', 'DRA', 'DPMS', 'OMSA', 'XDBA', 'PDU', '子钟', '总额']
+            },
+            "calculable": true,
+            "xAxis": [{
+                "type": "category",
+                "axisLine": {
+                    lineStyle: {
+                        color: '#90979c'
+                    }
+                },
+                "splitLine": {
+                    "show": false
+                },
+                "axisTick": {
+                    "show": false
+                },
+                "splitArea": {
+                    "show": false
+                },
+                "axisLabel": {
+                    "interval": 0,
+
+                },
+                "data": Data4,
+            }],
+            "yAxis": [{
+                "type": "value",
+                "splitLine": {
+                    "show": false
+                },
+                "axisLine": {
+                    lineStyle: {
+                        color: '#90979c'
+                    }
+                },
+                "axisTick": {
+                    "show": false
+                },
+                "axisLabel": {
+                    "interval": 0,
+
+                },
+                "splitArea": {
+                    "show": false
+                },
+
+            }],
+            "dataZoom": [{
+                "show": true,
+                "height": 30,
+                "xAxisIndex": [
+                    0
+                ],
+                bottom: 30,
+                "start": 0,
+                "end": 100,
+                handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
+                handleSize: '110%',
+                handleStyle: {
+                    color: "#d3dee5",
+
+                },
+                textStyle: {
+                    color: "#fff"
+                },
+                borderColor: "#90979c"
+
+
+            }, {
+                "type": "inside",
+                "show": true,
+                "height": 15,
+                "start": 1,
+                "end": 35
+            }],
+            "series": [
+                {
+                    "name": "NTS",
+                    "type": "bar",
+                    "stack": "总量",
+                    "barMaxWidth": 35,
+                    "barGap": "10%",
+                    "itemStyle": {
+                        "normal": {
+                            "color": "rgba(10,100,100,10)",
+                            "label": {
+                                "show": true,
+                                "textStyle": {
+                                    "color": "#fff"
+                                },
+                                "position": "insideTop",
+                                formatter: function (p) {
+                                    return p.value > 0 ? (p.value) : '';
+                                }
+                            }
+                        }
+                    },
+                    "data": [
+                        198.66,
+                        330.81,
+                        151.95,
+                        160.12,
+                        222.56,
+                        229.05,
+                        128.53,
+                        250.91,
+                        224.47,
+                        473.99,
+                        126.85,
+                        260.50
+                    ],
+                },
+        {
+            "name": "LOGSYS",
+            "type": "bar",
+            "stack": "总量",
+            "itemStyle": {
+                "normal": {
+                    "color": "rgba(100,10,80,10)",
+                    "barBorderRadius": 0,
+                    "label": {
+                        "show": true,
+                        "position": "insideTop",
+                        formatter: function (p) {
+                            return p.value > 0 ? (p.value) : '';
+                        }
+                    }
+                }
+            },
+            "data": [
+                82.89,
+                67.54,
+                62.07,
+                59.43,
+                67.02,
+                67.09,
+                35.66,
+                71.78,
+                81.61,
+                78.85,
+                79.12,
+                72.30
+            ]
+        },
+                {
+                    "name": "UDCS",
+                    "type": "bar",
+                    "stack": "总量",
+                    "itemStyle": {
+                        "normal": {
+                            "color": "rgba(52,130,8,1)",
+                            "barBorderRadius": 0,
+                            "label": {
+                                "show": true,
+                                "position": "insideTop",
+                                formatter: function (p) {
+                                    return p.value > 0 ? (p.value) : '';
+                                }
+                            }
+                        }
+                    },
+                    "data": [
+                        82.89,
+                        67.54,
+                        62.07,
+                        59.43,
+                        67.02,
+                        67.09,
+                        35.66,
+                        71.78,
+                        81.61,
+                        78.85,
+                        79.12,
+                        72.30
+                    ]
+                },
+                {
+                    "name": "EIM",
+                    "type": "bar",
+                    "stack": "总量",
+                    "itemStyle": {
+                        "normal": {
+                            "color": "rgba(0,191,183,1)",
+                            "barBorderRadius": 0,
+                            "label": {
+                                "show": true,
+                                "position": "insideTop",
+                                formatter: function (p) {
+                                    return p.value > 0 ? (p.value) : '';
+                                }
+                            }
+                        }
+                    },
+                    "data": [
+                        82.89,
+                        67.54,
+                        62.07,
+                        59.43,
+                        67.02,
+                        67.09,
+                        35.66,
+                        71.78,
+                        81.61,
+                        78.85,
+                        79.12,
+                        72.30
+                    ]
+                },
+                 {
+                     "name": "IPHM",
+                     "type": "bar",
+                     "stack": "总量",
+                     "itemStyle": {
+                         "normal": {
+                             "color": "rgba(0,191,183,1)",
+                             "barBorderRadius": 0,
+                             "label": {
+                                 "show": true,
+                                 "position": "insideTop",
+                                 formatter: function (p) {
+                                     return p.value > 0 ? (p.value) : '';
+                                 }
+                             }
+                         }
+                     },
+                     "data": [
+                         82.89,
+                         67.54,
+                         62.07,
+                         59.43,
+                         67.02,
+                         67.09,
+                         35.66,
+                         71.78,
+                         81.61,
+                         78.85,
+                         79.12,
+                         72.30
+                     ]
+                 },
+                 {
+                     "name": "AIS",
+                     "type": "bar",
+                     "stack": "总量",
+                     "itemStyle": {
+                         "normal": {
+                             "color": "rgba(0,191,183,1)",
+                             "barBorderRadius": 0,
+                             "label": {
+                                 "show": true,
+                                 "position": "insideTop",
+                                 formatter: function (p) {
+                                     return p.value > 0 ? (p.value) : '';
+                                 }
+                             }
+                         }
+                     },
+                     "data": [
+                         82.89,
+                         67.54,
+                         62.07,
+                         59.43,
+                         67.02,
+                         67.09,
+                         35.66,
+                         71.78,
+                         81.61,
+                         78.85,
+                         79.12,
+                         72.30
+                     ]
+                 },
+                 {
+                     "name": "DRA",
+                     "type": "bar",
+                     "stack": "总量",
+                     "itemStyle": {
+                         "normal": {
+                             "color": "rgba(0,191,183,1)",
+                             "barBorderRadius": 0,
+                             "label": {
+                                 "show": true,
+                                 "position": "insideTop",
+                                 formatter: function (p) {
+                                     return p.value > 0 ? (p.value) : '';
+                                 }
+                             }
+                         }
+                     },
+                     "data": [
+                         82.89,
+                         67.54,
+                         62.07,
+                         59.43,
+                         67.02,
+                         67.09,
+                         35.66,
+                         71.78,
+                         81.61,
+                         78.85,
+                         79.12,
+                         72.30
+                     ]
+                 },
+                {
+                    "name": "DPMS",
+                    "type": "bar",
+                    "stack": "总量",
+                    "itemStyle": {
+                        "normal": {
+                            "color": "rgba(0,191,183,1)",
+                            "barBorderRadius": 0,
+                            "label": {
+                                "show": true,
+                                "position": "insideTop",
+                                formatter: function (p) {
+                                    return p.value > 0 ? (p.value) : '';
+                                }
+                            }
+                        }
+                    },
+                    "data": [
+                        82.89,
+                        67.54,
+                        62.07,
+                        59.43,
+                        67.02,
+                        67.09,
+                        35.66,
+                        71.78,
+                        81.61,
+                        78.85,
+                        79.12,
+                        72.30
+                    ]
+                },
+                {
+                    "name": "OMSA",
+                    "type": "bar",
+                    "stack": "总量",
+                    "itemStyle": {
+                        "normal": {
+                            "color": "rgba(0,191,183,1)",
+                            "barBorderRadius": 0,
+                            "label": {
+                                "show": true,
+                                "position": "insideTop",
+                                formatter: function (p) {
+                                    return p.value > 0 ? (p.value) : '';
+                                }
+                            }
+                        }
+                    },
+                    "data": [
+                        82.89,
+                        67.54,
+                        62.07,
+                        59.43,
+                        67.02,
+                        67.09,
+                        35.66,
+                        71.78,
+                        81.61,
+                        78.85,
+                        79.12,
+                        72.30
+                    ]
+                },
+                {
+                    "name": "XDBA",
+                    "type": "bar",
+                    "stack": "总量",
+                    "itemStyle": {
+                        "normal": {
+                            "color": "rgba(0,191,183,1)",
+                            "barBorderRadius": 0,
+                            "label": {
+                                "show": true,
+                                "position": "insideTop",
+                                formatter: function (p) {
+                                    return p.value > 0 ? (p.value) : '';
+                                }
+                            }
+                        }
+                    },
+                    "data": [
+                        82.89,
+                        67.54,
+                        62.07,
+                        59.43,
+                        67.02,
+                        67.09,
+                        35.66,
+                        71.78,
+                        81.61,
+                        78.85,
+                        79.12,
+                        72.30
+                    ]
+                },
+                {
+                    "name": "PDU",
+                    "type": "bar",
+                    "stack": "总量",
+                    "itemStyle": {
+                        "normal": {
+                            "color": "rgba(0,191,183,1)",
+                            "barBorderRadius": 0,
+                            "label": {
+                                "show": true,
+                                "position": "insideTop",
+                                formatter: function (p) {
+                                    return p.value > 0 ? (p.value) : '';
+                                }
+                            }
+                        }
+                    },
+                    "data": [
+                        82.89,
+                        67.54,
+                        62.07,
+                        59.43,
+                        67.02,
+                        67.09,
+                        35.66,
+                        71.78,
+                        81.61,
+                        78.85,
+                        79.12,
+                        72.30
+                    ]
+                },
+                {
+                    "name": "子钟",
+                    "type": "bar",
+                    "stack": "总量",
+                    "itemStyle": {
+                        "normal": {
+                            "color": "rgba(0,191,183,1)",
+                            "barBorderRadius": 0,
+                            "label": {
+                                "show": true,
+                                "position": "insideTop",
+                                formatter: function (p) {
+                                    return p.value > 0 ? (p.value) : '';
+                                }
+                            }
+                        }
+                    },
+                    "data": [
+                        82.89,
+                        67.54,
+                        62.07,
+                        59.43,
+                        67.02,
+                        67.09,
+                        35.66,
+                        71.78,
+                        81.61,
+                        78.85,
+                        79.12,
+                        72.30
+                    ]
+                },
+                {
+                    "name": "总",
+                    "type": "line",
+                    "stack": "总量",
+                    symbolSize: 20,
+                    symbol: 'circle',
+                    "itemStyle": {
+                        "normal": {
+                            "color": "rgba(252,230,48,1)",
+                            "barBorderRadius": 0,
+                            "label": {
+                                "show": true,
+                                "position": "top",
+                                formatter: function (p) {
+                                    return p.value > 0 ? (p.value) : '';
+                                }
+                            }
+                        }
+                    },
+                    "data": [
+                        281.55,
+                        398.35,
+                        214.02,
+                        219.55,
+                        289.57,
+                        296.14,
+                        164.18,
+                        322.69,
+                        306.08,
+                        552.84,
+                        205.97,
+                        332.79
+                    ]
+                },
+            ]
+        }
+    </script>
+    <!-- 5 -->
+    <script>
+        var Data5 = function () {
+            var data = ['赵劲鹏', '崔节忠', '冯驰', '王恒', '娄丽霞', '臧会波', '廉波', '王华清', '许奕', '姚海红', '张颖', '李晓桂', '张万平', '朱勇'];
+
+            return data;
+        }();
+        var option5 = {
+            backgroundColor: '#404a59',
+            "title": {
+                "text": "2017年1月-12月各销售人员销售额分析",
+                "subtext": "昕辰清虹",
+                x: "1%",
+
+                textStyle: {
+                    color: '#fff',
+                    fontSize: '22'
+                },
+                subtextStyle: {
+                    color: '#90979c',
+                    fontSize: '16',
+
+                },
+            },
+            "tooltip": {
+                "trigger": "axis",
+                "axisPointer": {
+                    "type": "shadow",
+                    textStyle: {
+                        color: "#fff"
+                    }
+
+                },
+            },
+            "grid": {
+                "borderWidth": 0,
+                "top": 110,
+                "bottom": 95,
+                textStyle: {
+                    color: "#fff"
+                }
+            },
+            "legend": {
+                x: '4%',
+                top: '11%',
+                textStyle: {
+                    color: '#90979c',
+                },
+                "data": ['自有软件', '代理软件', 'AvocentKVM', '自有硬件', '总']
+            },
+
+
+            "calculable": true,
+            "xAxis": [{
+                "type": "category",
+                "axisLine": {
+                    lineStyle: {
+                        color: '#90979c'
+                    }
+                },
+                "splitLine": {
+                    "show": false
+                },
+                "axisTick": {
+                    "show": false
+                },
+                "splitArea": {
+                    "show": false
+                },
+                "axisLabel": {
+                    "interval": 0,
+
+                },
+                "data": Data5,
+            }],
+            "yAxis": [{
+                "type": "value",
+                "splitLine": {
+                    "show": false
+                },
+                "axisLine": {
+                    lineStyle: {
+                        color: '#90979c'
+                    }
+                },
+                "axisTick": {
+                    "show": false
+                },
+                "axisLabel": {
+                    "interval": 0,
+
+                },
+                "splitArea": {
+                    "show": false
+                },
+
+            }],
+            "dataZoom": [{
+                "show": true,
+                "height": 30,
+                "xAxisIndex": [
+                    0
+                ],
+                bottom: 30,
+                "start": 0,
+                "end": 100,
+                handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
+                handleSize: '110%',
+                handleStyle: {
+                    color: "#d3dee5",
+
+                },
+                textStyle: {
+                    color: "#fff"
+                },
+                borderColor: "#90979c"
+
+
+            }, {
+                "type": "inside",
+                "show": true,
+                "height": 15,
+                "start": 1,
+                "end": 35
+            }],
+            "series": [{
+                "name": "自有软件",
+                "type": "bar",
+                "stack": "总量",
+                "barMaxWidth": 35,
+                "barGap": "10%",
+                "itemStyle": {
+                    "normal": {
+                        "color": "rgba(10,100,100,10)",
+                        "label": {
+                            "show": true,
+                            "textStyle": {
+                                "color": "#fff"
+                            },
+                            "position": "insideTop",
+                            formatter: function (p) {
+                                return p.value > 0 ? (p.value) : '';
+                            }
+                        }
+                    }
+                },
+                "data": [
+                    198.66,
+                    330.81,
+                    151.95,
+                    160.12,
+                    222.56,
+                    229.05,
+                    128.53,
+                    250.91,
+                    224.47,
+                    473.99,
+                    126.85,
+                    260.50
+                ],
+            },
+        {
+            "name": "代理软件",
+            "type": "bar",
+            "stack": "总量",
+            "itemStyle": {
+                "normal": {
+                    "color": "rgba(100,10,80,10)",
+                    "barBorderRadius": 0,
+                    "label": {
+                        "show": true,
+                        "position": "insideTop",
+                        formatter: function (p) {
+                            return p.value > 0 ? (p.value) : '';
+                        }
+                    }
+                }
+            },
+            "data": [
+                82.89,
+                67.54,
+                62.07,
+                59.43,
+                67.02,
+                67.09,
+                35.66,
+                71.78,
+                81.61,
+                78.85,
+                79.12,
+                72.30
+            ]
+        },
+                {
+                    "name": "AvocentKVM",
+                    "type": "bar",
+                    "stack": "总量",
+                    "itemStyle": {
+                        "normal": {
+                            "color": "rgba(52,130,8,1)",
+                            "barBorderRadius": 0,
+                            "label": {
+                                "show": true,
+                                "position": "insideTop",
+                                formatter: function (p) {
+                                    return p.value > 0 ? (p.value) : '';
+                                }
+                            }
+                        }
+                    },
+                    "data": [
+                        82.89,
+                        67.54,
+                        62.07,
+                        59.43,
+                        67.02,
+                        67.09,
+                        35.66,
+                        71.78,
+                        81.61,
+                        78.85,
+                        79.12,
+                        72.30
+                    ]
+                },
+                {
+                    "name": "自有硬件",
+                    "type": "bar",
+                    "stack": "总量",
+                    "itemStyle": {
+                        "normal": {
+                            "color": "rgba(0,191,183,1)",
+                            "barBorderRadius": 0,
+                            "label": {
+                                "show": true,
+                                "position": "insideTop",
+                                formatter: function (p) {
+                                    return p.value > 0 ? (p.value) : '';
+                                }
+                            }
+                        }
+                    },
+                    "data": [
+                        82.89,
+                        67.54,
+                        62.07,
+                        59.43,
+                        67.02,
+                        67.09,
+                        35.66,
+                        71.78,
+                        81.61,
+                        78.85,
+                        79.12,
+                        72.30
+                    ]
+                }, {
+                    "name": "总",
+                    "type": "line",
+                    "stack": "总量",
+                    symbolSize: 20,
+                    symbol: 'circle',
+                    "itemStyle": {
+                        "normal": {
+                            "color": "rgba(252,230,48,1)",
+                            "barBorderRadius": 0,
+                            "label": {
+                                "show": true,
+                                "position": "top",
+                                formatter: function (p) {
+                                    return p.value > 0 ? (p.value) : '';
+                                }
+                            }
+                        }
+                    },
+                    "data": [
+                        281.55,
+                        398.35,
+                        214.02,
+                        219.55,
+                        289.57,
+                        296.14,
+                        164.18,
+                        322.69,
+                        306.08,
+                        552.84,
+                        205.97,
+                        332.79
+                    ]
+                },
+            ]
+        }
+    </script>
+
+    <script type="text/javascript">
+        var myChart = null;
+		function play(chartId){
+		    var div = document.getElementById("main1");
+		    //var divs = document.getElementsByClassName("page");
+		    if (myChart != null) {
+		        echarts.dispose(myChart);
+		    }		   		   
+		    if (chartId == '1') {
+		         myChart = echarts.init(div);
+		         myChart.setOption(option1);
+		    } else if (chartId == '2') {		         		       
+		        myChart = echarts.init(div);
+		        myChart.setOption(option2);
+		    } else if (chartId == '3') {
+		         myChart = echarts.init(div);
+		         myChart.setOption(option3);
+		        
+		    } else if (chartId == '4') {
+		         myChart = echarts.init(div);
+		        myChart.setOption(option4,true);
+		    } else if (chartId == '5') {
+		         myChart = echarts.init(div);
+		        myChart.setOption(option5,true);
+		    }
+
+			}
+		play('2');
+    </script>
+</body>
+</html>

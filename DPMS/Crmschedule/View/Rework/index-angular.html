@@ -1,0 +1,343 @@
+﻿<extend name="angular-base.html" />
+<block name="momentjs">
+</block>
+<block name="headcss">
+    
+</block>
+<block name="headjs">
+    <!--select start-->
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/select.css">
+    <script src="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/select.js"></script>
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/select2.css">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/selectize.default.css">
+    <!--select end-->
+    <link rel="stylesheet" href="{$Think.const.PAGE_URL}css/crmSchedule/Workerorder/workerorder.css" /><!-- 这里公用了工单css -->
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}upload.css" />   
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-file-upload/angular-file-upload.min.js"></script>
+    <script src='{$Think.const.BOOTSTRAP_URL}textAngular/textAngular-rangy.min.js'></script>
+    <script src='{$Think.const.BOOTSTRAP_URL}textAngular/textAngular-sanitize.min.js'></script>
+    <script src='{$Think.const.BOOTSTRAP_URL}textAngular/textAngular.min.js'></script>
+    <script>
+        var userid = "{$userid}";
+        var _appid = "{$appid}";
+        
+    </script>        
+</block>
+<block name="pageContent">
+    <main class="js-canvi-content canvi-content">
+        <div class="col-xs-12">
+            <!--操作区域-->
+            <div class="btn-box">
+                <page-btn></page-btn>
+                <!--<a class="display" ng-click="selectclose()">查看已关闭返修</a>-->
+                <!--展示检索条件区域-->
+                <div class="search-box">
+                    <span class="display" ng-click="search=!search"><span ng-bind="search?'隐藏':'点击'"></span>根据条件检索</span>&nbsp;
+                    <span class="input-search">
+                        <input type="text" placeholder="序列号检索 ..." class="search-input" ng-model="filtername">
+                        <i class="fa fa-search search-icon" ng-click="serialselect()"></i>
+                    </span>
+                </div>
+                <div ng-if="search" class="clearfix top-10">
+                    <ui-select multiple ng-model="service.user" on-select="addTags('user',$item);" theme="select2" ng-if="selectUserData">
+                        <ui-select-match placeholder="按创建人检索" ng-bind="$item.value.description"></ui-select-match>
+                        <ui-select-choices repeat="person.value as (key, person) in selectUserData | filter: { value: { description: $select.search }} track by $index">
+                            <div ng-bind-html="person.value.description | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                    <ui-select multiple ng-model="service.assign" on-select="addTags('assign', $item);" theme="select2" ng-if="selectAssignData">
+                        <ui-select-match placeholder="按执行人检索" ng-bind="$select.value.description"></ui-select-match>
+                        <ui-select-choices repeat="person.value as (key, person) in selectAssignData | filter: { value: { description: $select.search }} track by $index">
+                            <div ng-bind-html="person.value.description | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                    <ui-select multiple ng-model="service.refshipments" on-select="addTags('refshipments', $item);" theme="select2" ng-if="selectShipmentsData">
+                        <ui-select-match placeholder="根据出货检索" ng-bind="$item.value.name"></ui-select-match>
+                        <ui-select-choices repeat="person.value as (key, person) in selectShipmentsData | filter: { value: { name: $select.search }} track by $index">
+                            <div ng-bind-html="person.value.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+            <!--条件检索区-->
+            <div class="text-right">
+                <span class="tag" ng-repeat="item in tagsData" ng-class="item.key">
+                    <span ng-if="item.key=='refshipments'" ng-bind-html="item.value.name"></span>
+                    <span ng-if="item.key=='assignid'" ng-bind="item.value.description"></span>
+                    <span ng-if="item.key=='userid'" ng-bind="item.value.description"></span>
+                    <button type="button" class="close" ng-click="removeTag(item)">×</button>
+                </span>
+            </div>            
+        </div>
+        <!--表格展示区-->
+        <div class="col-xs-12">
+            <div class="text-right" style="padding:10px;">
+                当前<b class="blue" ng-bind="service.reworkArrData.length"></b>条返修清单
+                <!--<div ng-include="'__APP__/Crmbase/Baseinfo/setpaging'"></div>-->
+            </div>
+            <table class="table" ng-init="reworkDataCount={count:0};orderName = '-createtime'" style="margin-bottom:2px;">
+                <thead>
+                    <tr>
+                        <th style="width:5%;">编号</th>
+                        <th style="width:10%;" class="mousehand" ng-click="orderName=(orderName=='status'?'-status':'status')">返修状态 <i class="fa" ng-class="orderName=='status'?'fa-caret-up':'fa-caret-down'"></i></th>
+                        <th class="mousehand" style="width:8%;" ng-click="orderName=(orderName=='userid'?'-userid':'userid')">创建人<i class="fa" ng-class="orderName=='userid'?'fa-caret-up':'fa-caret-down'"></i></th>
+                        <th class="mousehand" style="width:7%;" ng-click="orderName=(orderName=='assignid'?'-assignid':'assignid')">指派人<i class="fa" ng-class="orderName=='assignid'?'fa-caret-up':'fa-caret-down'"></i></th>
+                        <th style="width:15%;">
+                            <span>关联出货清单</span>
+                        </th>
+                        <th style="width:15%;">
+                            <span>所属项目</span>
+                        </th>
+                        <th style="width:15%;">最终客户</th>
+                        <th style="width:10%;" class="mousehand" ng-click="orderName=(orderName=='estimatedendtime'?'-estimatedendtime':'estimatedendtime')">预计结束时间 <i class="fa" ng-class="orderName=='estimatedendtime'?'fa-caret-up':'fa-caret-down'"></i></th>
+                        <th style="width:15%;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="(key,item) in service.reworkArrData | orderBy:orderName track by $index" class="profile-activity" ng-class="(item.assignid == service.userid && item.status == 0) || (item.userid == service.userid&&item.status == 2)?'danger ':''">
+                        <td style="width:5%;"><span class="badge" ng-bind="key+1"></span></td>
+                        <!--返修状态-->
+                        <td>
+                            <span class="label label-info" ng-class="service.privateDateObj.reworkstatusData[item.status].type" ng-bind="service.privateDateObj.reworkstatusData[item.status].name"></span>
+                        </td>
+                        <!--创建人-->
+                        <td>
+                            <span class="label c-info" ng-bind="(service.privateDateObj.usersData[item.userid].description ? service.privateDateObj.usersData[item.userid].description :service.privateDateObj.usersData[item.userid].username)"></span>
+                        </td>
+                        <!--指派人-->
+                        <td>
+                            <span class="label c-info" ng-bind="(service.privateDateObj.usersData[item.assignid].description ? service.privateDateObj.usersData[item.assignid].description :service.privateDateObj.usersData[item.assignid].username)"></span>
+                        </td>
+                        <td>
+                            <!-- 关联的出货清单 -->
+                            <span class="label label-info" style="cursor:pointer;" ng-click="selectshipdetailed(service.privateDateObj.shipmentsData[item.refship])" ng-bind="service.privateDateObj.shipmentsData[item.refship].name"></span>
+                        </td>
+                        <td>
+                            <!-- 关联的项目 -->
+                            <span class="label label-info" style="cursor:pointer;" ng-click="selectprojectdetailed(service.privateDateObj.projectData[service.privateDateObj.shipmentsData[item.refship].refprojects])" ng-bind="service.privateDateObj.projectData[service.privateDateObj.shipmentsData[item.refship].refprojects].name"></span>
+                        </td>
+                        <td>
+                            <!-- 关联的客户 -->
+                            <span class="label label-default" ng-bind="service.privateDateObj.customerinfoData[service.privateDateObj.projectData[service.privateDateObj.shipmentsData[item.refship].refprojects].refcustomers].name"></span>
+                        </td>
+                        <!--预计结束时间-->
+                        <td>
+                            <span ng-bind="formatDate(item.estimatedendtime,'yyyy-mm-dd')"></span>
+                        </td>
+                        <td>
+                            <a href="javascript:;" ng-click="selectdetailed(item)" title="详细" class="btn btn-xs green"><i class="ace-icon fa fa-search"></i>&nbsp;详细</a>
+                            <a href="javascript:;" ng-if="item.assignid==service.userid && item.status == 0" ng-click="alertConfirm(item)" title="认领" class="btn btn-xs green"><i class="ace-icon fa fa-check "></i>&nbsp;认领</a>
+                            <a href="javascript:;" ng-if="item.assignid==service.userid && item.status == 1" ng-click="alertUpload(item)" title="完成返修" class="btn btn-xs green"><i class="ace-icon fa fa-hand-o-up "></i>&nbsp;完成返修</a>
+                            <a href="javascript:;" ng-if="item.userid==service.userid && item.status == 2" ng-click="alertOver(item)" title="关闭返修" class="btn btn-xs green"><i class="ace-icon fa fa-times "></i>&nbsp;关闭返修</a>
+                            <a href="javascript:;" ng-if="service.refedit && item.userid==service.userid" ng-click="updateInfo(item)" title="修改" class="btn btn-xs green"><i class="ace-icon fa fa-pencil "></i>&nbsp;修改</a>
+                            <a href="javascript:;" ng-if="service.refdel  && item.userid==service.userid" ng-click="remove(item)" class="btn btn-xs  green"><i class="ace-icon fa fa-times"></i>&nbsp;删除</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <aside class="reworkmodaltemplate canvi-navbar">
+        <div class="canvi-user-info">
+            <div class="canvi-user-info__data">
+                <span class="canvi-user-info__title" ng-bind="reworkModal.title"></span>
+                <!--<a href="#" class="canvi-user-info__meta">XXXX编辑</a>-->
+                <div class="canvi-user-info__close" ng-click="reworkModal.toggle();"></div>
+            </div>
+            
+        </div>
+        <div>
+            <form name="Form" class="container-fluid" verify-scope="tipStyle: 0">
+                <div class="row top-10" style="line-height:28px;">
+                    <label class="col-xs-3 text-right"><b class="c-red">*</b>关联出货清单</label>
+                    <span class="input-search">
+                        <input type="text" placeholder="输入序列号得到清单" class="search-input" ng-model="filternamesave">
+                        <i class="fa fa-search search-icon" ng-click="serialfilter()"></i>
+                    </span>
+                    <div>
+                        <span ng-model="service.selectItem.refship" ng-bind="service.privateDateObj.shipmentsData[service.selectItem.refship].name"></span>
+                    </div>
+                </div>
+                <div  class="row top-10" style="line-height:28px;">
+                    <label class="col-xs-3 text-right"><b class="c-red">*</b>指派人</label>
+                    <div class="col-xs-5" style="padding-left:0;">
+                        <ui-select ng-model="selectItem.assignid" style="width:100%;" ng-verify>
+                            <ui-select-match placeholder="请选择指派人员">
+                                <span ng-bind="$select.selected.value.description" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.value.idusers  as (key,item) in service.privateDateObj.usersData | filter: { value: { description: $select.search }}" style="max-height: 150px;">
+                                <div ng-bind-html="item.value.description | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+                <div class="row top-10" style="line-height:28px;">
+                    <label class="col-xs-3 text-right"><b class="c-red">*</b>预计结束时间</label>
+                    <div class="col-xs-5" style="padding-left:0;">
+                        <p class="input-group">
+                            <input style="border-radius:0;" ng-click="open()" type="text" class="form-control" current-text="今天" clear-text="清空" close-text="关闭" uib-datepicker-popup ng-model="dt" ng-readonly="true" is-open="popup.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" ng-click="open()"><i class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                
+                <table class="table" style="margin: 0 24%; width: 70%;">
+                    <tr class="info" ng-init="total=0">
+                        <td colspan="6">
+                            <span>维修设备(<b style="color:red;"> * 必填</b>)</span><button type="button" ng-click="addProductlist()" class="btn btn-xs btn-success f-r">新增维修</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>序号</td>
+                        <td>设备名称</td>
+                        <td colspan="2">设备型号</td>
+                        <td>设备序列号</td>
+                        <td>操作</td>
+                    </tr>
+                    <tbody class="project-tr" ng-repeat="item in selectItem.__refprojectdevicelist" ng-if="!item.__delelte&&!item.__deleted">
+                        <tr>
+                            <td>
+                                <span ng-bind="$index+1"></span>
+                            </td>
+                            <td><span ng-bind="service.privateDateObj.productData[service.privateDateObj.productmodelData[item.productmodelid].productid].name"></span></td>
+                            <td colspan="2" style="width:35%">
+                                <ui-select style="width:100%;" ng-model="item.productmodelid" ng-verify
+                                           on-select="item.__update = true; item.productnumber = (item.productnumber ? item.productnumber : 1); ">
+                                    <ui-select-match>
+                                        <span ng-bind="$select.selected.value.name">
+                                        </span>
+                                    </ui-select-match>
+                                    <ui-select-choices group-by="'productid'" repeat="val.value.idproductmodel as (key,val) in service.privateDateObj.productmodelData | filter: { value: { name: $select.search }}">
+                                        <div ng-bind-html="val.value.name| highlight: $select.search"></div>
+                                        <small>
+                                            <span style="color:#666" ng-bind-html="'&nbsp;&nbsp;'+service.privateDateObj.productData[val.value.productid].name | highlight: $select.search"></span>
+                                        </small>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </td>
+                            <td style="">
+                                <input type="text" class="form-control" ng-model="item.serials" ng-verify="{min:1,max:10}" style="width:100px;" />
+                            </td>
+                            <td style="">
+                                <button class="btn  btn-xs btn-warning" type="button" ng-click="delProductlist(item);"><i class="fa fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row top-10 clearfix" style="line-height:28px;">
+                    <label class="col-xs-3 text-right">故障现象</label>
+                    <!--<div class="col-xs-8" style="padding: 0px;" text-angular="text-angular" placeholder="请在此输入问题描述" ng-model="selectItem.__mark"></div>-->
+                    <!-- 加载编辑器的容器 -->
+                    <script class="col-xs-8" style="padding: 0px;" id="container" name="content" type="text/plain">
+                    </script>
+                </div> 
+                <div  class="row top-10" style="line-height:28px;">
+                    <label class="col-xs-3 text-right">抄送</label>
+                    <div class="col-xs-8" style="padding-left:0px;">
+                        <ui-select multiple ng-model="selectItem.refusers" theme="select2" style="width:100%;">
+                            <ui-select-match placeholder="请选择抄送">
+                                <span ng-bind="$item.value.description" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.value.idusers  as (key,item) in service.privateDateObj.usersData | filter: { value: { description: $select.search }}" style="max-height: 150px;">
+                                <div ng-bind-html="item.value.description | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+                <br />
+                <div class="col-xs-12 text-center">
+                    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="saveData(0)" ng-if="Action==0||Action==1" title="请检查数据是否正确填写！">
+                        保存
+                    </button>
+                    <button class="btn btn-warning btn-sm" type="button" ng-click="reworkModal.close();">取消</button>
+                </div>
+            </form>
+        </div>
+
+    </aside>     
+    <aside class="reworkuploadmodaltemplate canvi-navbar">
+        <div class="canvi-user-info">
+            <div class="canvi-user-info__data">
+                <span class="canvi-user-info__title" ng-bind="reworkuploadModal.title"></span>
+                <!--<a href="#" class="canvi-user-info__meta">XXXX编辑</a>-->
+                <div class="canvi-user-info__close" ng-click="reworkuploadModal.toggle();"></div>
+            </div>
+
+        </div>
+        <div class="col-xs-12">
+            <form name="Form" class="container-fluid" verify-scope="tipStyle: 0">
+                <table class="table top-10" style="width: 100%; margin-bottom: 10px;">
+                    <tr class="info" ng-init="total=0">
+                        <td colspan="7">
+                            <span>维修设备(<b style="color:red;"> * 必填</b>)</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>序号</td>
+                        <td>设备名称</td>
+                        <td >设备型号</td>
+                        <td>设备序列号</td>
+                        <td>返修状态</td>
+                        <td>新序列号</td>
+                    </tr>
+                    <tbody class="project-tr" ng-repeat="item in selectItem.__refprojectdevicelist" ng-if="!item.__delelte&&!item.__deleted">
+                        <tr>
+                            <td>
+                                <span ng-bind="$index+1"></span>
+                            </td>
+                            <td><span ng-bind="service.privateDateObj.productData[service.privateDateObj.productmodelData[item.productmodelid].productid].name"></span></td>
+                            <td style="width:35%">
+                                <span ng-bind="service.privateDateObj.productmodelData[item.productmodelid].name"></span>
+                            </td>
+                            <td style="">
+                                <span ng-bind="item.serials"></span>
+                            </td>
+                            <td style="">
+                                <ui-select ng-model="item.status" ng-verify>
+                                    <ui-select-match placeholder="请选择">
+                                        <span ng-bind="$select.selected.value.name" style="margin-right: 5px;">
+                                        </span>
+                                    </ui-select-match>
+                                    <ui-select-choices repeat="item.value.id as (key,item) in service.privateDateObj.reworkdevicestatusData |filter: { value: { name: $select.search }} track by $index" style="max-height: 150px;">
+                                        <div ng-bind-html="item.value.name | highlight: $select.search"></div>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </td>
+                            <td style=""><input type="text" class="form-control" ng-model="item.newserial" style="width:100px;" /></td> 
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row clearfix" style="line-height:28px;">
+                    <label class="col-xs-2"><b class="c-red">*</b>结果描述：</label>
+                    <!-- 加载编辑器的容器 -->
+                    <script class="col-xs-9" style="padding: 0px;" id="description" name="content" type="text/plain">
+                    </script>
+                </div>
+                <br />
+                <div class="col-xs-12 text-center">
+                    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="savestatusData(1,selectItem)" title="请检查数据是否正确填写！">
+                        保存
+                    </button>
+                    <button class="btn btn-warning btn-sm" type="button" ng-click="reworkuploadModal.close();">取消</button>
+                </div>
+            </form>
+        </div>
+
+    </aside>  
+</block>
+<block name="scriptTemplate">
+</block>
+
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmschedule/Rework/index.js?v={$Think.const.CRM_VERSION}"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagebtn.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmschedule/Rework/uploadBtn.js"></script>
+    <!-- 配置文件 -->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}ueditor/1.4.3.3/ueditor.config.js"></script>
+    <!-- 编辑器源码文件 -->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}ueditor/1.4.3.3/ueditor.all.js"></script>
+</block>​

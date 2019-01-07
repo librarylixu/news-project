@@ -1,0 +1,46 @@
+ <!--头部-->
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <button class="btn btn-default"
+                    mwl-date-modifier
+                    date="calendarData.viewDate"
+                    ng-click=" calendarData.timespanClicked(0,calendarData.today)">
+                回到今天
+            </button>&nbsp;&nbsp;&nbsp;
+            <div class="btn-group">
+                <button class="btn btn-primary"
+                        mwl-date-modifier
+                        date="calendarData.viewDate"
+                        decrement="calendarData.calendarView"
+                        ng-click="calendarData.cellIsOpen = false">
+                    <i class="fa fa-chevron-left" aria-hidden="true"></i>
+
+                </button>
+                <!--ng-click=" calendarData.timespanClicked(0,calendarData.today)" set-to-today  date="calendarData.viewDate"  -->
+                <button class="btn btn-default"
+                        mwl-date-modifier
+                        date="calendarData.viewDate"
+                        ng-click=" calendarData.timespanClicked(0,calendarData.today)">
+                    {{calendarData.calendarTitle}}
+                </button>
+                <button class="btn btn-primary"
+                        mwl-date-modifier
+                        date="calendarData.viewDate"
+                        increment="calendarData.calendarView"
+                        ng-click="calendarData.cellIsOpen = false">
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+        <br class="visible-xs visible-sm">
+        <div class="col-md-6 text-center">
+            <div class="btn-group">
+                <label class="btn btn-primary" ng-model="calendarData.calendarView" uib-btn-radio="'year'">年</label>
+                <label class="btn btn-primary" ng-model="calendarData.calendarView" uib-btn-radio="'month'">月</label>
+                <label class="btn btn-primary" ng-model="calendarData.calendarView" uib-btn-radio="'day'" ng-click="calendarData.cellIsOpen = false">日</label>
+                <label class="btn btn-primary" ng-click="select()">
+                    <i class="glyphicon glyphicon-refresh"></i>
+                </label>
+            </div>
+        </div>
+    </div>

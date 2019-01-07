@@ -1,0 +1,207 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{servicetitle}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="config_cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+<div class="modal-body" style="max-height:508px;">
+    <!--RDP-->
+    <div ng-if="service.selectItem.sessiontype.typename=='RDP'">
+        <div class="btn-group btn-group-sm">
+            <button type="button" class="btn" ng-class="tab_page=='tab_Basic'||tab_page==undefind?'btn-primary':'btn-default'" ng-click="tab_page = 'tab_Basic'">基本</button>
+            <button type="button" class="btn" ng-class="tab_page=='tab_show'?'btn-primary':'btn-default'" ng-click="tab_page = 'tab_show'">显示</button>
+            <button type="button" class="btn" ng-class="tab_page=='tab_local'?'btn-primary':'btn-default'" ng-click="tab_page = 'tab_local'">本地</button>
+            <button type="button" class="btn" ng-class="tab_page=='tab_program'?'btn-primary':'btn-default'" ng-click="tab_page = 'tab_program'">程序</button>
+            <button type="button" class="btn" ng-class="tab_page=='tab_advanced'?'btn-primary':'btn-default'" ng-click="tab_page = 'tab_advanced'">高级</button>
+        </div>
+        <div class="top-5">
+            <!--基本-->
+            <div class="panel panel-default" ng-if="tab_page=='tab_Basic'||tab_page==undefind">
+                <div class="panel-body">
+                    端口<input type="text" ng-model="service.selectItem.sessiontype.setting.port" /><br />
+                    域<input type="text" ng-model="service.selectItem.sessiontype.setting.domain" /><br />
+                    <input type="checkbox" ng-model="service.selectItem.sessiontype.setting.console" /> 是否登录到主控会话或管理模式（console session, or admin mode）
+                    <br />
+                    <input type="checkbox" ng-model="service.selectItem.sessiontype.setting.legacyMode" />兼容模式(如果你正在连接到 xrdp 或 VirtualBox RDP 请启用兼容模式)
+                    <br />
+                </div>
+            </div>
+            <!--显示-->
+            <div class="panel panel-default" ng-if="tab_page=='tab_show'">
+                <div class="panel-body">
+                    <label>输入您的远程桌面的大小：</label><br />
+                    宽度：<input type="text" ng-model="service.selectItem.sessiontype.setting.width" /><br />
+                    高度：<input type="text" ng-model="service.selectItem.sessiontype.setting.height" /><br />
+                    <button class="btn btn-primary btn-xs" ng-click="service.selectItem.sessiontype.setting.width=0;service.selectItem.sessiontype.setting.height=0;">全屏浏览器</button>
+                    <button class="btn btn-primary btn-xs" ng-click="btn_useFullScreen();">全屏显示器</button>
+                    <br />
+                    <label>颜色深度</label><br />
+                    <select class="form-control" ng-model="service.selectItem.sessiontype.setting.server_bpp">
+                        <option value="8">256</option>
+                        <option value="16" ng-selected="true">高色彩(16位)</option>
+                        <option value="24">真彩色(24位)</option>
+                        <option value="32">最高质量(32位)</option>
+                    </select>
+                    <br />
+                    <input type="checkbox" ng-model="service.selectItem.sessiontype.setting.nocursor" />禁用远程光标
+                </div>
+            </div>
+            <!--本地-->
+            <div class="panel panel-default" ng-if="tab_page=='tab_local'">
+                <div class="panel-body">
+                    <label>远程音频播放：</label>
+                    <select class="form-control" style="width:120px;" ng-model="service.selectItem.sessiontype.setting.playSound">
+                        <option value="0" ng-selected="true">启用</option>
+                        <option value="1">禁用</option>
+                        <option value="2">仅在远程电脑上播放</option>
+                    </select>
+                    <label>质量 ：</label>
+                    <select class="form-control" style="width:120px;" ng-model="service.selectItem.sessiontype.setting.soundPref">
+                        <option value="0">低</option>
+                        <option value="1" ng-selected="true">高</option>
+                    </select><br />
+                    <label>选择您想要在远程会话中使用的设备和资源</label><br />
+                    <input type="checkbox" ng-model="service.selectItem.sessiontype.setting.mapClipboard" />启用剪贴板(在本地和远程之间复制文本，图像，html)<br />
+                    <input type="checkbox" ng-model="service.selectItem.sessiontype.setting.mapPrinter" />打印机,名称<input type="text" value="0" /><br />
+                    <input type="checkbox" ng-model="service.selectItem.sessiontype.setting.mapDisk" />上传/下载文件(连接后将文件拖到屏幕上)
+                </div>
+            </div>
+            <!--程序-->
+            <div class="panel panel-default" ng-if="tab_page=='tab_program'">
+                <div class="panel-body">
+                    <input type="radio" ng-model="service.selectItem.sessiontype.setting.startProgram" value="shell" name="tab_program" />连接时启动以下程序:<br />
+                    程序路径和文件名称 <input type="text" ng-model="service.selectItem.sessiontype.setting.command" /><br />
+                    从以下文件夹开始<input type="text" ng-model="service.selectItem.sessiontype.setting.directory" /><br />
+                    <hr />
+                    <input type="radio" ng-model="service.selectItem.sessiontype.setting.startProgram" value="app" name="tab_program" />RemoteApp:<br />
+                    EXE或文件 <input type="text" ng-model="service.selectItem.sessiontype.setting.exe" /><br />
+                    参数<input type="text" ng-model="service.selectItem.sessiontype.setting.args" /><br />
+                    <hr />
+                    <input type="radio" ng-model="service.selectItem.sessiontype.setting.startProgram" ng-checked="true" value="noapp" name="tab_program" checked />没有
+                </div>
+            </div>
+            <!--高级-->
+            <div class="panel panel-default" ng-if="tab_page=='tab_advanced'">
+                <div class="panel-body">
+                    <input type="checkbox" ng-model="service.selectItem.sessiontype.setting.background" />桌面背景<br />
+                    <input type="checkbox" ng-model="service.selectItem.sessiontype.setting.smoothfont" />字体平滑<br />
+                    <input type="checkbox" ng-model="service.selectItem.sessiontype.setting.composition" />桌面组成<br />
+                    <input type="checkbox" ng-model="service.selectItem.sessiontype.setting.contents" />拖动时显示窗口内容<br />
+                    <input type="checkbox" ng-model="service.selectItem.sessiontype.setting.animation" />菜单和窗口动画<br />
+                    <input type="checkbox" ng-model="service.selectItem.sessiontype.setting.styles" />视觉风格<br />
+                    <input type="checkbox" ng-model="service.selectItem.sessiontype.setting.bitmap" />持久性位图缓存<br />
+                    <hr />
+                    网络级别认证(credSSP)
+                    <select class="form-control" ng-model="service.selectItem.sessiontype.setting.credSSP">
+                        <option value="0">启用</option>
+                        <option value="1" ng-selected="true">禁用</option>
+                        <option value="2">自动</option>
+                    </select>
+                    <br />
+                    <input type="checkbox" ng-model="service.selectItem.sessiontype.setting.remotefx" />RemoteFX（仅限32位彩色和局域网）<br />
+                    会话记录
+                    <select class="form-control" ng-model="service.selectItem.sessiontype.setting.sessionRecord">
+                        <option value="0">禁用</option>
+                        <option value="1" ng-selected="true">仅录制图形</option>
+                    </select>
+                    <br />
+                    <input type="checkbox" ng-model="service.selectItem.sessiontype.setting.decompressingRDP61" />RDP6.1解压<br />
+                    <!--负载均衡：<input type="text" ng-model="service.selectItem.sessiontype.setting.loadBalanceInfo" /><br />-->
+                    <!--Hyper-V VM ID：<input type="text" ng-model="service.selectItem.sessiontype.setting.vmid" />连接到Hyper-V控制台时，Hyper-V控制台的默认侦听端口是2179<br />-->
+                    <!--计算机名称：<input type="text" ng-model="service.selectItem.sessiontype.setting.clientHost" /><br />-->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--xRDP-->
+    <div ng-if="service.selectItem.sessiontype.typename=='xRDP'">
+        无
+    </div>
+    <!--VNC-->
+    <div ng-if="service.selectItem.sessiontype.typename=='VNC'">
+        端口<input type="text" ng-model="service.selectItem.sessiontype.setting.port" /><br />
+        编码方式
+        <select class="form-control" ng-model="service.selectItem.sessiontype.setting.encoding">
+            <option value="ZRLE" ng-selected="true">ZRLE</option>
+            <option value="Raw">Raw</option>
+            <option value="Tight">Tight</option>
+            <option value="Hextile">Hextile</option>
+        </select>
+        <br />
+        图像质量
+        <select class="form-control" ng-model="service.selectItem.sessiontype.setting.quality">
+            <option value="1">1 (Lowest quality)</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5" ng-selected="true">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9 (Best quality)</option>
+        </select>
+        <br />
+        ZIP压缩
+        <select ng-model="service.selectItem.sessiontype.setting.compression">
+            <option value="1">1(Little compression)</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6" ng-selected="true">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+        </select>
+        CopyRect编码
+        <input type="checkbox" ng-model="service.selectItem.sessiontype.setting.UseCopyRect" /><br />
+        Colors
+        <select class="form-control" ng-model="service.selectItem.sessiontype.setting.color">
+            <option value="32">Full color(24bit)</option>
+            <option value="8">256 color</option>
+            <option value="16" ng-selected="true">Full color(16bit,Tight encoding only)</option>
+        </select>
+        <br />
+        <input type="checkbox" ng-model="service.selectItem.sessiontype.setting.share" />共享服务器<br />
+        <input type="checkbox" ng-model="service.selectItem.sessiontype.setting.mapClipboard" />启用剪贴板<br />
+        会话记录
+        <select class="form-control" ng-model="service.selectItem.sessiontype.setting.sessionRecord">
+            <option value="0">禁用</option>
+            <option value="1" ng-selected="true">仅录制图形</option>
+        </select>
+    </div>
+    <!--SSH-->
+    <div ng-if="service.selectItem.sessiontype.typename=='SSH'">
+        端口<input type="text" ng-model="service.selectItem.sessiontype.setting.port" /><br />
+        字体大小<input type="text" ng-model="service.selectItem.sessiontype.setting.fontSize" />(像素)<br />
+        <input type="checkbox" ng-model="service.selectItem.sessiontype.setting.mapClipboard" />启用剪贴板<br />
+        会话记录
+        <select class="form-control" ng-model="service.selectItem.sessiontype.setting.sessionRecord">
+            <option value="0">禁用</option>
+            <option value="1" ng-selected="true">仅录制图形</option>
+        </select>
+    </div>
+    <!--TELNET-->
+    <div ng-if="service.selectItem.sessiontype.typename=='TELNET'">
+        端口<input type="text" ng-model="service.selectItem.sessiontype.setting.port" /><br />
+        字体大小<input type="text" ng-model="service.selectItem.sessiontype.setting.fontSize" />(像素)<br />
+        <input type="checkbox" ng-model="service.selectItem.sessiontype.setting.mapClipboard" />启用剪贴板<br />
+        会话记录
+        <select class="form-control" ng-model="service.selectItem.sessiontype.setting.sessionRecord">
+            <option value="0">禁用</option>
+            <option value="1" ng-selected="true">仅录制图形</option>
+        </select>
+    </div>
+    <!--KVM-->
+    <div ng-if="service.selectItem.sessiontype.typename=='KVM'">
+        启动方式
+        <select class="form-control" ng-model="service.selectItem.sessiontype.setting.kvmStartType">
+            <option value="0" ng-selected="true">Avocent</option>
+            <option value="1">Emerson</option>
+        </select>
+    </div>
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" type="button" ng-click="btn_save()">保存</button>
+    <button class="btn btn-warning btn-sm" type="button" ng-click="config_cancel()">取消</button>
+</div>

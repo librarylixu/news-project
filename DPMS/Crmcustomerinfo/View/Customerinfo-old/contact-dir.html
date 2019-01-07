@@ -1,0 +1,45 @@
+﻿<div ng-controller="saveContactController" >
+    <a href="javascript:;" class="btn btn-sm btn-info f-r" ng-click="addContact()"><i class="fa fa-plus"></i>&nbsp;添加联系人</a>
+
+        <table class="table">
+            <tr>
+                <th >序号</th>
+                <th >名称</th>
+                <th >职位</th>
+                <th >手机</th>
+                <th >电话</th>
+                <!--<th style="width:10%;">QQ</th>-->
+                <th >邮箱</th>
+                <th >操作</th>
+            </tr>
+
+            <tr ng-repeat="item in service.contactData">
+                <td ng-bind="$index+1">1</td>
+                <td>
+                    <edit-confix value="item" confixname="'name'" verify="'min:1, max:25'" confixtype="'text'" spanvisible=1 inputvisible=0 editbtn=0 savebtn=0 backbtn=0 save-contact="saveConfix(newvalue,newconfixname)"></edit-confix>
+                </td>
+                <td>
+                    <edit-confix value="item" confixname="'position'" verify="'min:1, max:25'" confixtype="'text'" spanvisible=1 inputvisible=0 editbtn=0 savebtn=0 backbtn=0 save-contact="saveConfix(newvalue,newconfixname)"></edit-confix>
+                </td>
+                <td>
+                    <edit-confix value="item" confixname="'mobilephone'" verify="''" confixtype="'phone'" spanvisible=1 inputvisible=0 editbtn=0 savebtn=0 backbtn=0 save-contact="saveConfix(newvalue,newconfixname)"></edit-confix>
+                </td>
+                <td>
+                    <edit-confix value="item" confixname="'phone'" verify="'{pattern:/^0\d{2,3}-\d{7,8}(-\d{1,6})?$/,errmsg:\'电话号码格式不正确\',required:false}'" confixtype="'text'" spanvisible=1 inputvisible=0 editbtn=0 savebtn=0 backbtn=0 save-contact="saveConfix(newvalue,newconfixname)"></edit-confix>
+                </td>
+                <!--<td>
+                    <span ng-if="!item._edit" ng-bind="item.qqchat"></span>
+                    <input ng-if="item._edit" ng-verify="{pattern:/^[1-9]\d{4,8}$/,errmsg:'QQ格式不正确',required:false}" type="text" ng-model="item.qqchat" />
+                </td>-->
+                <td>
+                    <edit-confix value="item" confixname="'email'" verify="'{pattern:/^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/,errmsg:\'邮箱格式不正确\',required:false}'" confixtype="'text'" spanvisible=1 inputvisible=0 editbtn=0 savebtn=0 backbtn=0 save-contact="saveConfix(newvalue,newconfixname)"></edit-confix>
+                </td>
+                <td>
+                    <button class="btn  btn-xs btn-info" type="button" ng-if="!item._edit" ng-click="item._edit=!item._edit;"><i class="fa fa-edit"></i></button>
+                    <button class="btn  btn-xs btn-info" type="button" ng-verify="control:'Form'" ng-if="item._edit" ng-click="saveContact(item,1);item._edit=!item._edit"><i class="fa fa-save"></i></button>
+                    <button class="btn  btn-xs btn-warning" type="button" ng-if="!item._edit" ng-click="saveContact(item,2)"><i class="fa fa-trash"></i></button>
+                </td>
+            </tr>
+        </table>
+
+</div>

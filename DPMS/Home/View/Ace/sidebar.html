@@ -1,0 +1,12 @@
+
+<ul class="nav nav-list">
+    <li ng-repeat="item in sidebar.root"
+        ng-include="'__APP__/Home/Ace/page_m_sidebar_item'"
+        ng-class="{'open':item.submenu && isSubOpen(item.name), 'active': isActiveItem(item.name), 'hover': $parent.ace.settings.hover, 'highlight': $parent.ace.settings.highlight}">
+
+    </li>
+</ul>
+
+<div class="sidebar-toggle sidebar-collapse">		
+  <i class='ace-icon fa' ng-class="{'fa-angle-double-left': !ace.sidebar.minimized, 'fa-angle-double-right': ace.sidebar.minimized}"></i>
+</div>

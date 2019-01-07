@@ -1,0 +1,15 @@
+﻿<treecontrol class="tree-light" tree-model="service.treemydevicegroupdata">
+    <span ng-mouseenter="mouseenter=true" ng-mouseleave="mouseenter=false">
+        <span ng-bind="node.groupname"></span>
+        <i class="fa fa-plus green" uib-popover="为【{{node.groupname}}】添加一个子集分组" popover-trigger="'mouseenter'" popover-placement="top-left" popover-append-to-body="true" style="white-space:nowrap;" ng-show="mouseenter" ng-click="add(node,0)"></i>
+        <i class="fa fa-edit green" uib-popover="编辑【{{node.groupname}}】分组" popover-trigger="'mouseenter'" popover-placement="top-left" popover-append-to-body="true" style="white-space:nowrap;" ng-show="mouseenter" ng-click="update(node,0)"></i>
+        <i class="fa fa-trash red" uib-popover="删除【{{node.groupname}}】分组" popover-trigger="'mouseenter'" popover-placement="top-left" popover-append-to-body="true" style="white-space:nowrap;" ng-show="mouseenter" ng-click="remove(node,0)"></i>
+        <a uib-popover="查看或编辑【{{node.groupname}}】关联添加的用户" popover-trigger="'mouseenter'" popover-placement="top-left" popover-append-to-body="true" style="white-space:nowrap;" ng-click="refuser(node)">
+            用户(<span ng-bind="usersCount(node,1)"></span>)
+        </a>
+        <a uib-popover="查看或编辑【{{node.groupname}}】关联添加的用户组" popover-trigger="'mouseenter'" popover-placement="top-left" popover-append-to-body="true" style="white-space:nowrap;" ng-click="refusergroup(node)">
+            用户组(<span ng-bind="usersCount(node,0)"></span>)
+        </a>
+    </span>
+</treecontrol>
+ 

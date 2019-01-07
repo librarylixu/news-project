@@ -1,0 +1,39 @@
+﻿<!--页头-->
+<div class="page-header clearfix">
+    <div class="col-xs-12 text-center">
+        <a ng-click="select(1)" class="btn btn-success btn-sm">
+            <i class="glyphicon glyphicon-refresh"></i>&nbsp;刷新
+        </a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-2">
+        我的设备组tree
+    </div>
+    <div class="col-xs-10">
+        <div widget-box="" class="widget-box transparent " wb-reloading="is_activity_reloading">
+            <div class="widget-header widget-header-small">
+                <h4 class="widget-title blue smaller">
+                    <i class="ace-icon fa fa-rss orange"></i>
+                    设备信息列表(<span ng-init="assetsdeviceDataCount={count:0}" ng-bind="assetsdeviceDataCount.count"> </span>)
+                </h4>
+                <div class="widget-toolbar action-buttons">
+                    快速检索：<input type="text" ng-model="filtername" />
+                </div>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main padding-8">
+                    <div acs-scroll options="activityScroll">
+                        <table class="profile-feed">
+                            <!--Device Show-->
+                            <tbody ng-include="'__APP__/Eimdevice/Assetsdevicelist/devicelist'"></tbody>
+
+                            <!--Dpulist Show-->
+                            <tbody ng-include="'__APP__/Eimdevice/Dpulist/pdulist'"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

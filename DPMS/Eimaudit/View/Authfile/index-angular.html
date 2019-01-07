@@ -1,0 +1,42 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="btn_cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+<div class="modal-body">
+   <table class="table">
+       <thead>
+           <tr>
+               <th>时间</th>
+               <th>用户</th>
+               <th>审计类型</th>
+               <th>会话开启类型</th>
+               <th>操作</th>
+           </tr>
+       </thead>
+       <tbody>
+           <tr ng-repeat="item in service.authfileData">{{item}}
+               <td ng-bind="item.time?formatDate(item.time):'暂无'"></td>
+               <td ng-bind="item.userid?service.usersData[item.userid].username:'暂无'"></td>
+               <td >
+                   <span ng-if="item.type=='all'">会话</span>
+                   <span ng-if="item.type=='input'">用户输入的内容</span>
+                   <span ng-if="item.type=='t_all'">文本统计所有内容</span>
+                   <span ng-if="item.type=='t_input'">文本统计所有输入</span>
+                   <span ng-if="item.type=='video'">视频记录</span>
+                   <span ng-if="item.type=='recording'">串口会话手动记录</span>
+               </td>
+               <td ng-bind="item.sessiontype=='create'?'新建':'抢占'">
+                   
+               </td>
+               <td>
+                   <a href="javascript:;" ng-click="openPlayback(item);"><i class="fa fa-search green"></i>&nbsp;查看回放</a> 
+               </td>
+           </tr>
+       </tbody>
+   </table>
+</div>
+<div class="modal-footer" style="clear:both;">   
+    <button class="btn btn-danger btn-sm" type="button" ng-click="btn_cancel();">关闭</button>
+</div>
+
+

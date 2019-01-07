@@ -1,0 +1,217 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+<div class="modal-body" style="padding-top:8px;">
+    <form name="Form" class="container-fluid" verify-scope="">
+        <table class="table">
+            <tr class="info">
+                <td colspan="6">基本信息</td>
+            </tr>
+            <tr>
+                <td class="text-right"><b class="c-red">*</b>客户名称</td>
+                <td colspan="2">
+                    <input type="text" ng-verify="min:1, max:25" class="col-xs-12" ng-readonly="Source.Action>1" id="check" ng-keyup="check()" ng-model="Source.selectItem.name" placeholder="输入1~25位字符名称" />
+                </td>
+                <td class="text-right" style="width:15%;">简称</td>
+                <td colspan="2">
+                    <input type="text" ng-verify="{required:false,min:1, max:25}" class="col-xs-12" ng-model="Source.selectItem.abbreviation" placeholder="输入1~25位字符名称" />
+                </td>
+            </tr>
+            <tr>
+                <td class="text-right">办公电话</td>
+                <td colspan="2">
+                    <input type="text" class="col-xs-12" ng-verify="{pattern:/^\d{2,4}-\d{7,8}(-\d{1,6})?$/,errmsg:'电话格式不正确',required:false}" ng-model="Source.selectItem.officephone" placeholder="输入电话号码" />
+                </td>
+                <td class="text-right">传真</td>
+                <td colspan="2">
+                    <input type="text" ng-verify="{pattern:/^\d{2,4}-\d{7,8}(-\d{1,6})?$/,errmsg:'传真格式不正确',required:false}" ng-model="Source.selectItem.fax" class="col-xs-12" placeholder="请输入传真号码（非必填）" />
+                </td>
+
+            </tr>
+            <tr>
+                <td class="text-right">网址</td>
+                <td colspan="5">
+                    <input ng-verify="{min:0,max:70 ,pattern:/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/,errmsg:'网址格式不正确',required:false}" type="text" ng-model="Source.selectItem.url" class="col-xs-12" placeholder="请输入网址" />
+                </td>
+            </tr>
+            <tr>
+                <td class="text-right"><b class="c-red">*</b>联系地址</td>
+                <td colspan="5">
+                    <input type="text" ng-verify="pattern:/[\u4e00-\u9fa5]/, errmsg:'需要输入中文' " class="col-xs-12" ng-model="Source.selectItem.address" placeholder="请输入中文" />
+                </td>
+            </tr>
+            </table>
+            <table class="table">
+                <tr class="info">
+                    <td colspan="6">类别信息</td>
+                </tr>
+                <tr>
+                    <td class="text-right">客户类型</td>
+                    <td colspan="2">                       
+                        <ui-select style="width:100%" ng-model="Source.selectItem.reftypeids">
+                            <ui-select-match placeholder="请选择客户类型">
+                                <span ng-bind="$select.selected.value.typename" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.key  as (key,item) in service.privateDateObj.customertypeData | filter: { value: { typename: $select.search }} " style="max-height: 150px;">
+                                <div ng-bind-html="item.value.typename | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+                    <td class="text-right">客户等级</td>
+                    <td colspan="2">                       
+                        <ui-select style="width:100%" ng-model="Source.selectItem.reflevelids">
+                            <ui-select-match placeholder="请选择客户等级">
+                                <span ng-bind="$select.selected.value.levelname" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.key  as (key,item) in service.privateDateObj.customerlevelData | filter: { value: { levelname: $select.search }} " style="max-height: 150px;">
+                                <div ng-bind-html="item.value.levelname | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">客户行业</td>
+                    <td colspan="2">                       
+                        <ui-select style="width:100%" ng-model="Source.selectItem.refindustryids">
+                            <ui-select-match placeholder="请选择客户行业">
+                                <span ng-bind="$select.selected.value.industryname" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.key  as (key,item) in service.privateDateObj.customerindustryData | filter: { value: { industryname: $select.search }} " style="max-height: 150px;">
+                                <div ng-bind-html="item.value.industryname | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+                    <td class="text-right">客户来源</td>
+                    <td colspan="2">
+                        <!--<select style="width:100%" ng-options="item.idcustomersource as item.name for (key,item) in service.privateDateObj.customersourceData" ng-model="Source.selectItem.refsourceids"></select>-->
+                        <ui-select style="width:100%" ng-model="Source.selectItem.refsourceids">
+                            <ui-select-match placeholder="请选择客户来源">
+                                <span ng-bind="$select.selected.value.name" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.key  as (key,item) in service.privateDateObj.customersourceData | filter: { value: { name: $select.search }} " style="max-height: 150px;">
+                                <div ng-bind-html="item.value.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td class="text-right">客户市场</td>
+                    <td colspan="2">                      
+                        <ui-select style="width:100%" ng-model="Source.selectItem.refmarketids">
+                            <ui-select-match placeholder="请选择客户市场">
+                                <span ng-bind="$select.selected.value.name" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.key  as (key,item) in service.privateDateObj.customermarketData | filter: { value: { name: $select.search }} " style="max-height: 150px;">
+                                <div ng-bind-html="item.value.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+                    <td class="text-right">信用等级</td>
+                    <td colspan="2">                       
+                        <ui-select style="width:100%" ng-model="Source.selectItem.refcreditids">
+                            <ui-select-match placeholder="请选择客户信用等级">
+                                <span ng-bind="$select.selected.value.name" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.key  as (key,item) in service.privateDateObj.customercreditData | filter: { value: { name: $select.search }} " style="max-height: 150px;">
+                                <div ng-bind-html="item.value.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">客户状态</td>
+                    <td colspan="2">
+                        <ui-select style="width:100%" ng-model="Source.selectItem.refstatusids">
+                            <ui-select-match placeholder="请选择客户状态">
+                                <span ng-bind="$select.selected.value.status" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.key  as (key,item) in service.privateDateObj.customerstatusData | filter: { value: { status: $select.search }} " style="max-height: 150px;">
+                                <div ng-bind-html="item.value.status | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+                    <td class="text-right">当前阶段</td>
+                    <td colspan="2">                       
+                        <ui-select style="width:100%" ng-model="Source.selectItem.refstageids">
+                            <ui-select-match placeholder="请选择当前阶段">
+                                <span ng-bind="$select.selected.value.name" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.key  as (key,item) in service.privateDateObj.customerstageData | filter: { value: { name: $select.search }} " style="max-height: 150px;">
+                                <div ng-bind-html="item.value.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+                </tr>
+            </table>
+            <table class="table">
+                <tr class="info">
+                    <td colspan="6"><span><b class="c-red">*</b>客户联系人信息</span><button type="button" ng-click="add_contact()" class="btn btn-xs btn-success f-r">添加联系人</button></td>
+                </tr>
+                <tr>
+                    <td>姓名</td>
+                    <td>职位</td>
+                    <td>手机</td>
+                    <td>电话</td>
+                    <td>邮箱</td>
+                    <td>操作</td>
+                </tr>
+                <tr class="contact-tr" ng-repeat="item in service.contactData">
+                    <td style="width:15%;">
+                        <span ng-bind="item.name"></span>
+                    </td>
+                    <td style="width:10%;">
+                        <span ng-bind="item.position"></span>
+                    </td>
+                    <td style="width:20%;">
+                        <span ng-bind="item.mobilephone"></span>
+                    </td>
+                    <td style="width:20%;">
+                        <span ng-bind="item.phone"></span>
+                    </td>
+                    <td style="width:20%;">
+                        <span ng-bind="item.email"></span>
+                    </td>
+                    <td style="width:15%;">
+                        <button class="btn  btn-xs btn-info" type="button" ng-click="edit_contact(item)"><i class="fa fa-edit"></i></button>
+                        <button class="btn  btn-xs btn-warning" type="button" ng-click="del_contact(item)"><i class="fa fa-trash"></i></button>
+                    </td>
+                </tr>
+            </table>
+            <table class="table" style="margin-bottom:8px;">
+                <tr class="info">
+                    <td colspan="6">其他信息</td>
+                </tr>
+                <tr>
+                    <td class="text-right">抄送人</td>
+                    <td colspan="5">
+                        <ui-select multiple ng-model="Source.selectItem.refusers" theme="select2" style="width:100%;">
+                            <ui-select-match placeholder="请选择抄送">
+                                <span ng-bind="$item.value.description" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.value.idusers  as (key,item) in Source.privateDateObj.usersData | filter: { value: { description: $select.search }}" style="max-height: 150px;">
+                                <div ng-bind-html="item.value.description | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+                </tr>
+            </table>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save()" ng-if="Source.Action<2">
+        保存
+    </button>
+    <button class="btn btn-primary btn-sm" type="button" ng-click="save();" ng-if="Source.Action==2">删除</button>
+    <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+</div>

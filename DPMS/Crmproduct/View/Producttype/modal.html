@@ -1,0 +1,38 @@
+    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+   <div class="modal-body">
+    <div class="form-container">
+        <form name="Form" verify-scope class="myform">
+            <div class="form-group">
+                <label>类型名称</label>
+                <input type="text" ng-readonly="Source.Action==2 || Source.Action==3" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.name" placeholder="请输入1~25个字符" />
+            </div>
+            <div ng-show="Source.Action==3">
+                
+                <div class="form-group">
+                    <label>关联产品型号</label>
+                    <div class="mycheckbox">
+                        <div class="checkbox" ng-repeat="productmodel in Source.productmodelData">
+                            <label style="text-align:left;width:80%">
+                                <input type="checkbox" ng-model="productmodel.checked" ng-change="save(productmodel)" />{{productmodel.name}}
+                                &nbsp;&nbsp;&nbsp;<a href="javascript:;" class="green top-5" ng-click="updatemodel(productmodel)"><i class="glyphicon glyphicon-pencil bigger-120"></i></a>
+                                &nbsp;<a href="javascript:;" class="red top-5" ng-click="removemodel(productmodel)"><i class="glyphicon glyphicon-trash bigger-120"></i></a>
+                            </label>
+                        </div>
+                    </div>
+                    <a ng-click="addProductClick()" title="新建产品型号"><i class="fa fa-plus green f-16"></i></a>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save(1)" ng-show="Source.Action==0">连续保存</button>
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save(0)" ng-show="Source.Action==0||Source.Action==1">保存</button>
+    <button class="btn btn-primary btn-sm" type="button" ng-click="save(2)" ng-show="Source.Action==2">删除</button>
+    <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+</div>
+

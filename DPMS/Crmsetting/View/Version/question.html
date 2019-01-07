@@ -1,0 +1,106 @@
+﻿<extend name="angular-base.html" />
+<block name="headcss">
+    <style>
+        .section-box {
+            max-width: 100%;
+            box-sizing: border-box;
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 1;
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+        }
+
+        .section-q {
+            max-width: 100%;
+            box-sizing: border-box;
+            display: inline;
+            float: left;
+            font-size: 38px;
+            color: rgb(32, 209, 253);
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+        }
+
+        .section-and {
+            margin-top: 1.7em;
+            max-width: 100%;
+            box-sizing: border-box;
+            display: inline;
+            float: left;
+            font-size: 13px;
+            color: rgb(153, 153, 153);
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+        }
+
+        .section-a {
+            margin-top: 1em;
+            max-width: 100%;
+            box-sizing: border-box;
+            display: inline;
+            float: left;
+            font-size: 24px;
+            color: rgb(32, 209, 253);
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+        }
+
+        .section-yin {
+            margin-top: 1em;
+            max-width: 100%;
+            box-sizing: border-box;
+            display: inline-block;
+            font-size: 24px;
+            color: rgb(32, 209, 253);
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+        }
+
+        .section-p {
+            max-width: 100%;
+            line-height: 25.6px;
+            font-size: 14px;
+            color: rgb(0, 128, 255);
+            box-sizing: border-box !important;
+            word-wrap: break-word !important;
+        }
+    </style>
+</block>
+<block name="headjs">
+
+</block>
+<block name="pageContent">
+    <!--页头-->
+    <div class="page-header clearfix">
+        <h1 class="col-xs-3 text-left">
+            {$MenuName}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {$PageName}
+            </small>
+        </h1>
+    </div>
+    <div class="col-xs-12">
+        <div>
+            <section class="section-box" style="">
+                <section class="section-q">Q</section>
+                <section class="section-and">&amp;</section>
+                <section class="section-a">A &nbsp;</section>
+            </section>
+            <span class="section-p">1.我访问CRM网站，为什么登录名和密码输入框这么小，而且我登录之后，每个页面都没有添加和刷新按钮呢？</span>
+            <img style="width:100%" src="../../../DPMS/public/images/gif/question1.gif"/>
+            <p>
+                <span class="section-yin">“</span>
+                <span>出现该现象主要是因为我们是基于H5开发的CRM，已不支持IE内核的浏览器，建议您把浏览器调整成兼容模式再重新访问。</span>
+                <span class="section-yin">”</span>
+            </p>
+        </div>
+    </div>
+</block>
+<block name="scriptTemplate">
+</block>
+<block name="footjs">
+
+</block>
+

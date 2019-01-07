@@ -1,0 +1,153 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+<div class="modal-body">
+    <form name="Form" class="container-fluid" verify-scope="tipStyle: 0">
+        <div ng-if="(Source.selectItem.status == null?0:Source.selectItem.status)<1" class="row" style="line-height:28px;">
+            <label class="col-xs-3 text-right"><b class="c-red">*</b>工单标题</label>
+            <input type="text" ng-verify="min:1, max:25" class="col-xs-4" ng-readonly="Source.Action>1" ng-model="Source.selectItem.title" placeholder="输入1~25位字符标题" />
+        </div>
+        <div ng-if="(Source.selectItem.status == null?0:Source.selectItem.status)>0" class="row" style="line-height:28px;">
+            <label class="col-xs-3 text-right"><b class="c-red">*</b>工单标题</label>
+            <div class="col-xs-4" ng-bind="Source.selectItem.title"></div>
+        </div>
+        <div ng-if="(Source.selectItem.status == null?0:Source.selectItem.status)<2" class="row top-10 clearfix" style="line-height:28px;">
+            <label class="col-xs-3 text-right"><b class="c-red">*</b>问题描述</label>
+            <div class="col-xs-8" style="padding: 0px;" text-angular="text-angular" placeholder="请在此输入问题描述" ng-model="Source.mark"></div>
+        </div>
+        <div ng-if="(Source.selectItem.status == null?0:Source.selectItem.status)>1" class="row top-10 clearfix" style="line-height:28px;">
+            <label class="col-xs-3 text-right"><b class="c-red">*</b>问题描述</label>
+            <div class="col-xs-8" style="padding: 0px;" ng-bind="Source.mark"></div>
+        </div>
+        <div ng-if="Source.Action<2 && (Source.selectItem.status == null?0:Source.selectItem.status)<1" class="row top-10" style="line-height:28px;">
+            <label class="col-xs-3 text-right">关联客户</label>
+            <!--<select class="col-xs-8" ng-model="Source.selectItem.refcustomerid" ng-options="item.idcustomerinfo as item.name for item in Source.customerinfoArrData"></select>-->
+            <div class="col-xs-8" style="padding: 0px;">
+                <ui-select multiple ng-model="Source.selectItem.refcustomerid" theme="select2" on-select="save_customer($item, 0)" on-remove="save_customer($item, 1)" style="width:100%;">
+                    <ui-select-match placeholder="请选择客户">
+                        <span ng-bind="$item.name" style="margin-right: 5px;">
+                        </span>
+                    </ui-select-match>
+                    <ui-select-choices repeat="item in (Source.customerinfoArrData | filter:$select.search) track by $index" style="max-height:150px;">
+                        <div ng-bind-html="item.name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <div ng-if="(Source.selectItem.status == null?0:Source.selectItem.status)>0&&Source.selectItem.refcustomerid!=''" class="row" style="line-height:28px;">
+            <label class="col-xs-3 text-right">关联客户</label>
+            <div class="col-xs-4" ng-repeat="cusitem in Source.selectItem.refcustomerid">
+                <span class="label label-default" ng-bind="cusitem.name"></span>
+            </div>
+        </div>
+        <div ng-if="Source.Action<2&&Source.selectItem.refcustomerid.length>0 && (Source.selectItem.status == null?0:Source.selectItem.status)<1" class="row top-10" style="line-height:28px;">
+            <label class="col-xs-3 text-right">关联项目</label>
+            <div class="col-xs-8" style="padding:0px;">
+                <ui-select multiple ng-model="Source.selectItem.refprojectid" theme="select2" on-select="save_project($item,0)" on-remove="save_project($item,1)" style="width:100%;">
+                    <ui-select-match placeholder="请选择项目">
+                        <span ng-bind="$item.name" style="margin-right: 5px;">
+                        </span>
+                    </ui-select-match>
+                    <ui-select-choices repeat="item in (Source.projectArrData | filter:$select.search) track by $index" style="max-height: 150px;">
+                        <div ng-bind-html="item.name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <div ng-if="(Source.selectItem.status == null?0:Source.selectItem.status)>0&&Source.selectItem.refprojectid!=''" class="row" style="line-height:28px;">
+            <label class="col-xs-3 text-right">关联项目</label>
+            <div class="col-xs-4" ng-repeat="proitem in Source.selectItem.refprojectid">
+                <span class="label label-info" ng-bind="proitem.name"></span>
+            </div>
+        </div>
+        <div ng-if="Source.Action<2 && Source.selectItem.refcustomerid.length>0 && (Source.selectItem.status == null?0:Source.selectItem.status)<1" class="row top-10" style="line-height:28px;">
+            <label class="col-xs-3 text-right">关联联系人</label>
+            <div class="col-xs-8" style="padding:0px;">
+                <ui-select multiple ng-model="Source.selectItem.refcontactid" theme="select2" on-select="save_contact($item, 0)" on-remove="save_contact($item,1)" style="width:100%;">
+                    <ui-select-match placeholder="请选择联系人">
+                        <span ng-bind="$item.name" style="margin-right: 5px;">
+                        </span>
+                    </ui-select-match>
+                    <ui-select-choices repeat="item in (Source.contactArrData | filter:$select.search) track by $index" style="max-height: 150px;">
+                        <div ng-bind-html="item.name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <div ng-if="(Source.selectItem.status == null?0:Source.selectItem.status)>0&&Source.selectItem.refcontactid!=''" class="row" style="line-height:28px;">
+            <label class="col-xs-3 text-right">关联联系人</label>
+            <div class="col-xs-4" ng-repeat="conitem in Source.selectItem.refcontactid">
+                <span class="label label-primary" ng-bind="conitem.name"></span>
+            </div>
+        </div>
+        <div ng-if="Source.Action<2 && (Source.selectItem.status == null?0:Source.selectItem.status)<1" class="row top-10" style="line-height:28px;">
+            <label class="col-xs-3 text-right">指派人员</label>
+            <!--<select class="col-xs-3" ng-model="Source.selectItem.assignid" ng-options="item.idusers as item.description for item in Source.usersArrData"></select>-->
+            <div class="col-xs-3" style="padding:0px;">
+                <ui-select ng-model="Source.selectItem.assignid">
+                    <ui-select-match placeholder="请选择指派人">
+                        <span ng-bind="$select.selected.description" style="margin-right: 5px;">
+                        </span>
+                    </ui-select-match>
+                    <ui-select-choices repeat="item in (Source.usersArrData | filter:$select.search) track by $index" style="max-height: 150px;">
+                        <div ng-bind-html="item.description | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <div ng-if="(Source.selectItem.status == null?0:Source.selectItem.status)>0" class="row" style="line-height:28px;">
+            <label class="col-xs-3 text-right">指派人员</label>
+            <div class="col-xs-4">
+                <span class="label label-success" ng-bind="Source.selectItem.assignid.description"></span>
+            </div>
+        </div>
+        <div ng-if="Source.Action<2 && (Source.selectItem.status == null?0:Source.selectItem.status)<1" class="row top-10" style="line-height:28px;">
+            <label class="col-xs-3 text-right">期望解决时间</label>
+            <div class="col-xs-3" style="padding-left:0;">
+                <p class="input-group">
+                    <input style="border-radius:0;" ng-click="open()" type="text" class="form-control" uib-datepicker-popup ng-model="Source.dt" ng-readonly="true" is-open="popup.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="open()"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                </p>
+            </div>
+        </div>
+        <div ng-if="(Source.selectItem.status == null?0:Source.selectItem.status)>0&&Source.selectItem.expectationendtime!=''" class="row" style="line-height:28px;">
+            <label class="col-xs-3 text-right">期望解决时间</label>
+            <div class="col-xs-4">
+                <span ng-bind="Source.selectItem.expectationendtime==0?'暂无时间':formatDate(Source.selectItem.expectationendtime,'yyyy-mm-dd')"></span>
+            </div>
+        </div>
+        <div ng-if="Source.Action<2 && (Source.selectItem.status == null?0:Source.selectItem.status)<1" class="row top-10" style="line-height:28px;">
+            <label class="col-xs-3 text-right">抄送</label>
+            <div class="col-xs-8" style="padding-left:0px;">
+                <ui-select multiple ng-model="Source.selectItem.refusers" theme="select2" style="width:100%;">
+                    <ui-select-match placeholder="请选择抄送">
+                        <span ng-bind="$item.description" style="margin-right: 5px;">
+                        </span>
+                    </ui-select-match>
+                    <ui-select-choices repeat="item in (Source.usersArrData | filter:$select.search) track by item.idusers" style="max-height: 150px;">
+                        <div ng-bind-html="item.description | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <div ng-if="(Source.selectItem.status == null?0:Source.selectItem.status)>0" class="row" style="line-height:28px;">
+            <label class="col-xs-3 text-right">抄送</label>
+            <div class="col-xs-4" ng-repeat="useritem in Source.selectItem.refusers">
+                <span class="label label-default" ng-bind="useritem.description"></span>
+            </div>
+        </div>
+        <br />
+        <br />
+        <br />
+    </form>
+</div>
+<div class="modal-footer">  
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save(0)"ng-if="Source.Action==0||Source.Action==1">
+        保存
+    </button>  
+    <button class="btn btn-primary btn-sm" type="button" ng-click="save(2)" ng-if="Source.Action==2">删除</button>
+    <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+</div>

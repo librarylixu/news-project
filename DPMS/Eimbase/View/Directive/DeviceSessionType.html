@@ -1,0 +1,17 @@
+<div>
+    <div class="checkbox" ng-repeat="item in Source.devicesessiontypeData">
+        <label> 
+            <input type="checkbox"
+                   name="{{item.typename}}"
+                   ng-true-value="item.iddevicesessiontype"
+                   ng-checked="service.devicesessiontypeids.indexOf(item.iddevicesessiontype)>=0"
+                   ng-click="item.checked=ngchange_devicesessiontype($event,item)" /> {{item.typename}}
+        </label>  
+        <span class="btn btn-link btn-xs"
+              ng-if="service.is_show_config_directive"
+              ng-show="item.checked||service.devicesessiontypeids.indexOf(item.iddevicesessiontype)>=0"
+              ng-click="btn_configinfo(item);">
+            详细配置
+        </span>
+    </div>
+</div>

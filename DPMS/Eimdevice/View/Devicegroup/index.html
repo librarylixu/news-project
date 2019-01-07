@@ -1,0 +1,153 @@
+﻿    <!--页头-->
+<div class="page-header clearfix">
+    <div class="col-xs-12 text-center">
+        <a ng-click="add()" class="btn btn-success  btn-sm">
+            <i class="glyphicon glyphicon-plus"></i>
+            添加
+        </a>
+        <a ng-click="" class="btn btn-success btn-sm">
+            <i class="glyphicon glyphicon-refresh"></i>刷新
+        </a>
+    </div>
+</div>
+<div class="mt-5">
+    <div class="table-header">
+        设备组管理       
+    </div>
+    <table class="table table-striped table-bordered table-hover table-condensed table-responsive">
+        <tr>
+            <th>序号</th>
+            <th>设备组</th>
+            <th>父级组</th>
+            <th>关系</th>
+            <th>操作</th>
+        </tr>
+        <tr ng-repeat="(key,item) in service.privateDateObj.devicegroupData">
+            <td ng-bind="key"></td>
+            <td ng-bind="item.groupname"></td>
+            <td ng-bind="item.__parentname"></td>
+            <td>
+                <a href="javascript:;" class="blue">用户(<b ng-bind="item.refusers?(item.refusers.split?item.refusers.split:item.refusers).length:'0'"></b>)</a><br />
+                <a href="javascript:;" class="blue">DPU设备(<b ng-bind="item.__refdpudevices?item.__refdpudevices.length:'0'"></b>)</a><br />
+                <a href="javascript:;" class="blue">KVM设备(<b ng-bind="item.__refkvmdevices?item.__refkvmdevices.length:'0'"></b>)</a><br />
+                <a href="javascript:;" class="blue">用户组(<b ng-bind="item.refugroup?(item.refugroup.split?item.refugroup.split:item.refugroup).length:'0'"></b>)</a>
+            </td>
+            <td>
+                <a href="javascript:;" class="green top-5" ng-click="updateInfo(item)"><i class="glyphicon glyphicon-pencil fa-lg"></i></a>&nbsp;
+                <a href="javascript:;" class="red top-5" ng-click="remove(item)"><i class="glyphicon glyphicon-trash fa-lg"></i></a>
+            </td>
+        </tr>
+    </table>
+    <div class="text-right">共<b class="blue" ng-bind="length(service.privateDateObj.devicegroupData)"></b>条</div>
+</div>
+<script type="text/ng-template" id="Eimdevice/Devicegroup/openmodal">
+    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+    <div class="modal-body" style="padding:0;">
+        <form name="Form" class="container-fluid" verify-scope>
+            <table class="table" style="margin-bottom:8px;">
+                <tr class="info">
+                    <td colspan="4">基本信息</td>
+                </tr>
+                <tr>
+                    <td class="text-right">设备组名称</td>
+                    <td colspan="3"><input style="width:100%;" type="text" ng-model="Source.selectItem.groupname" /></td>
+                </tr>
+                <tr>
+                    <td class="text-right">父级组</td>
+                    <td colspan="3">
+                        <ui-select ng-model="Source.selectItem.pid">
+                            <ui-select-match placeholder="请选择父级">
+                                <span ng-if="$select.selected.value&&$select.selected.value.pid!=0" ng-bind="$select.selected.value.__parentname+'->'+$select.selected.value.groupname" style="margin-right: 5px;">
+                                </span>
+                                <span ng-if="$select.selected.value&&$select.selected.value.pid==0" ng-bind="$select.selected.value.groupname" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.key  as (key,item) in service.privateDateObj.devicegroupData | filter: { value: { groupname: $select.search }}" style="max-height: 150px;">
+                                <div ng-if="item.value.iddevicegroup!=Source.selectItem.iddevicegroup&&item.value.pid!=0" 
+                                     ng-bind-html="item.value.__parentname+'->'+item.value.groupname | highlight: $select.search"></div>
+                                <div ng-if="item.value.iddevicegroup!=Source.selectItem.iddevicegroup&&item.value.pid==0" 
+                                     ng-bind-html="item.value.groupname | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+                </tr>
+                <tr class="info">
+                    <td colspan="4">访问信息</td>
+                </tr>
+                <tr>
+                    <td class="text-right">DPU设备</td>
+                    <td colspan="3">                       
+                        <div>
+                            <ui-select multiple ng-model="Source.selectItem.__refdpudevices" style="width:100%;">
+                                <ui-select-match placeholder="请选择关联DPU设备">
+                                    <span ng-bind="$item.value.devicename" style="margin-right: 5px;">
+                                    </span>
+                                </ui-select-match>
+                                <ui-select-choices repeat="item.value.iddpulist  as (key,item) in service.privateDateObj.dpulistData | filter: { value: { devicename: $select.search }}" style="max-height: 150px;">
+                                    <div ng-bind-html="item.value.devicename | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">KVM设备</td>
+                    <td colspan="3">                       
+                        <div ng-if="datatype=='2'">
+                            <ui-select multiple ng-model="Source.selectItem.__refkvmdevices" style="width:100%;">
+                                <ui-select-match placeholder="请选择关联KVM设备">
+                                    <span ng-bind="$item.value.devicename" style="margin-right: 5px;">
+                                    </span>
+                                </ui-select-match>
+                                <ui-select-choices repeat="item.value.idkvmlist  as (key,item) in service.privateDateObj.kvmlistData | filter: { value: { devicename: $select.search }}" style="max-height: 150px;">
+                                    <div ng-bind-html="item.value.devicename | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right" style="width:25%;">用户组</td>
+                    <td colspan="3" style="width:50%;">
+                        <ui-select multiple ng-model="Source.selectItem.refugroup" style="width:100%;">
+                            <ui-select-match placeholder="请选择关联用户组">
+                                <span ng-if="$item.value.pid!=0" ng-bind="$item.value.__parentname+'->'+$item.value.groupname" style="margin-right: 5px;">
+                                </span>
+                                <span ng-if="$item.value.pid==0" ng-bind="$item.value.groupname" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.value.idusergroup  as (key,item) in service.privateDateObj.usergroupData | filter: { value: { groupname: $select.search }}" style="max-height: 150px;">
+                                <div ng-if="item.value.idusergroup!=Source.selectItem.idusergroup&&item.value.pid!=0"
+                                     ng-bind-html="item.value.__parentname+'->'+item.value.groupname | highlight: $select.search"></div>
+                                <div ng-if="item.value.idusergroup!=Source.selectItem.idusergroup&&item.value.pid==0"
+                                     ng-bind-html="item.value.groupname | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">用户</td>
+                    <td colspan="3">
+                        <ui-select multiple ng-model="Source.selectItem.refusers" style="width:100%;">
+                            <ui-select-match placeholder="请选择关联用户">
+                                <span ng-bind="$item.value.description" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.value.idusers  as (key,item) in service.privateDateObj.usersData | filter: { value: { description: $select.search }}" style="max-height: 150px;">
+                                <div ng-bind-html="item.value.description | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save()">保存</button>
+        <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+    </div>
+</script>
+

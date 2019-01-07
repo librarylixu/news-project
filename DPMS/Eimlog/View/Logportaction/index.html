@@ -1,0 +1,202 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}bootstrap/css/bootstrap3.3.7.min.css">
+    <!-- text fonts -->
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/font-awesome4.7.0.css" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/ace-fonts.css" />
+    <!-- ace styles -->
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/ace.css" class="ace-main-stylesheet" id="main-ace-style" />
+    <link href="{$Think.const.CSS_URL}EIMPublicTools.css" rel="stylesheet" type="text/css" />
+    <title>传感器日志</title>
+    <script type="text/javascript">
+        var __URL = '__MODULE__';
+        var _dt_pagelength = parseInt(("{$_SESSION['PagedataCount']}" == "" ? 10 : "{$_SESSION['PagedataCount']}"));
+        //var pages = {$all_page_num};
+        var usertable;
+    </script>
+</head>
+<body>
+
+    <div class="container-fluid">
+        <div class="row-fluid top-10">
+            <div class="page-header clearfix">
+                <h1 class="col-xs-3 text-left">
+                    {$MenuName}
+                    <small>
+                        <i class="ace-icon fa fa-angle-double-right"></i>
+                        {$PageName}
+                    </small>
+                </h1>
+                <div class="col-xs-4 text-center">
+                   
+                </div>
+            </div>
+        </div>
+        <div class="well well-sm clearfix">
+            <div class="col-xs-12 ">
+                <form action="__APP__/Home/Navigation/get_sensor_page" method="post">
+                    <label>日期范围：</label>
+                    <input type="text" name="sTime" value="{$stime}" onfocus="WdatePicker({maxDate:'#F{ $dp.$D(\'txtetime\')||\'%y-%M-%d\'}'})" id="txtstime" class="input-text Wdate radius" style="width: 120px;">
+                    -
+                    <input type="text" name="eTime" value="{$etime}" onfocus="WdatePicker({minDate:'#F{ $dp.$D(\'txtstime\')}'})" id="txtetime" class="input-text Wdate radius" style="width: 120px;">
+
+                    <label>&nbsp;&nbsp;DPU名称：</label>
+                    <span class="select-box radius" style="width:150px;">
+                        <select id="seldpu" name="Dpus" class="select">
+                            <option value="">全部</option>
+                            <foreach name="dpulist" item="dpu">
+                                <if condition="$dpu['_id'] eq $Dpus">
+                                    <option value="{$dpu['_id']}" selected="selected">{$dpu['dpuname']}</option>
+                                    <else />
+                                    <option value="{$dpu['_id']}">{$dpu['dpuname']}</option>
+                                </if>
+                            </foreach>
+                        </select>
+                    </span>
+                    <label>&nbsp;&nbsp;类型：</label>
+                    <span class="select-box" style="width: 100px;">
+                        <select id="selSensortype" name="sensortype" class="select " searchstr="{$sensortype}">
+                            <option value="">全部</option>
+                            <option value="温度">温度</option>
+                            <option value="湿度">湿度</option>
+                            <option value="水浸">水浸</option>
+                            <option value="烟雾">烟雾</option>
+                            <option value="门禁">门禁</option>
+                        </select>
+                    </span>
+                    <div class="f-r">
+                        <!--<button type="button" class="btn btn-success btn-sm" onclick="onExportClick();"><i class="fa fa-upload"></i>&nbsp;导出</button>&nbsp;-->
+                        <!--<button type="submit" class="btn btn-success btn-sm" id="" name=""><i class="fa fa-search"></i>&nbsp; 查询</button>-->
+                        {$_SESSION['operation_button']['btn100131']['btn_value']}
+                    </div>
+                    <input type="text" name="PageNow" value="{$now_page}" id="nowpage" style="display:none">
+                </form>
+            </div>
+        </div>
+        <div class="table-header">
+            {$MenuName} <small><i class="ace-icon fa fa-angle-double-right"></i>{$PageName}</small>
+        </div>
+        <table class="table table-condensed table-hover table-striped table-sort table-bordered">
+            <thead>
+                <tr class="text-c">
+                    <th>DPU名称</th>
+                    <th>DPUIP</th>
+                    <th>类型</th>
+                    <th>名称</th>
+                    <th>值</th>
+                    <th>时间</th>
+                </tr>
+            </thead>
+            <tbody>
+                <foreach name="loglist" item="log">
+                    <tr class="text-c">
+                        <td>{$dpulist[strval($log['dpuguid'])].dpuname}</td>
+                        <td>{$dpulist[strval($log['dpuguid'])].dpuaddress}</td>
+                        <td>{$log.Sensortype}</td>
+                        <td>{$log.sensorname}</td>
+                        <td>{$log.sensorValue}</td>
+                        <td>{$log.Time}</td>
+                    </tr>
+                </foreach>
+            </tbody>
+        </table>
+
+    </div>
+    <script type="text/javascript" src="{$Think.const.APP_PUBLIC}jquery/1.9.1/jquery.min.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}bootstrap/js/bootstrap3.3.7.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.APP_PUBLIC}layer/1.9.3/layer.js"></script>
+    <script type="text/javascript" src="{$Think.const.APP_PUBLIC}datatables/1.10.12/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.APP_PUBLIC}My97DatePicker/WdatePicker.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}ace/js/jquery.dataTables.bootstrap.js"></script>
+    <script src="{$Think.const.JS_URL}EIMPublicTools.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            table_init();
+        });
+        function table_init(){
+            usertable = $('.table-sort').dataTable({
+                "destroy":true,
+                "lengthChange": true,
+                "paging": true,
+                "deferRender": true,
+                //状态保存，使用了翻页或者改变了每页显示数据数量，会保存在cookie中，下回访问时会显示上一次关闭页面时的内容
+                "bStateSave": true,
+                "autoWidth": false,//自动宽度
+                "pagingType": "full_numbers",//分页栏样式 - 首页、上页、下页、末页
+                "language": dataLanguage,
+                "iDisplayLength":  _dt_pagelength,//默认显示的记录数
+            });
+        }
+
+   $(function () {
+       $("[name='Sensortype']").val($("[name='Sensortype']").attr('searchstr'));
+       $('.table-sort tbody').on('click', 'tr', function () {
+           if ($(this).hasClass('selected')) {
+               $(this).removeClass('selected');
+           }
+           else {
+               $('tr.selected').removeClass('selected');
+               $(this).addClass('selected');
+           }
+       });
+      
+
+   });
+
+
+
+
+        ////导出
+        //function onExportClick() {
+        //    if (pages == 0) {
+        //        layer.msg('没有数据', { icon: 5 });
+        //        return;
+        //    } else {
+        //        $("#savetablediv").show();
+        //    }
+        //}
+
+        ////导出保存
+        //function exportlogsave() {
+        //    //serializeArray:输出以数组形式序列化表单值的结果            
+        //    //var formloglist = $("#formlog").serializeArray();            
+        //    //var formexportlist = $("#formexport").serializeArray();
+        //    var postdata = new Object();
+        //    postdata.sTime = $("#txtstime").val();
+        //    postdata.eTime = $("#txtetime").val();
+        //    postdata.Dpus = $("#seldpu").val();
+        //    //postdata.sensorname = $("#txtsensorname").val();
+        //    postdata.sensortype = $("#selSensortype").val();
+        //    postdata.a_task = $("#txta_task").val();
+        //    postdata.Title = $("#txtTitle").val();
+        //    postdata.sheetTitle = $("#txtsheetTitle").val();
+        //    postdata.count = $("#txtcount").val();
+        //    var url = "__MODULE__/HuiLog/export_sensor_log";
+        //    var loadlayer = layer.msg('请稍后...', { icon: 16, time: 20000 });//
+        //    ajaxasyn(url, postdata, true, 'POST', 'json', function (msg) {
+        //        layer.close(loadlayer);
+        //        if (msg != "no") {
+        //            var href = "__MODULE__/Api/download_file/FileName/" + msg;
+        //            window.open(href);
+        //        } else {
+        //            layer.msg('操作失败', { icon: 5 });//5:哭脸
+        //        }
+        //    }, function (errorMsg) {
+        //        layer.close(loadlayer);
+        //        var index = layer.open({
+        //            type: 1,
+        //            title: '错误信息',
+        //            content: errorMsg.responseText,
+        //            maxmin: true
+        //        });
+        //        layer.full(index);
+        //    });
+        //}
+    </script>
+</body>
+</html>

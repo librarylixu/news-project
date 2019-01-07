@@ -1,0 +1,39 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+<div class="modal-body">
+    <div class="form-container">
+        <form name="Form" verify-scope class="myform">
+            <div class="form-group">
+                <label>客户状态</label>
+                <input type="text" ng-readonly="Source.Action==2" ng-verify="min:3, max:25" class="form-control" ng-model="Source.selectItem.status" placeholder="输入1~25位用户状态" />
+            </div>
+            <div class="form-group" ng-show="Source.Action==0||Source.Action==1">
+                <a href="javascript:;" class="colorpick" colorpicker ng-model="Source.selectItem.labelclass">标签样式</a>
+                <span class="label" ng-style="{'background-color':Source.selectItem.labelclass}" ng-bind="Source.selectItem.status"></span>
+            </div>
+            <div ng-show="Source.Action==0||Source.Action==1" style="min-height:30px;">
+                <div class="text-right col-xs-12">
+                    <a href="javascript:;" title="点击隐藏/显示其余属性" ng-click="hideOther=!hideOther">
+                        <i class="fa" ng-class="{'fa-chevron-circle-down':hideOther,'fa-chevron-circle-up':!hideOther}" aria-hidden="true"></i>
+                        <span>{{hideOther?'展开其他':'隐藏'}}属性</span>
+                    </a>
+                </div>
+            </div>
+            <!--其他属性-->
+            <div ng-show="!hideOther&&(Source.Action==0 || Source.Action==1)">
+
+            </div>
+
+
+        </form>
+
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save(1)" ng-show="Source.Action==0">连续保存</button>
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save(0)" ng-show="Source.Action==0||Source.Action==1">保存</button>
+    <button class="btn btn-primary btn-sm" type="button" ng-click="save(2)" ng-show="Source.Action==2">删除</button>
+    <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+</div>

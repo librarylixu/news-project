@@ -1,0 +1,30 @@
+﻿
+
+<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{service.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="fa fa-close"></i></a>
+</div>
+<div class="modal-body">
+    <div class="form-container" style="padding-bottom:0;">
+        <form class="form-inline " name="form">
+            <div class="form-line" style="margin-bottom:10px;" ng-hide="uploadComplete">
+                <label>请选择文件：<small ng-hide="service.uploadannex" class="small-tip red">文件只支持.xlsx格式或.xls格式</small> </label>
+                <div class="choose-file-area">
+                    <input class="file-name" type="text" readonly="readonly" ng-model="fileItem.name" style="float: left;margin-right:5px;" />
+                    <a href="javascript:;" class="btn btn-sm btn-success choose-book">
+                        <input type="file" ng-if="!service.uploadannex" name="fileaddress" accept="application/msexcel" nv-file-select="" uploader="uploader" ng-click="clearItems()" />浏览
+                        
+                    </a>
+                </div>
+            </div>
+            <div class="text-center"><button class="btn btn-sm btn-warning" ng-if="uploadStatus&&uploadComplete"  ng-click="preview()">预览</button></div>          
+            <button type="submit" class="btn btn-sm btn-success" ng-click="UploadFile();uploadComplete=true" ng-hide="uploadComplete">提交</button>
+            <div class="text-center" ng-if="!uploadStatus&&uploadComplete"><i class="fa fa-spinner fa-spin green bigger-125"></i>正在上传...</div>
+        </form>
+        <br />
+        <div ng-if="!service.uploadannex">
+            <i class="blue fa fa-download"></i><span class="blue" ng-click="UploadTemplate(service.type)" style="cursor: pointer; border-bottom: 1px dashed #478FCA">下载{{service.name}}模板</span>
+        </div>
+    </div>
+</div>
+

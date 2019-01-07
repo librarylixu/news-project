@@ -1,0 +1,105 @@
+<?php
+/*
+    2017-12-12
+    李旭
+    角色权限表
+*/
+namespace Crmuser\Controller;
+use Crmuser\Controller\CommonController;
+class RefutypeRefauthController extends CommonController {
+    //空控制器操作
+    public function _empty(){        
+		 $this->display(A('Home/Html')->error404());
+    }
+    public $table_colunms;//全部的字段信息
+    public $table_name='ref_utype_auth';
+    public $table_key;//只包含字段名称
+    function __construct(){  
+        parent::__construct();
+        $this->table_colunms=$this->getColunms();
+        $this->table_key=array_keys($this->table_colunms);
+    }
+    function  __destruct(){   
+    }
+     //字段
+    function getColunms(){
+         /*
+    'Type'=>'INT',  字段的数据类型
+    'isNull'=>'NOT NULL', 是否为空
+    'Comment'=>'', 字段描述
+    'Default'=>'', 默认值
+    'AutoIncrement'=>'AUTO_INCREMENT' 自增标致
+
+    tValue 自定义的处理标志  md5表示需要该字段的值需要进行md5加密   
+       public $table_colunms=array('','name','del','index','path','createtime','deltime','uploaduser','uploadaddress');
+    */
+       $c=array(
+                'idref_utype_auth'=>array('Type'=>'INT','isNull'=>'NOT NULL','AutoIncrement'=>'AUTO_INCREMENT','Comment'=>'id'),
+                'utypeid'=>array('Type'=>'INT','isNull'=>'NOT NULL','Comment'=>'用户角色id'),
+                'authid'=>array('Type'=>'INT','isNull'=>'NOT NULL','Comment'=>'权限id'),
+                );
+        return $c;
+    } 
+   /*表结构创建*/
+   public function create_table(){     
+        $str='';
+        foreach($this->table_colunms as $key=>$value){
+        //`[字段名]` [类型] [是否为空] [ 默认值 DEFAULT 0] [ 自增长 AUTO_INCREMENT]
+       
+            $s=sprintf("`%s` %s %s %s %s,",$key,$value['Type'],$value['isNull'],(array_key_exists('Default',$value)?'DEFAULT '.$value['Default']:''),(array_key_exists('AutoIncrement',$value)?$value['AutoIncrement']:''));           
+            $str.=$s;
+        }   
+        $sql=sprintf("CREATE  TABLE IF NOT EXISTS `%s`.`%s` (%s PRIMARY KEY (`idref_utype_auth`) ,
+                  INDEX fk_ref_utype_auth_authority (`authid` ASC) ,
+                  INDEX fk_ref_utype_auth_usertype (`utypeid` ASC) ,
+                  UNIQUE INDEX unique_uty_authid USING BTREE (`authid` ASC, `utypeid` ASC) ,
+                  CONSTRAINT `fk_ref_utype_auth_authority`
+                    FOREIGN KEY (`authid` )
+                    REFERENCES `".C('CrmDB')['DB_NAME']."`.`".C('CrmDB')['DB_PREFIX']."authority` (`idauthority` )
+                    ON DELETE CASCADE
+                    ON UPDATE CASCADE,
+                  CONSTRAINT `fk_ref_utype_auth_usertype`
+                    FOREIGN KEY (`utypeid` )
+                    REFERENCES `".C('CrmDB')['DB_NAME']."`.`".C('CrmDB')['DB_PREFIX']."usertype` (`idusertype` )
+                    ON DELETE CASCADE
+                    ON UPDATE CASCADE)
+                ENGINE = InnoDB
+                COMMENT = '角色权限表';",C('CrmDB')['DB_NAME'],C('CrmDB')['DB_PREFIX'].$this->table_name,$str);        
+                $result=Fm()->execute($sql);
+                echo 'CreateTable '.$this->table_name.'==>'.$result."<br/>";
+    }
+    /*初始化表数据*/
+    public function init_db(){
+        try{
+            $nValue=array();
+            $key=array('utypeid','authid'); 
+            $nValue = array_combine($key,array(1,1));
+            $result=Fm($this->table_name)->data($nValue)->add();
+            echo "初始化角色权限表 :".$result."<br/>";
+        }catch (Exception $e) {
+            A('Crm/Runlog')->add(array(level=>1,text=>CONTROLLER_NAME.'-'.ACTION_NAME.'初始化Appinfo,Error:'.$e->getMessage()));            
+        } 
+    }
+
+     /*
+    根据角色id查询关联的权限
+    关联查询
+    @$typeids 角色的id  '1,2,3,4,5'
+    @$json 是否返回带key的数组  ,key值是权限id
+    */
+    public function getTypeAuth($typeids,$json=false){        
+        $where=array();       
+        $where['ref.utypeid']=array('in',$typeids);
+        $result=Fm('ref_utype_auth as ref')->join(C('CrmDB')['DB_PREFIX'].'authority as au on au.idauthority=ref.authid')->where($where)->select();
+        if (!$json)
+        {
+        	return $result;
+        }
+        $nData=array();
+        foreach($result as $value){
+            $nData[$value['idauthority']]=$value;
+        }
+        return $nData;
+    }
+
+}

@@ -1,0 +1,600 @@
+﻿<html ng-app="ionicApp">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title>昕辰CRM云办公系统</title>
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ionic/1.3.3/ionic.min.css" />
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}ionic/1.3.3/ionic.bundle.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}ionic/1.3.3/uaest.js"></script>
+    <script type="text/javascript">
+        angular.module('ionicApp', ['ionic'])
+      .config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
+          /*解决安卓导航栏的问题*/
+          $ionicConfigProvider.platform.ios.tabs.style('standard');
+          $ionicConfigProvider.platform.ios.tabs.position('bottom');
+          $ionicConfigProvider.platform.android.tabs.style('standard');
+          $ionicConfigProvider.platform.android.tabs.position('standard');
+
+          $ionicConfigProvider.platform.ios.navBar.alignTitle('center');
+          $ionicConfigProvider.platform.android.navBar.alignTitle('left');
+
+          $ionicConfigProvider.platform.ios.backButton.previousTitleText('').icon('ion-ios-arrow-thin-left');
+          $ionicConfigProvider.platform.android.backButton.previousTitleText('').icon('ion-android-arrow-back');
+
+          $ionicConfigProvider.platform.ios.views.transition('ios');
+          $ionicConfigProvider.platform.android.views.transition('android');
+
+          //路由
+          $stateProvider
+            .state('tabs', {
+                url: "/tab",
+                abstract: true,
+                templateUrl: "templates/taskbar.html"
+            })
+            .state('tabs.customerinfopage', {
+                url: "/customerinfopage",
+                views: {
+                    'customerinfo-tab': {
+                        templateUrl: "templates/customerinfo.html",
+                        controller: 'customerinfoController'
+                    }
+                }
+            })
+            .state('tabs.customermessagepage', {
+                url: "/customermessagepage",
+                views: {
+                    'customerinfo-tab': {
+                        templateUrl: "templates/customermessage.html",
+                        controller: 'customermessageController'
+                    }
+                }
+            })
+              //projectinfo-tab是页面的分组
+            .state('tabs.projectinfopage', {
+                url: "/projectinfopage",
+                views: {
+                    'projectinfo-tab': {
+                        templateUrl: "templates/projectinfo.html"
+                    }
+                }
+            })
+            .state('tabs.projectmessagepage', {
+                url: "/projectmessagepage",
+                views: {
+                    'projectinfo-tab': {
+                        templateUrl: "templates/projectmessage.html"
+                    }
+                }
+            })
+            .state('tabs.workerorderpage', {
+                url: "/workerorderpage",
+                views: {
+                    'workerorder-tab': {
+                        templateUrl: "templates/workerorder.html"
+                    }
+                }
+            });    
+          $urlRouterProvider.otherwise("/tab/customerinfopage");  
+      })
+      .service('crminoicService', function () {          
+          //右侧菜单栏作为通知、检索用，每个页面都有不同的操作方式 -1 禁用 / 0 客户 / 1 项目 / 2 工单
+          this.rightMenuPage = -1;
+          //当前登录的用户
+          this.userinfo = { username: '刘世群' };
+      })
+            //客户管理
+      .controller('customerinfoController', ['$scope', 'crminoicService', '$ionicPopup', '$timeout', '$state', '$ionicListDelegate',
+          function ($scope, crminoicService, $ionicPopup, $timeout, $state, $ionicListDelegate) {
+          $scope.service = crminoicService;
+          //编辑方法
+          $scope.edit = function (item) {
+              //关闭滑块按钮区域
+              $ionicListDelegate.closeOptionButtons();
+              $scope.service.selectCustomerItem = item;
+              //$scope.service.cusmsgstatus=0 查看/1 新增/2编辑
+              $scope.service.cusmsgstatus = 2;
+              //跳转页面
+              $state.go("tabs.customermessagepage", {}, { reload: true });
+          };
+          //查看方法
+          $scope.share = function (item) {
+              //关闭滑块按钮区域
+              $ionicListDelegate.closeOptionButtons();
+
+              $scope.service.selectCustomerItem = item;
+              //$scope.service.cusmsgstatus=0 查看/1 新增/2编辑
+              $scope.service.cusmsgstatus = 0;
+              //跳转页面
+              $state.go("tabs.customermessagepage", {}, { reload: true });
+          };
+          //下拉刷新
+          $scope.doRefresh = function (item) {               
+              //下拉刷新                 
+              $scope.$broadcast('scroll.refreshComplete');
+          }
+          //删除方法
+          $scope.del = function (item) {
+              //关闭滑块按钮区域
+              $ionicListDelegate.closeOptionButtons();
+
+              var title = '请确认[' + item.name + ']客户信息,删除后不可找回?';
+              var confirmPopup = $ionicPopup.confirm({
+                  title: '删除客户',
+                  template: title,
+                  okText: '删除',
+                  okType: 'button-assertive',
+                  cancelText: '取消',
+                  cancelType: 'button-calm'
+              });
+              confirmPopup.then(function (res) {
+                  if (res) {
+                    delete $scope.source[item.id];
+                  } else {
+                      //取消
+                  }
+              });
+          };
+
+          //模拟的客户数据源
+          $scope.service.source = {
+              1: {
+                  id:1,
+                  name: '中国钢铁工业协会',
+                  user: '崔节忠',
+                  time: '2018-05-06',
+                  status:'1'
+              },
+              2: {
+                  id: 2,
+                  name: '中国工程物理研究院',
+                  user: '娄丽霞',
+                  time: '2018-02-03' ,status:'1'
+              },
+              3: {
+                  id: 3,
+                  name: '内蒙古包头供电局',
+                  user: '崔节忠',
+                  time: '2018-04-20', status: '1'
+              },
+              4: {
+                  id: 4,
+                  name: '中国钢铁工业协会',
+                  user: '崔节忠',
+                  time: '2018-05-06', status: '1'
+              },
+              5: {
+                  id: 5,
+                  name: '中国工程物理研究院',
+                  user: '娄丽霞',
+                  time: '2018-02-03', status: '1'
+              },
+              6: {
+                  id: 6,
+                  name: '内蒙古包头供电局',
+                  user: '崔节忠',
+                  time: '2018-04-20', status: '1'
+              },
+              7: {
+                  id: 7,
+                  name: '中国钢铁工业协会',
+                  user: '崔节忠',
+                  time: '2018-05-06', status: '1'
+              },
+              8: {
+                  id: 8,
+                  name: '中国工程物理研究院',
+                  user: '娄丽霞',
+                  time: '2018-02-03', status: '1'
+              }
+          };
+          }
+      ])
+            //左侧菜单
+    .controller('leftMenuController', ['$scope', '$state', 'crminoicService',
+        function ($scope, $state, crminoicService) {
+            $scope.service = crminoicService;
+            //跳转页面
+            $scope.go = function (item) {
+                //跳转页面
+                $state.go(item.src, {}, { reload: true });
+            }
+            //打开模态框
+            $scope.open = function (item) {
+                switch (item.index) {
+                    case "addcustomer":
+                        //$scope.service.cusmsgstatus=0 查看/1 新增/2编辑
+                        $scope.service.cusmsgstatus = 1;
+                        $scope.service.selectCustomerItem = {
+                            id: 1,
+                            name: '中国钢铁工业协会',
+                            user: '崔节忠',
+                            time: '2018-05-06',
+                            status: '1'
+                        };
+                        //跳转页面
+                        $state.go(item.src, {}, { reload: true });
+                        break;
+                    default:
+
+                }
+            };
+           
+             //导航栏数据
+          $scope.menulist = [
+                    {
+                        name: '客户管理',
+                        src: 'tabs.customerinfopage'
+                    }, {
+                        name: '项目管理',
+                        src: 'tabs.projectinfopage'
+                    }, {
+                        name: '工单管理',
+                        src: 'tabs.workerorderpage'
+                    }
+          ];
+            //导航栏数据
+          $scope.addmenulist = [
+                    {
+                        name: '新建客户',
+                        icon: 'icon ion-plus-circled',
+                        index: 'addcustomer', src: 'tabs.customermessagepage'
+                    }, {
+                        name: '新建项目', icon: 'icon ion-plus-circled',
+                        index: 'addproject', src: 'tabs.projectmessagepage'
+                    }, {
+                        name: '新建工单', icon: 'icon ion-plus-circled',
+                        index: 'addworkorder', src: 'tabs.workerorderpage'
+                    }
+          ];
+            }])
+            //右侧菜单
+            .controller('rightMenuController', ['$scope','crminoicService', '$ionicSideMenuDelegate',
+            function ($socpe, crminoicService, $ionicSideMenuDelegate) {
+                $socpe.service = crminoicService;
+                //侧边栏的开启方式禁止拖拽，只能通过点选触发
+                $ionicSideMenuDelegate.canDragContent(false);
+            }])
+              //客户详情页
+     .controller('customermessageController', ['$scope', 'crminoicService', '$ionicPopup', '$ionicModal','$ionicListDelegate',
+         function ($scope, crminoicService, $ionicPopup, $ionicModal, $ionicListDelegate) {
+         $scope.service = crminoicService;
+         //$scope.service.cusmsgstatus=0 查看/1 新增/2编辑
+         $scope.service.customerStatusSource = {
+             1: {
+                 id: 1,
+                 name:'跟进中'
+             },
+             2: {
+                 id:2,
+                 name: '长期合作'
+             },
+             3: {
+                 id: 3,
+                 name: '已中止'
+             }
+         };
+         //当前客户的状态  select控件绑定的值
+         $scope.service.selectCustomerItem._status = $scope.service.customerStatusSource[$scope.service.selectCustomerItem.status];
+         //保存数据
+         $scope.save = function () {
+             var title = '确认保存当前客户信息?';
+             var confirmPopup = $ionicPopup.confirm({
+                 title: '保存信息',
+                 template: title,
+                 okText: '确认',
+                 cancelText: '取消'
+             });
+             confirmPopup.then(function (res) {
+                 if (res) {
+                     //确认保存
+                     $scope.service.selectCustomerItem.name = "已经保存了";
+                 } else {
+                     //取消
+                 }
+             });
+         };
+
+         //修改联系人
+         $scope.editContact = function (item) {
+             //关闭滑块按钮区域
+             $ionicListDelegate.closeOptionButtons();
+             $scope.modal.show();
+         }
+         //查看联系人
+         $scope.openContact = function (item) {
+             //关闭滑块按钮区域
+             $ionicListDelegate.closeOptionButtons();
+             $scope.modal.show();
+         }
+         //删除联系人
+         $scope.delContact = function (item) {
+             //关闭滑块按钮区域
+             $ionicListDelegate.closeOptionButtons();
+             var title = '请确认[' + item.name + ']联系人,删除后不可找回?';
+             var confirmPopup = $ionicPopup.confirm({
+                 title: '删除联系人',
+                 template: title,
+                 okText: '删除',
+                 okType: 'button-assertive',
+                 cancelText: '取消',
+                 cancelType: 'button-calm'
+             });
+             confirmPopup.then(function (res) {
+                 if (res) {
+                     //确认删除
+                 } else {
+                     //取消
+                 }
+             });
+         }
+         //联系人的模态框  - 初始化
+         if (!$scope.modal) {
+             $ionicModal.fromTemplateUrl('templates/contactmodal.html', {
+                  scope: $scope    
+             }).then(function (modal) {
+                 $scope.modal = modal;
+             });
+         }
+         //模态框的保存按钮
+         $scope.saveContact = function (u) {                
+             $scope.modal.hide();
+         };
+
+     }])
+          
+
+    </script>
+</head>  
+<body>
+    <ion-side-menus>
+        <!--左侧菜单-->
+        <ion-side-menu side="left" ng-controller="leftMenuController">
+            <header class="bar bar-header bar-stable">
+                <h1 class="title" ng-bind="service.userinfo.username"></h1>
+            </header>
+            <ion-content class="has-header">
+                <ion-list>
+                    <ion-item ng-repeat="item in menulist" menu-close ng-click="go(item)">
+                        {{item.name}}
+                    </ion-item> 
+                    <ion-item ng-repeat="item in addmenulist" menu-close ng-click="open(item)">
+                        <i ng-class="item.icon"></i>&nbsp;&nbsp;{{item.name}}
+                    </ion-item> 
+                </ion-list>
+            </ion-content>
+        </ion-side-menu> 
+        <ion-side-menu-content>
+            <!--每个APP的返回按钮部分-->
+            <ion-nav-bar class="bar-positive"><ion-nav-back-button>返回</ion-nav-back-button></ion-nav-bar>
+            <!--主体部分-->
+            <ion-nav-view></ion-nav-view>
+        </ion-side-menu-content>
+           
+        <!--右侧菜单,不被拖动-->
+        <ion-side-menu side="right" ng-controller="rightMenuController">
+            <ion-content>
+              {{service.rightMenuPage}}
+            </ion-content>
+        </ion-side-menu>
+    </ion-side-menus>  
+
+    <script id="templates/taskbar.html" type="text/ng-template">
+        <ion-tabs class="tabs-icon-top tabs-positive"> 
+            <ion-tab title="客户管理" icon="ion-home" href="#/tab/customerinfopage">
+                <ion-nav-view name="customerinfo-tab"></ion-nav-view>
+            </ion-tab>            
+            <ion-tab title="项目管理" icon="ion-ios-information" href="#/tab/projectinfopage">
+                <!--projectinfo-tab是页面的分组-->
+                <ion-nav-view name="projectinfo-tab"></ion-nav-view>
+            </ion-tab>           
+            <ion-tab title="工单管理" icon="ion-ios-world" href="#/tab/workerorderpage">
+                <ion-nav-view name="workerorder-tab"></ion-nav-view>
+            </ion-tab>     
+        </ion-tabs>
+    </script>
+
+    <script id="templates/customerinfo.html" type="text/ng-template">   
+        <ion-view view-title="客户管理的主页(向左滑详情)">              
+            <ion-nav-buttons side="left">
+                <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+            </ion-nav-buttons>           
+            <ion-nav-buttons side="right">
+                {{service.rightMenuEnable}}
+                <button menu-toggle="right" class="button button-icon icon ion-funnel" ng-click="service.rightMenuPage=0;"></button>
+            </ion-nav-buttons>
+            <ion-content class="padding">
+                <ion-refresher pulling-text="下拉刷新" on-refresh="doRefresh()"></ion-refresher>   
+                
+                <div class="bar bar-header item-input-inset">
+                    <label class="item-input-wrapper">
+                        <i class="icon ion-search placeholder-icon"></i>
+                        <input type="text" ng-model="searchtxt" placeholder="检索客户">
+                    </label>
+                </div>          
+                <ion-list>
+                    <ion-item ng-repeat="item in service.source " item="item" class="item-remove-animate">
+                        {{item.name}}
+                        <ion-option-button class="button-assertive" ng-click="del(item)">删除</ion-option-button>
+                        <ion-option-button class="button-calm" ng-click="edit(item)">编辑</ion-option-button>
+                        <ion-option-button class="button-balanced" ng-click="share(item)">查看</ion-option-button>
+                    </ion-item>
+                </ion-list>              
+            </ion-content>
+        </ion-view>
+
+    </script>
+
+    <script id="templates/customermessage.html" type="text/ng-template">
+        <ion-view view-title="{{service.selectCustomerItem.name}}--  详细信息">
+            <ion-content class="padding">
+                {{service.selectCustomerItem}}
+                <div class="list">
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">客户名称</span>
+                        <span style="text-align:center" ng-if="service.cusmsgstatus===0" ng-bind="service.selectCustomerItem.name"></span>
+                        <input type="text" placeholder="John" ng-if="service.cusmsgstatus!=0">
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">简称</span>
+                        <span style="text-align:center" ng-if="service.cusmsgstatus===0" ng-bind="service.selectCustomerItem.name"></span>
+                        <input type="text" placeholder="John" ng-if="service.cusmsgstatus!=0">
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">办公电话</span>
+                        <span style="text-align:center" ng-if="service.cusmsgstatus===0" ng-bind="service.selectCustomerItem.name"></span>
+                        <input type="text" placeholder="John" ng-if="service.cusmsgstatus!=0">
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">传真</span>
+                        <span style="text-align:center" ng-if="service.cusmsgstatus===0" ng-bind="service.selectCustomerItem.name"></span>
+                        <input type="text" placeholder="John" ng-if="service.cusmsgstatus!=0">
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">网址</span>
+                        <span style="text-align:center" ng-if="service.cusmsgstatus===0" ng-bind="service.selectCustomerItem.name"></span>
+                        <input type="text" placeholder="John" ng-if="service.cusmsgstatus!=0">
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">联系地址</span>
+                        <span style="text-align:center" ng-if="service.cusmsgstatus===0" ng-bind="service.selectCustomerItem.name"></span>
+                        <input type="text" placeholder="John" ng-if="service.cusmsgstatus!=0">
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">客户类型</span>
+                        <span style="text-align:center" ng-if="service.cusmsgstatus===0" ng-bind="service.selectCustomerItem.name"></span>
+                        <select ng-model="service.selectCustomerItem._status" ng-options="value.name for (key,value) in  service.customerStatusSource"></select>
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">客户等级</span>
+                        <span style="text-align:center" ng-if="service.cusmsgstatus===0" ng-bind="service.selectCustomerItem.name"></span>
+                        <select ng-model="service.selectCustomerItem._status" ng-options="value.name for (key,value) in  service.customerStatusSource"></select>
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">客户行业</span>
+                        <span style="text-align:center" ng-if="service.cusmsgstatus===0" ng-bind="service.selectCustomerItem.name"></span>
+                        <select ng-model="service.selectCustomerItem._status" ng-options="value.name for (key,value) in  service.customerStatusSource"></select>
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">客户来源</span>
+                        <span style="text-align:center" ng-if="service.cusmsgstatus===0" ng-bind="service.selectCustomerItem.name"></span>
+                        <select ng-model="service.selectCustomerItem._status" ng-options="value.name for (key,value) in  service.customerStatusSource"></select>
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">客户市场</span>
+                        <span style="text-align:center" ng-if="service.cusmsgstatus===0" ng-bind="service.selectCustomerItem.name"></span>
+                        <select ng-model="service.selectCustomerItem._status" ng-options="value.name for (key,value) in  service.customerStatusSource"></select>
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">信用等级</span>
+                        <span style="text-align:center" ng-if="service.cusmsgstatus===0" ng-bind="service.selectCustomerItem.name"></span>
+                        <select ng-model="service.selectCustomerItem._status" ng-options="value.name for (key,value) in  service.customerStatusSource"></select>
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">当前状态</span>
+                        <span style="text-align:center" ng-if="service.cusmsgstatus===0" ng-bind="service.selectCustomerItem.name"></span>
+                        <select ng-model="service.selectCustomerItem._status" ng-options="value.name for (key,value) in  service.customerStatusSource"></select>
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">当前阶段</span>
+                        <span style="text-align:center" ng-if="service.cusmsgstatus===0" ng-bind="service.selectCustomerItem.name"></span>
+                        <select ng-model="service.selectCustomerItem._status" ng-options="value.name for (key,value) in  service.customerStatusSource"></select>
+                    </label>
+                </div>
+                联系人:
+                <ion-list>
+                    <ion-item item="item" class="item-remove-animate">
+                        刘世群
+                        <ion-option-button class="button-assertive" ng-click="delContact({name:'lsq'})">删除</ion-option-button>
+                        <ion-option-button class="button-calm" ng-click="editContact({name:'lsq'})">编辑</ion-option-button>
+                        <ion-option-button class="button-balanced" ng-click="openContact({name:'lsq'})">查看</ion-option-button>
+                    </ion-item>
+                    <ion-item item="item" class="item-remove-animate">
+                        刘世群
+                        <ion-option-button class="button-assertive" ng-click="delContact({name:'lsq'})">删除</ion-option-button>
+                        <ion-option-button class="button-calm" ng-click="editContact({name:'lsq'})">编辑</ion-option-button>
+                        <ion-option-button class="button-balanced" ng-click="openContact({name:'lsq'})">查看</ion-option-button>
+                    </ion-item>
+                </ion-list>
+                <div class="padding">
+                    <button class="button button-balanced  button-block button-positive" ng-click="save()">保存</button>
+                </div>
+            </ion-content>
+        </ion-view>
+    </script>
+
+    <script id="templates/projectinfo.html" type="text/ng-template">
+        <ion-view view-title="项目管理的主页">
+            <ion-nav-buttons side="left">
+                <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+            </ion-nav-buttons>
+            <ion-content class="padding">
+                <h3>项目管理</h3>
+                <p>项目管理的主页</p>
+                <p>
+                    <a class="button icon icon-right ion-chevron-right" href="#/tab/projectmessagepage">去看看详情页</a>
+                </p>
+            </ion-content>
+        </ion-view>
+    </script>
+    <script id="templates/projectmessage.html" type="text/ng-template">
+        <ion-view view-title="项目管理的详情页">
+            <ion-content class="padding">
+                <p><img src="http://ionicframework.com/img/diagrams/tabs-nav-stack.png" style="width:100%"></p>
+            </ion-content>
+        </ion-view>
+    </script>
+
+    <script id="templates/workerorder.html" type="text/ng-template">
+        <ion-view title="工单管理的主页">
+            <ion-nav-buttons side="left">
+                <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+            </ion-nav-buttons>
+            <ion-content>
+                <div class="list">
+                    <div class="item">
+                        @北京昕辰清虹科技有限公司
+                    </div>
+                    <div class="item">
+                        @清虹研发部
+                    </div>
+                </div>
+            </ion-content>
+        </ion-view>
+    </script>
+
+    <script id="templates/contactmodal.html" type="text/ng-template">
+        <ion-modal-view>
+            <ion-header-bar class="bar bar-header bar-positive">
+                <h1 class="title">联系人</h1>
+                <button class="button button-clear button-primary" ng-click="modal.hide()">取消</button>
+            </ion-header-bar>
+            <ion-content class="padding">
+                <div class="list">
+                    <label class="item item-input">
+                        <span class="input-label">姓名</span>
+                        <input ng-model="newUser.firstName" type="text">
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label">职位</span>
+                        <input ng-model="newUser.lastName" type="text">
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label">手机</span>
+                        <input ng-model="newUser.email" type="text">
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label">办公电话</span>
+                        <input ng-model="newUser.email" type="text">
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label">邮箱</span>
+                        <input ng-model="newUser.email" type="text">
+                    </label>                  
+                    <button class="button button-full button-positive" ng-click="saveContact({})">保存</button>
+                </div>
+            </ion-content>
+        </ion-modal-view>
+    </script>
+
+</body>
+</html>

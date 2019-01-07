@@ -1,0 +1,65 @@
+﻿<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>北京昕辰清虹科技有限公司</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width = device-width, initial-scale = 1.0, user-scalable = yes, minimum-scale = 0.1, maximum-scale = 8" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="application-name" content="北京昕辰清虹科技有限公司" />
+<link rel="apple-touch-icon" href="{$Think.const.IMG_URL}logo.ico" />
+<meta name="application-name" content="北京昕辰清虹科技有限公司" />
+<link rel="SHORTCUT ICON" href="{$Think.const.IMG_URL}logo.ico" />
+
+<link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/hi5.css" />
+<link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/rdp.css" />
+<link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/player.css" />
+
+<script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/appcfg.js"></script>
+<script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/hi5core_min.js"></script>
+<script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/hi5_min.js"></script>
+<script type="text/javascript" src="{$Think.const.PAGE_URL}js/Eimsessiontools/sessiontool/playeremote.page.js"></script>
+    <script>
+        var file = "{$file}";
+        var type = '{$type}';
+        var sessioncenterip = '{$sessioncenterip}';
+    </script>
+</head>
+<body>
+    <div id="playerZone" style="height:100%">
+        <div id="sessionZone" style="position: relative;">
+            <canvas id="remotectrl" width="1" height="1"></canvas>
+            <div id="cursorID" class="cursor-node" focus="false" title="(10, 24)" style="position: absolute; top: 10px; display: none; width: 10px; height: 16px; -webkit-transition: opacity, background-color 100ms linear; transition: opacity, background-color 100ms linear; border-color: rgba(255, 0, 0, 0.498039); left: 0px; opacity: 1; background-color: rgba(255, 0, 0, 0.498039);"></div>
+            <div id="copydialog" style="display:none; width:80%; height:80%">
+                <textarea  id="copytextarea" style="width:100%;height:100%;resize:none;">
+                </textarea>
+            </div>
+        </div>
+		<div id="video-controls" class="controls" data-state="visible">
+			<button id="sv_pl_play" type="button" data-state="play">Play/Pause</button>
+			<button id="sv_pl_stop" type="button" data-state="stop" title="Stop">Stop</button>
+			<div class="progress">
+				<progress id="seekpos" value="0" min="0" max="100">
+				</progress>
+			</div>
+			<button id="sv_pl_mute" type="button" data-state="mute">Mute/Unmute</button>
+			<button id="sv_pl_scan" type="button" data-state="scanmode" title="Scan Mode">Vol+</button>
+			<!-- <button id="sv_pl_fullscreen" type="button" data-state="go-fullscreen">Fullscreen</button> -->
+		</div>
+
+    </div>
+
+
+<script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/resource.js"></script>
+<script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/surface_min.js"></script>
+<script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/telnet_min.js" ></script>
+<script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/ssh_min.js" ></script>
+<script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/vnc_min.js" ></script>
+<script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/vncutil_min.js"></script>
+<script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/rdpcore_min.js" async="async"></script>
+<script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/rdp_min.js" async="async"></script>
+<script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/player_min.js"></script>
+
+
+</body>
+</html>

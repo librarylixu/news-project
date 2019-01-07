@@ -1,0 +1,11 @@
+﻿<div class="modal-header clearfix">
+    <input style="width:300px;float:left;" type="text" value="" ng-model="context" id="suggestId" class="form-control" />&nbsp;
+        <div id="searchResultPanel" style="border:1px solid #C0C0C0;width:150px;height:auto; display:none;"></div>
+    <button type="button" class="btn btn-primary" ng-click="setPlace(context)">设置为此地址</button>
+    <button type="button" class="btn btn-primary" ng-click="refmap()">刷新地图</button>
+        <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+<div id="l-map" class="modal-body" style="height:200px;"></div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" ng-click="cancel()">关闭</button>
+</div>

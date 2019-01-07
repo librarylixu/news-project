@@ -1,0 +1,113 @@
+﻿<extend name="angular-base.html" />
+<block name="momentjs">
+</block>
+<block name="headcss">
+
+</block>
+<block name="headjs">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/select.css">
+    <script src="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/select.js"></script>
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/select2.css">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/selectize.default.css">
+    <link rel="stylesheet" href="{$Think.const.PAGE_URL}css/crmSchedule/Workerorder/workerorder.css" /><!-- 这里公用了工单css -->
+    <style>
+        .table > tbody > tr > td {
+            border-bottom: 1px solid #ccc !important;
+            background-color: #fff;
+            padding-left: 12px;
+            padding-right: 12px;
+            padding-top: 6px;
+            padding-bottom: 6px;
+            box-sizing: border-box;
+            word-break: break-all;
+            line-height: 20px;
+            color: #666;
+        }
+
+
+    </style>
+    <script>
+        var userid = "{$userid}";
+    </script>
+</block>
+<block name="pageContent">
+    <div class="col-xs-12">
+        <!--操作区域-->
+        <div class="btn-box">
+            <!--展示检索条件区域-->
+            <div class="search-box col-xs-10 text-right">
+                <ui-select multiple on-select="addTags('refproducts', $item)" class="f-l" style="width:24%;margin-right:2px;" ng-model="service.productmodelid">
+                    <ui-select-match placeholder="下拉检索产品" ng-bind=""></ui-select-match>
+                    <ui-select-choices group-by="'productid'" repeat="val.value.idproductmodel as (key,val) in selectProductData | filter: { value: { name: $select.search }}">
+                        <div ng-bind-html="val.value.name| highlight: $select.search" title="{{val.value.name}}"></div>
+                    </ui-select-choices>
+                </ui-select>
+                <ui-select multiple ng-model="service.refcustomer" on-select="addTags('refcustomers', $item)" class="f-l" style="width:30%;">
+                    <ui-select-match placeholder="下拉检索客户" ng-bind=""></ui-select-match>
+                    <ui-select-choices repeat="person.value as (key, person) in selectCustomerinfoData | filter: { value: { name: $select.search }} track by $index">
+                        <div ng-bind-html="person.value.name | highlight: $select.search" title="{{person.value.name}}"></div>
+                    </ui-select-choices>
+                </ui-select>
+                <select class="select" ng-model="status" ng-options="v.name for v in projectstatusData" ng-change="addTags('statusid');"><option value='' disabled selected style='display:none;' ng-selected="">检索状态</option> </select>
+                <select class="select" ng-model="user" ng-options="v.description for v in selectUserData" ng-change="addTags('user');"><option value='' disabled selected style='display:none;' ng-selected="">检索负责人</option> </select>
+                <span class="input-search">
+                    <input type="text" placeholder="标题检索 ..." class="search-input" ng-model="filtername">
+                    <i class="fa fa-search search-icon"></i>
+                </span>
+            </div>
+        </div>
+        <br />
+        <!--条件检索区-->
+        <div class="text-right">
+            <span class="tag" ng-repeat="item in tagsData" ng-class="item.key">
+                <span ng-if="item.key=='statusid'" ng-bind="item.value.name"></span>
+                <span ng-if="item.key=='userid'" ng-bind="item.value.description"></span>
+                <span ng-if="item.key=='refcustomers'" ng-bind="item.value.name"></span>
+                <span ng-if="item.key=='refproducts'" ng-bind="item.value.name"></span>
+                <button type="button" class="close" ng-click="removeTag(item)">×</button>
+            </span>
+        </div>
+    </div>
+
+    <!--表格展示区-->
+    <div class="col-xs-12">
+
+        <table class="table" ng-init="projectDataCount={count:0};orderName='-createtime'" style="margin-bottom:2px;">
+            <thead>
+                <tr>
+                    <th style="width:5%;">序号</th>
+                    <th style="width:15%;" class="mousehand" ng-click="orderName=(orderName=='name'?'-name':'name')">项目名称<i class="fa" ng-class="orderName=='name'?'fa-caret-up':'fa-caret-down'"></i></th>
+                    <th style="width:5%;" class="mousehand" ng-click="orderName=(orderName=='statusid'?'-statusid':'statusid')">当前阶段<i class="fa" ng-class="orderName=='statusid'?'fa-caret-up':'fa-caret-down'"></i></th>   
+                    <th style="width:7%;" class="mousehand" ng-click="orderName=(orderName=='userid'?'-userid':'userid')">负责人<i class="fa" ng-class="orderName=='userid'?'fa-caret-up':'fa-caret-down'"></i></th>
+                    <th style="width:10%;" class="mousehand">客户名称</th>
+                    <th style="width:7%;" class="mousehand" ng-click="orderName=(orderName=='createtime'?'-createtime':'createtime')">创建时间<i class="fa" ng-class="orderName=='createtime'?'fa-caret-up':'fa-caret-down'"></i></th>
+                    <th style="width:17%;">产品名称</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="(key,item) in service.protectArrData | orderBy:orderName?orderName:'createtime' |filterByAttr:filtername:projectDataCount track by $index" class="profile-activity">
+                    <td><span class="badge" ng-bind="key+1"></span></td>
+                    <td ng-bind="item.name">                       </td>
+                    <td style="width: 5%;"><span ng-bind="service.privateDateObj.projectstatusData[item.statusid].name" class="label" style="background:{{ service .privateDateObj.projectstatusData[item.statusid].labelclass; }};"></span></td>
+                    <td style="width:7%;" ng-bind="service.privateDateObj.usersData[item.userid].description"></td>
+                    <td style="width:10%;" ng-bind="selectCustomerinfoData[item.refcustomers].name"></td>
+                    <td style="width:7%;"><span ng-bind="formatDate(item.createtime)"></span></td>
+                    <td>
+                        <div ng-repeat="(key,value) in service.privateDateObj.projectdevicelistData" ng-if="value.projectid==item.idproject" ng-bind="service.privateDateObj.productmodelData[value.productmodelid].name + '（共'+ value.number +'台）'"></div>
+                    </td>
+                </tr> 
+            </tbody>
+
+
+        </table>
+        <div class="text-right">
+            共<b class="blue" ng-if="service.privateDateObj.projectData" ng-bind="service.protectArrData.length"></b>条项目信息
+        </div>
+    </div>
+</block>
+<block name="scriptTemplate">
+</block>
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmproject/Project/protect_list.js"></script>
+</block>
+​

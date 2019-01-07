@@ -1,0 +1,56 @@
+﻿<extend name="angular-base.html" />
+<block name="headcss">
+    <style>
+        li {
+            list-style: initial;
+            color: #666;
+            font-size: 14px;
+            line-height: 20px;
+        }
+
+        img {
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</block>
+<block name="headjs">
+
+</block>
+<block name="pageContent">
+    <!--页头-->
+    <div class="page-header clearfix">
+        
+    </div>
+    <div class="col-xs-12">
+        <!--<h4 style="color:red;" class="text-center">公告</h4>-->
+        <ul>
+            <li ng-repeat="item in service.bulletinArrData | orderBy:'-time'">
+                <b>发布时间：</b><span ng-bind="formatDate(item.time,'yyyy-mm-dd')"></span>
+                <span ng-bind-html="item.bulletinmessage"></span>
+            </li>
+        </ul>
+        <br />
+        <!--<h4 style="color:red;">KPI评分排名</h4>
+        <div>
+            1、刘世群：100（分）
+        </div>
+        <div>
+            2、李旭：95（分）
+        </div>
+        <div>
+            3、张赛：90（分）
+        </div>
+        <div>
+            4、张思博：85（分）
+        </div>
+        <br />-->
+    </div>
+</block>
+<block name="scriptTemplate">
+</block>
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmsetting/Bulletin/index.js"></script>
+</block>
+

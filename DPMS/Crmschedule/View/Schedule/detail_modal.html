@@ -1,0 +1,232 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+<form name="Form" verify-scope class="modal-body" style="max-height:100%">
+    <h4>基本信息</h4>
+    <div class="profile-user-info profile-user-info-striped">
+        <div class="profile-info-row">
+            <div class="profile-info-name">
+                标题
+            </div>
+            <div class="profile-info-value">
+                <input type="text" ng-readonly="readonly" ng-verify="min:1, max:25" ng-model="Source.selectItem.title" placeholder="输入1~25位标题" required ng-readonly="service.Action==2" />
+            </div>
+        </div>
+        <!--判断：1.如果是添加页面，添加完成后把新加项目的id，然后重新查数据赋值给service.selectItem并显示出来
+                 2.如果是编辑页面，则有相关数据取到，service.selectItem.idproject不为空-->
+        <div class="profile-info-row">
+            <div class="profile-info-name">
+                标记颜色
+            </div>
+            <div class="profile-info-value">
+                <input class="form-control" ng-verify="min:1, max:25" ng-model="Source.selectItem.color.primary" placeholder="必选" colorpicker type="text">
+            </div>
+        </div>
+        <div class="profile-info-row">
+            <div class="profile-info-name">
+                开始时间
+            </div>
+            <div class="profile-info-value">
+                <input type="datetime-local" value="{{Source.selectItem.stime}}" ng-model="Source.selectItem.startsAt" placeholder="必填" required />
+            </div>
+        </div>
+        <div class="profile-info-row">
+            <div class="profile-info-name">
+                结束时间
+            </div>
+            <div class="profile-info-value">
+                <input type="datetime-local" value="{{Source.selectItem.etime}}" ng-model="Source.selectItem.endsAt" placeholder="必填" required />
+            </div>
+        </div>
+    </div>
+    <div class="profile-info-row" style="min-height:30px;min-width:100px;">
+        <div class="text-right">
+            <a href="javascript:;" title="点击隐藏/显示其余属性" ng-click="hideOther=!hideOther">
+                <i class="fa" ng-class="{'fa-chevron-circle-down':!hideOther,'fa-chevron-circle-up':hideOther}" aria-hidden="true"></i>
+                <span>{{ !hideOther?'展开其他':'隐藏'}}属性</span>
+            </a>
+        </div>
+    </div>
+    <div class="profile-info-row" ng-show="hideOther">
+        <h4>其他属性</h4>
+        <div class="profile-info-row">
+            <div class="profile-info-name" style="padding: inherit;">
+                边框颜色
+            </div>
+            <div class="profile-info-value">
+                <div class="top-2">
+                    <input class="form-control" ng-verify="min:1, max:25" ng-model="Source.selectItem.color.secondary" placeholder="必选" colorpicker type="text">
+                </div>
+            </div>
+        </div>
+        <div class="profile-info-row">
+            <div class="profile-info-name" style="padding: inherit;">
+                内容/备注:
+            </div>
+            <div class="profile-info-value">
+                <div class="top-2">
+                    <textarea ng-verify="pattern:/[\u4e00-\u9fa5]/, required:false, errmsg:'需要输入中文' " ng-model="Source.selectItem.message" placeholder="输入中文（非必填）"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="profile-info-row">
+            <div class="profile-info-name" style="padding: inherit;">
+                相关用户:
+            </div>
+            <div class="profile-info-value">
+                <div class="top-2">
+                    <a href="javascript:;" title="点击隐藏/显示用户" ng-click="hideusers=!hideusers;status(3);">
+                        <i class="fa" ng-class="{'fa-chevron-circle-down':!hideusers,'fa-chevron-circle-up':hideusers}" aria-hidden="true"></i>
+                        <span>{{ !hideusers?'关联用户':'隐藏列表'}}</span>
+                    </a>
+                    <div class="mycheckbox" ng-show="hideusers">
+                        <div class="checkbox" ng-repeat="user in Source.usersData track by $index">
+                            <label style="text-align:left;">
+                                <input type="checkbox" ng-model="user.checked" ng-change="save(user)" />{{user.username}}
+                            </label>
+                        </div>
+                        <a ng-click="addUserClick()" title="新建用户"><i class="fa fa-plus green f-16"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="profile-info-row">
+            <div class="profile-info-name" style="padding: inherit;">
+                相关角色:
+            </div>
+            <div class="profile-info-value">
+                <div class="top-2">
+                    <a href="javascript:;" title="点击隐藏/显示用户角色" ng-click="hideusertype=!hideusertype;status(4);">
+                        <i class="fa" ng-class="{'fa-chevron-circle-down':!hideusertype,'fa-chevron-circle-up':hideusertype}" aria-hidden="true"></i>
+                        <span>{{ !hideusertype?'关联用户角色':'隐藏列表'}}</span>
+                    </a>
+                    <div class="mycheckbox" ng-show="hideusertype">
+                        <div class="checkbox" ng-repeat="usertype in Source.usertypeData track by $index">
+                            <label style="text-align:left;">
+                                <input type="checkbox" ng-model="usertype.checked" ng-change="save(usertype)" />{{usertype.typename}}
+                            </label>
+                        </div>
+                        <a ng-click="addUserTypeClick()" title="新建用户角色"><i class="fa fa-plus green f-16"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="profile-info-row">
+            <div class="profile-info-name" style="padding: inherit;">
+                相关用户组:
+            </div>
+            <div class="profile-info-value">
+                <div class="top-2">
+                    <a href="javascript:;" title="点击隐藏/显示用户组" ng-click="hideusergroup=!hideusergroup;status(5);">
+                        <i class="fa" ng-class="{'fa-chevron-circle-down':!hideusergroup,'fa-chevron-circle-up':hideusergroup}" aria-hidden="true"></i>
+                        <span>{{ !hideusergroup?'关联用户组':'隐藏列表'}}</span>
+                    </a>
+                    <div class="mycheckbox" ng-show="hideusergroup">
+                        <div>
+                            <treecontrol class="tree-light" tree-model="service.treedata" on-selection="showSelected(node)">
+                                <span ng-mouseenter="mouseenter=true" ng-mouseleave="mouseenter=false">
+                                    <span ng-class="node.isParent == true?'fa fa-user-circle-o bigger-120 ng-scope':'fa fa-user bigger-120 ng-scope'" ng-class="node.type"></span>
+                                    <input type="checkbox" ng-checked="node.checked">
+                                    <span ng-bind="node.groupname"></span>
+                                    <i class="fa fa-plus green" uib-popover="为【{{node.groupname}}】添加一个子集分组" popover-trigger="'mouseenter'" popover-placement="top-left" popover-append-to-body="true" style="white-space:nowrap;" ng-show="mouseenter" ng-click="addUsergroupClick(node)"></i>
+                                </span>
+                            </treecontrol>
+                        </div>
+                        <a ng-click="addUsergroupClick()" title="新建用户组"><i class="fa fa-plus green f-16"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="profile-info-row">
+            <div class="profile-info-name" style="padding: inherit;">
+                相关联系人:
+            </div>
+            <div class="profile-info-value">
+                <div class="top-2">
+                    <a href="javascript:;" title="点击隐藏/显示联系人" ng-click="hidecontact=!hidecontact;status(6);">
+                        <i class="fa" ng-class="{'fa-chevron-circle-down':!hidecontact,'fa-chevron-circle-up':hidecontact}" aria-hidden="true"></i>
+                        <span>{{ !hidecontact?'关联联系人':'隐藏列表'}}</span>
+                    </a>
+                    <div class="mycheckbox" ng-show="hidecontact">
+                        <div class="checkbox" ng-repeat="contact in Source.contactData track by $index">
+                            <label style="text-align:left;">
+                                <input type="checkbox" ng-model="contact.checked" ng-change="save(contact)" />{{contact.name}}
+                            </label>
+                        </div>
+                        <a ng-click="addCustypeClick()" title="新建联系人"><i class="fa fa-plus green f-16"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="profile-info-row">
+            <div class="profile-info-name" style="padding: inherit;">
+                相关客户:
+            </div>
+            <div class="profile-info-value">
+                <div class="top-2">
+                    <a href="javascript:;" title="点击隐藏/显示客户" ng-click="hidecustomer=!hidecustomer;status(7);">
+                        <i class="fa" ng-class="{'fa-chevron-circle-down':!hidecustomer,'fa-chevron-circle-up':hidecustomer}" aria-hidden="true"></i>
+                        <span>{{ !hidecustomer?'关联客户':'隐藏列表'}}</span>
+                    </a>
+                    <div class="mycheckbox" ng-show="hidecustomer">
+                        <div class="checkbox" ng-repeat="customerinfo in Source.customerinfoData">
+                            <label style="text-align:left;">
+                                <input type="checkbox" ng-model="customerinfo.checked" ng-change="save(customerinfo)" />{{customerinfo.name}}
+                            </label>
+                        </div>
+                        <a ng-click="addCustomerinfoClick()" title="新建客户"><i class="fa fa-plus green f-16"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="profile-info-row">
+            <div class="profile-info-name" style="padding: inherit;">
+                相关项目:
+            </div>
+            <div class="profile-info-value">
+                <div class="top-2">
+                    <a href="javascript:;" title="点击隐藏/显示项目" ng-click="hideproject=!hideproject;status(8);">
+                        <i class="fa" ng-class="{'fa-chevron-circle-down':!hideproject,'fa-chevron-circle-up':hideproject}" aria-hidden="true"></i>
+                        <span>{{ !hideproject?'关联项目':'隐藏列表'}}</span>
+                    </a>
+                    <div class="mycheckbox" ng-show="hideproject">
+                        <div class="checkbox" ng-repeat="project in Source.projectData">
+                            <label style="text-align:left;">
+                                <input type="checkbox" ng-model="project.checked" ng-change="save(project)" />{{project.name}}
+                            </label>
+                        </div>
+                        <a ng-click="addWorkorderClick()" title="新建项目"><i class="fa fa-plus green f-16"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="profile-info-row">
+            <div class="profile-info-name" style="padding: inherit;">
+                相关工单:
+            </div>
+            <div class="profile-info-value">
+                <div class="top-2">
+                    <a href="javascript:;" title="点击隐藏/显示工单" ng-click="hideworkorder=!hideworkorder;status(9);">
+                        <i class="fa" ng-class="{'fa-chevron-circle-down':!hideworkorder,'fa-chevron-circle-up':hideworkorder}" aria-hidden="true"></i>
+                        <span>{{ !hideworkorder?'关联工单':'隐藏列表'}}</span>
+                    </a>
+                    <div class="mycheckbox" ng-show="hideworkorder">
+                        <div class="checkbox" ng-repeat="workorder in Source.workorderData">
+                            <label style="text-align:left;">
+                                <input type="checkbox" ng-model="workorder.checked" ng-change="save(workorder)" />{{workorder.title}}
+                            </label>
+                        </div>
+                        <a ng-click="addWorkorderClick()" title="新建客户"><i class="fa fa-plus green f-16"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer" style="text-align: center;">
+        <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save(0)">保存</button>
+        <button class="btn btn-primary btn-sm" type="button" ng-click="save(2)" ng-show="Source.Action==2">删除</button>
+        <button class="btn btn-warning btn-sm" type="button" ng-click="cancel();">取消</button>
+    </div>
+</form>

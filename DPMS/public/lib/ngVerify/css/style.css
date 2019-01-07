@@ -1,0 +1,40 @@
+/*DEMO页面布局*/
+
+.page-header{
+     margin: 0 0 12px;
+    border-bottom: 1px dotted #E2E2E2;
+    padding-bottom: 16px;
+    padding-top: 7px;
+}
+.page-header h1{
+    padding: 0;
+    margin: 0 8px;
+    font-size: 24px;
+    font-weight: lighter;
+    color: #2679B5;
+}
+}
+   
+.form-container{
+    width: 400px;
+    margin: 0 auto;
+    padding-bottom: 50px;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input[type="number"]{
+  -moz-appearance: textfield;
+}
+label {
+    width: 100%;
+}
+label.radio-inline,label.checkbox-inline{
+    width: auto;
+}
+
+label span {
+    color: #ee9285;
+    float: right;
+}

@@ -1,0 +1,91 @@
+﻿<extend name="angular-base.html" />
+    
+<block name="headcss">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angular-bootstrap-colorpicker/3.0.32/css/colorpicker.min.css">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angularTree/css/tree-control.css" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angularTree/css/tree-control-attribute.css" /> 
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}my-tree-style.css" />   
+    <style>
+        .filename {
+            width: 300px;
+            height: 30px;
+            line-height: 30px;
+        }
+
+        .choose-file-area a {
+            width: 50px;
+            text-align: center;
+            height: 30px;
+            line-height: 30px;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        a input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+        }
+    </style> 
+</block>
+<block name="headjs">
+    <script>
+        //当前登录的用户下能访问的客户信息
+        var _userrefcus = "{$cusRefuser}";
+        //已经过滤好的客户信息
+        var _customerinfoRefauth = "{$customerinfoRefauth}";
+    </script>  
+    <script src="{$Think.const.BOOTSTRAP_URL}angularTree/js/angular-tree-control.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-sanitize/{$Think.const.ANGULAR_VERSION}angular-sanitize.min.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-file-upload/angular-file-upload.min.js"></script> 
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customerinfo/index-angular.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular-bootstrap-colorpicker/3.0.32/js/bootstrap-colorpicker-module.js"></script>
+</block>
+<block name="pageContent">
+    <!--页头-->
+    <div class="page-header clearfix">
+        <h1 class="col-xs-3 text-left">
+            {$MenuName}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {$PageName}
+            </small>
+        </h1>
+        <div class="col-xs-4 text-center">
+            <button type="button" class="btn btn-sm btn-warning" ng-click="uploadfile()">批量导入</button><page-btn></page-btn>
+        </div>
+    </div>
+    <!--快速检索-->
+    <div class="table-header clearfix">
+        <div class="col-xs-6">{$MenuName}<small><i class="ace-icon fa fa-angle-double-right"></i>{$PageName}</small></div>
+    </div>
+    <div>
+        <div ui-grid="gridOptions"  ui-grid-auto-resize ui-grid-resize-columns ui-grid-pagination ui-grid-empty-base-layer></div>
+    </div>
+</block>
+
+<block name="scriptTemplate">
+    
+</block>
+
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customerinfo/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Contact/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customertype/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customercredit/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customerindustry/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customerlevel/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customermarket/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customersource/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customerstage/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customerstatus/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customerrefcompany/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmuser/Users/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmuser/Usergroup/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmuser/Usertype/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagebtn.js"></script>    
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customerinfo/uploadBtn.js"></script>
+</block>

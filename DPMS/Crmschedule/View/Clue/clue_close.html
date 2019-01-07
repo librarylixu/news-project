@@ -1,0 +1,140 @@
+<extend name="angular-base.html" />
+<block name="momentjs">
+</block>
+<block name="headcss">
+
+</block>
+<block name="headjs">
+    <!--select start-->
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/select.css">
+    <script src="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/select.js"></script>
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/select2.css">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/selectize.default.css">
+    <!--select end-->
+    <link rel="stylesheet" href="{$Think.const.PAGE_URL}css/crmSchedule/Workerorder/workerorder.css" /><!-- 这里公用了工单css -->
+    <script>
+        var userid = "{$userid}";
+        var _appid = "{$appid}";
+    </script>
+</block>
+<block name="pageContent">
+    <div class="col-xs-12">
+        <!--操作区域-->
+        <div class="btn-box">
+            <!--展示检索条件区域-->
+            <div class="search-box">
+                <span class="display" ng-click="search=!search"><span ng-bind="search?'隐藏':'点击'"></span>根据条件检索</span>&nbsp;
+                <span class="input-search">
+                    <input type="text" placeholder="标题检索 ..." class="search-input" ng-model="filtername">
+                    <i class="fa fa-search search-icon"></i>
+                </span>
+            </div>
+            <div ng-if="search" class="top-10">
+                <ui-select multiple ng-model="service.status" on-select="addTags('status', $item);" theme="select2">
+                    <ui-select-match placeholder="按状态检索" ng-bind="$item.value.name"></ui-select-match>
+                    <ui-select-choices repeat="person.value as (key, person) in service.privateDateObj.cluestatusData | filter: { value: { name: $select.search }} track by $index">
+                        <span>
+                            <div ng-bind-html="person.value.name | highlight: $select.search"></div>
+                        </span>
+                    </ui-select-choices>
+                </ui-select>
+                <ui-select multiple ng-model="service.user" on-select="addTags('user',$item);" theme="select2" ng-if="selectUserData">
+                    <ui-select-match placeholder="按创建人检索" ng-bind="$item.value.description"></ui-select-match>
+                    <ui-select-choices repeat="person.value as (key, person) in selectUserData | filter: { value: { description: $select.search }} track by $index">
+                        <div ng-bind-html="person.value.description | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+                <ui-select multiple ng-model="service.assign" on-select="addTags('assign', $item);" theme="select2" ng-if="selectAssignData">
+                    <ui-select-match placeholder="按指派人检索" ng-bind="$select.value.description"></ui-select-match>
+                    <ui-select-choices repeat="person.value as (key, person) in selectAssignData | filter: { value: { description: $select.search }} track by $index">
+                        <div ng-bind-html="person.value.description | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <!--条件检索区-->
+        <div class="text-right">
+            <span class="tag" ng-repeat="item in tagsData" ng-class="item.key">
+                <span ng-if="item.key=='status' || item.key=='type'" ng-bind-html="item.value.name"></span>
+                <span ng-if="item.key!='status' && item.key!='type'" ng-bind="item.value.description"></span>
+                <button type="button" class="close" ng-click="removeTag(item)">×</button>
+            </span>
+        </div>
+    </div>
+    <!--表格展示区-->
+    <div class="col-xs-12">
+
+        <table class="table" ng-init="clueDataCount={count:0};orderName = '-createtime'" style="margin-bottom:2px;">
+            <thead>
+                <tr>
+                    <th class="mousehand" ng-click="orderName=(orderName=='name'?'-name':'name')">指派人<i class="fa" ng-class="orderName=='type'?'fa-caret-up':'fa-caret-down'"></i></th>
+                    <th class="mousehand" ng-click="orderName=(orderName=='status'?'-status':'status')">商机状态 <i class="fa" ng-class="orderName=='-createtime'?'fa-caret-up':'fa-caret-down'"></i></th>
+                    <th class="mousehand" ng-click="orderName=(orderName=='-starttime'?'-starttime':'starttime')">创建时间<i class="fa" ng-class="orderName=='status'?'fa-caret-up':'fa-caret-down'"></i></th>
+                    <th class="mousehand" ng-click="orderName=(orderName=='endtime'?'-endtime':'endtime')">咨询人<i class="fa" ng-class="orderName=='title'?'fa-caret-up':'fa-caret-down'"></i></th>
+                    <th>
+                        <span class="mousehand" ng-click="orderName=(orderName=='refcustomerid'?'-refcustomerid':'refcustomerid')">
+                            预留电话<i class="fa" ng-class="orderName=='refcustomerid'?'fa-caret-up':'fa-caret-down'"></i>
+                        </span>
+                    </th>
+                    <th class="mousehand" ng-click="orderName=(orderName=='userid'?'-userid':'userid')">公司名称<i class="fa" ng-class="orderName=='userid'?'fa-caret-up':'fa-caret-down'"></i></th>
+                    <th class="mousehand" ng-click="orderName=(orderName=='assignid'?'-assignid':'assignid')">咨询产品<i class="fa" ng-class="orderName=='assignid'?'fa-caret-up':'fa-caret-down'"></i></th>
+                    <th class="mousehand" ng-click="orderName=(orderName=='-place'?'place':'-place')">商机类型 <i class="fa" ng-class="orderName=='-createtime'?'fa-caret-up':'fa-caret-down'"></i></th>
+                    <td>操作</td>
+                </tr>
+            </thead>
+            <tbody>
+                <!--ng-class="item.assignid==service.userid?'bg-pink-red':''"-->
+                <tr ng-repeat="(key,item) in service.closeclueArrData | orderBy:orderName |filterByAttr:filtername:clueDataCount track by $index"
+                    class="profile-activity">
+                    <td>
+                        <div><!-- 商机指派人 -->
+                            <span class="label c-info" ng-bind="(service.privateDateObj.usersData[item.assignid].description ? service.privateDateObj.usersData[item.assignid].description :service.privateDateObj.usersData[item.assignid].username)"></span>
+                        </div>
+                    </td>
+                    <td>
+                        <!-- 商机状态 -->
+                        <span class="left-10 label" ng-class="service.privateDateObj.cluestatusData[item.status].type" ng-bind="service.privateDateObj.cluestatusData[item.status].name"></span>
+                    </td>
+                    <td><span ng-bind="service.formatDate(item.createtime,'yyyy-mm-dd')"></span></td>
+                    <td><span ng-bind="item.contactname"></span></td><!-- 咨询人 -->
+                    <td>
+                        <!-- 预留电话 -->
+                        <span class="label label-default left-5" ng-bind="item.contactphone"></span>
+                    </td>
+                    <td>
+                        <div>
+                            <!-- 公司名称 -->
+                            <span class="label c-info" ng-bind="item.customername"></span>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <!-- 咨询产品 -->
+                            <span class="label c-info" ng-bind="item.productmodel"></span>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <!-- 商机类型 -->
+                            <span class="label c-info" ng-bind="service.privateDateObj.cluetypeData[item.type].name"></span>
+                        </div>
+                    </td>
+                    <td>
+                        <a href="javascript:;" ng-click="selectdetailed(item)" title="详细" class="btn btn-xs green"><i class="ace-icon fa fa-search"></i>&nbsp;详细</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="text-right" style="padding:10px;">
+            当前<b class="blue" ng-bind="service.closeclueArrData.length"></b>条已关闭商机
+            <!--<div ng-include="'__APP__/Crmbase/Baseinfo/setpaging'"></div>-->
+        </div>
+    </div>
+</block>
+<block name="scriptTemplate">
+</block>
+
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmschedule/Clue/clue_close.js"></script>
+</block>
+​

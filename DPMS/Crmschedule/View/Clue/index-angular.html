@@ -1,0 +1,324 @@
+﻿<extend name="angular-base.html" />
+<block name="momentjs">
+</block>
+<block name="headcss">
+    
+</block>
+<block name="headjs">
+    <!--select start-->
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/select.css">
+    <script src="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/select.js"></script>
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/select2.css">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/selectize.default.css">
+    <!--select end-->
+    <link rel="stylesheet" href="{$Think.const.PAGE_URL}css/crmSchedule/Workerorder/workerorder.css" /><!-- 这里公用了工单css -->
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}upload.css" />   
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-file-upload/angular-file-upload.min.js"></script>
+    <script src='{$Think.const.BOOTSTRAP_URL}textAngular/textAngular-rangy.min.js'></script>
+    <script src='{$Think.const.BOOTSTRAP_URL}textAngular/textAngular-sanitize.min.js'></script>
+    <script src='{$Think.const.BOOTSTRAP_URL}textAngular/textAngular.min.js'></script>
+    <script>
+        var _appid = "{$appid}";
+    </script>
+</block>
+<block name="pageContent">
+    <main class="js-canvi-content canvi-content">
+        <div class="col-xs-12">
+            <!--操作区域-->
+            <div class="btn-box">
+                <page-btn></page-btn>&nbsp;
+                <a class="display" ng-click="selectclose()">查看已关闭的商机</a>  
+                <!--展示检索条件区域-->
+                <div class="search-box">
+                    <span class="display" ng-click="search=!search"><span ng-bind="search?'隐藏':'点击'"></span>根据条件检索</span>&nbsp;
+                    <span class="input-search">
+                        <input type="text" placeholder="标题检索 ..." class="search-input" ng-model="filtername">
+                        <i class="fa fa-search search-icon"></i>
+                    </span>
+                </div>
+                <div ng-if="search" class="top-10">
+                    <ui-select multiple ng-model="service.type" on-select="addTags('type', $item);" theme="select2">
+                        <ui-select-match placeholder="按类型检索" ng-bind="$item.value.name"></ui-select-match>
+                        <ui-select-choices repeat="person.value as (key, person) in service.privateDateObj.cluetypeData | filter: { value: { name: $select.search }} track by $index">
+                            <div ng-bind-html="person.value.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                    <ui-select multiple ng-model="service.assign" on-select="addTags('assign', $item);" theme="select2" ng-if="selectAssignData">
+                        <ui-select-match placeholder="按指派人检索" ng-bind="$select.value.description"></ui-select-match>
+                        <ui-select-choices repeat="person.value as (key, person) in selectAssignData | filter: { value: { description: $select.search }} track by $index">
+                            <div ng-bind-html="person.value.description | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+            <!--条件检索区-->
+            <div class="text-right">
+                <span class="tag" ng-repeat="item in tagsData" ng-class="item.key">
+                    <span ng-if="item.key=='status' || item.key=='type'" ng-bind-html="item.value.name"></span>
+                    <span ng-if="item.key!='status' && item.key!='type'" ng-bind="item.value.description"></span>
+                    <button type="button" class="close" ng-click="removeTag(item)">×</button>
+                </span>
+            </div>            
+        </div>
+        <!--表格展示区-->
+        <div class="col-xs-12">
+            <div class="text-right" style="padding:10px;">
+                当前<b class="blue" ng-bind="service.clueArrData.length"></b>条线索
+                <!--<div ng-include="'__APP__/Crmbase/Baseinfo/setpaging'"></div>-->
+            </div>
+            <table class="table" ng-init="clueDataCount={count:0};orderName = '-createtime'" style="margin-bottom:2px;">
+                <thead>
+                    <tr>
+                        <th style="width:5%;">编号</th>
+                        <th style="width:7%;">指派人</th>
+                        <th style="width:7%;">商机状态</th>
+                        <th style="width:11%;">创建时间</th>
+                        <th style="width:7%;">咨询人</th>
+                        <th style="width:12%;">预留电话</th>
+                        <th style="width:15%;">公司名称</th>
+                        <th style="width:10%;">咨询产品</th>
+                        <th style="width:7%;">商机来源</th>
+                        <th style="width:7%;">商机类型</th>
+                        <th style="width:12%;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!--ng-class="item.assignid==service.userid?'bg-pink-red':''"-->
+                    <tr ng-repeat="(key,item) in service.clueArrData | orderBy:orderName |filterByAttr:filtername:clueDataCount track by $index" class="profile-activity"
+                        ng-class="(item.userid == service.userid&&item.status == 0) || (item.assignid == service.userid&&(item.status == 1))?'danger ':''">
+                        <td style="width:5%;"><span class="badge" ng-bind="key+1"></span></td>
+                        <td><span class="blue display" ng-bind="service.privateDateObj.usersData[item.assignid].description" ng-click="selectdetailed(item)"></span></td>
+                        <td>
+                            <span class="left-10 label" ng-class="service.privateDateObj.cluestatusData[item.status].type" ng-bind="service.privateDateObj.cluestatusData[item.status].name"></span>
+                        </td>
+
+                        <td style="width:10%;">
+                            <span ng-bind="formatDate(item.createtime,'yyyy-mm-dd')"></span>
+                        </td>
+                        <td><span ng-bind="item.contactname"></span></td>
+                        <td><span ng-bind="item.contactphone"></span></td>
+                        <td>
+                            <span>
+                                <a class="user" href="" ng-click="selectdetailed(item)" ng-bind="item.customername"></a>
+                            </span>
+                        </td>
+                        <td><span ng-bind="item.productmodel"></span></td>
+                        <td> 
+                            <span class="left-10 label" ng-class="service.privateDateObj.cluesourceData[item.source].type?service.privateDateObj.cluesourceData[item.source].type:'label-danger'" ng-bind="service.privateDateObj.cluesourceData[item.source].name?service.privateDateObj.cluesourceData[item.source].name:'未知'"></span>
+                        </td>
+                        <td>
+                            <span class="left-10 label" ng-class="service.privateDateObj.cluetypeData[item.type].type" ng-bind="service.privateDateObj.cluetypeData[item.type].name"></span>
+                        </td>
+                        <!--关键字检索-->
+                        <td style="width:20%;">
+                            <a href="javascript:;" ng-click="selectdetailed(item)" title="详细" class="btn btn-xs green"><i class="ace-icon fa fa-search"></i>&nbsp;详细</a>
+                            <a href="javascript:;" ng-if="item.assignid==service.userid && item.status=='1'" ng-click="alertConfirm(item)" title="认领" class="btn btn-xs green"><i class="ace-icon fa fa-check "></i>&nbsp;认领</a>
+                            <a href="javascript:;" ng-if="item.status=='2' && item.assignid==service.userid " ng-click="alertOver(item)" title="关闭" class="btn btn-xs green"><i class="ace-icon fa fa-times "></i>&nbsp;关闭此商机</a>
+                            <a href="javascript:;" ng-if="service.refedit && item.userid==service.userid && item.status<2" ng-click="updateInfo(item)" title="修改" class="btn btn-xs green"><i class="ace-icon fa fa-pencil "></i>&nbsp;修改</a>
+                            <a href="javascript:;" ng-if="service.refdel  && item.userid==service.userid" ng-click="remove(item)" class="btn btn-xs  green"><i class="ace-icon fa fa-times"></i>&nbsp;删除</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+</main>
+    <aside class="workerordermodaltemplate canvi-navbar">
+        <div class="canvi-user-info">
+            <div class="canvi-user-info__data">
+                <span class="canvi-user-info__title" ng-bind="clueModal.title"></span>
+                <!--<a href="#" class="canvi-user-info__meta">XXXX编辑</a>-->
+                <div class="canvi-user-info__close" ng-click="clueModal.toggle();"></div>
+            </div>
+        </div>
+        <div>
+            <form name="Form" class="container-fluid" verify-scope="tipStyle: 0">     
+                <div class="row " style="line-height:28px;">
+                    <label class="col-xs-3 text-right"><b class="c-red">*</b>咨询人</label>
+                    <input type="text" ng-verify="min:1, max:20" class="form-control col-xs-4" ng-model="selectItem.contactname" placeholder="输入1~20位字符咨询人名称" />
+                </div> 
+                <div class="row top-10 clearfix" style="line-height:28px;">
+                    <label class="col-xs-3 text-right"><b class="c-red">*</b>预留电话</label>
+                    <input type="text" ng-verify="" class="form-control col-xs-4" ng-model="selectItem.contactphone" placeholder="输入联系方式" />
+                </div>
+                <div class="row top-10 clearfix" style="line-height:28px;">
+                    <label class="col-xs-3 text-right"><b class="c-red"></b>咨询人职位</label>
+                    <input type="text" ng-verify="min:1, max:20,required:false" class="form-control col-xs-4" ng-model="selectItem.contactlevel" placeholder="输入1~20位字符职位信息" />
+                </div> 
+                <div class="row top-10 clearfix" style="line-height:28px;">
+                    <label class="col-xs-3 text-right">公司名称</label>
+                    <input type="text" ng-verify="pattern:/[\u4e00-\u9fa5]/, errmsg:'需要输入中文',required:false" class="form-control col-xs-4" ng-model="selectItem.customername" placeholder="输入1~25位字符标题" />
+                </div>
+                <div class="row top-10 clearfix" style="line-height:28px;">
+                    <label class="col-xs-3 text-right"><b class="c-red"></b>公司地址</label>
+                    <input type="text" ng-verify="pattern:/[\u4e00-\u9fa5]/, errmsg:'需要输入中文',required:false " class="form-control col-xs-4" ng-model="selectItem.customeraddress" placeholder="请输入中文" />
+                </div>    
+                <div class="row top-10 clearfix" style="line-height:28px;">
+                    <label class="col-xs-3 text-right"><b class="c-red">*</b>咨询产品</label>
+                    <input type="text" ng-verify="min:1, max:100" class="form-control col-xs-4" ng-model="selectItem.productmodel" placeholder="请输入咨询的产品" />
+                        <!--<ui-select style="width: 50%;" ng-model="selectItem.productmodel" ng-verify="">
+                            <ui-select-match placeholder="请选择产品型号">
+                                <span ng-bind="$select.selected.value.name">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices group-by="'productid'" repeat="val.value.idproductmodel as (key,val) in service.privateDateObj.productmodelData | filter: { value: { name: $select.search }}">
+                                <div ng-bind-html="val.value.name| highlight: $select.search"></div>
+                                <small>
+                                    <span style="color:#666" ng-bind-html="'&nbsp;&nbsp;'+service.privateDateObj.productData[val.value.productid].name | highlight: $select.search"></span>
+                                </small>
+                            </ui-select-choices>
+                        </ui-select>-->
+                </div>
+                <div class="row top-10 clearfix" style="line-height:28px;">
+                    <label class="col-xs-3 text-right"><b class="c-red">*</b>商机类型</label>
+                    <span class="col-xs-8">
+                        <ui-select style="width: 50%" ng-model="selectItem.type" ng-verify="">
+                            <ui-select-match placeholder="请选择商机类型">
+                                <span ng-bind="$select.selected.value.name" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.key  as (key,item) in service.privateDateObj.cluetypeData | filter: { value: { name: $select.search }} " style="max-height: 150px;">
+                                <div ng-bind-html="item.value.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>           
+                    </span>
+                </div> 
+                <div class="row top-10 clearfix" style="line-height:28px;">
+                    <label class="col-xs-3 text-right"><b class="c-red"></b>指派给</label>
+                    <span class="col-xs-8">
+                        <ui-select style="width: 50%" ng-model="selectItem.assignid">
+                            <ui-select-match placeholder="请选择用户">
+                                <span ng-bind="$select.selected.value.description" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.key  as (key,item) in service.privateDateObj.usersData | filter: { value: { description: $select.search }} " style="max-height: 150px;">
+                                <div ng-bind-html="item.value.description | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </span>
+                </div>
+                <div class="row top-10 clearfix" style="line-height:28px;">
+                    <label class="col-xs-3 text-right"><b class="c-red"></b>商机来源</label>
+                    <span class="col-xs-8">
+                        <ui-select style="width: 50%" ng-model="selectItem.source">
+                            <ui-select-match placeholder="请选择来源">
+                                <span ng-bind="$select.selected.value.name" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.key  as (key,item) in service.privateDateObj.cluesourceData | filter: { value: { name: $select.search }} " style="max-height: 150px;">
+                                <div ng-bind-html="item.value.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </span>
+                </div>
+                <div class="row top-10 clearfix" style="line-height:28px;">
+                    <label class="col-xs-3 text-right">抄送</label>
+                    <div class="col-xs-8">
+                        <ui-select multiple ng-model="selectItem.refusers" theme="select2" style="width: 50%;">
+                            <ui-select-match placeholder="请选择抄送">
+                                <span ng-bind="$item.value.description" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.value.idusers  as (key,item) in service.privateDateObj.usersData | filter: { value: { description: $select.search }}" style="max-height: 150px;">
+                                <div ng-bind-html="item.value.description | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+                <div class="row top-10 clearfix" style="line-height:28px;">
+                    <label class="col-xs-3 text-right"><b class="c-red"></b>备注</label>                    
+                    <!-- 加载编辑器的容器 -->
+                    <script class="col-xs-8" style="padding: 0px;" id="container" name="content" type="text/plain">
+                    </script>
+                </div>
+                <div class="col-xs-12 text-center top-10">
+                    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="saveData()" ng-if="Action==0||Action==1" title="请检查数据是否正确填写！">
+                        保存
+                    </button>
+                    <button class="btn btn-warning btn-sm" type="button" ng-click="clueModal.close();">取消</button>
+                </div>
+                <br />
+                <br />
+                <br />
+            </form>
+        </div>
+
+    </aside>     
+
+    <aside class="closecluemodaltemplate canvi-navbar">
+        <div class="canvi-user-info">
+            <div class="canvi-user-info__data">
+                <span class="canvi-user-info__title" ng-bind="closeclueModal.title"></span>
+                <!--<a href="#" class="canvi-user-info__meta">XXXX编辑</a>-->
+                <div class="canvi-user-info__close" ng-click="closeclueModal.toggle();"></div>
+            </div>
+
+        </div>
+        <div style="padding-top:10px;">
+            <form name="Form" class="container-fluid" verify-scope="tipStyle: 0">
+                <div class="row " style="line-height:28px;">
+                    <label class="col-xs-3 text-right">咨询人</label>
+                    <input type="text" ng-verify="min:1, max:20" class="form-control col-xs-4" ng-model="selectItem.contactname" placeholder="输入1~20位字符咨询人名称" />
+                </div>
+                <div class="row top-10 clearfix" style="line-height:28px;">
+                    <label class="col-xs-3 text-right">预留电话</label>
+                    <input type="text" ng-verify="" class="form-control col-xs-4" ng-model="selectItem.contactphone" placeholder="输入联系方式" />
+                </div>
+                <div class="row top-10 clearfix" style="line-height:28px;">
+                    <label class="col-xs-3 text-right"><b class="c-red">*</b>咨询人职位</label>
+                    <input type="text" ng-verify="min:1, max:20" class="form-control col-xs-4" ng-model="selectItem.contactlevel" placeholder="输入1~20位字符职位信息" />
+                </div>
+                <div class="row top-10 clearfix" style="line-height:28px;">
+                    <label class="col-xs-3 text-right"><b class="c-red">*</b>公司名称</label>
+                    <input type="text" ng-verify="pattern:/[\u4e00-\u9fa5]/, errmsg:'需要输入中文'" class="form-control col-xs-4" ng-model="selectItem.customername" placeholder="输入1~25位字符标题" />
+                </div>
+                <div class="row top-10 clearfix" style="line-height:28px;">
+                    <label class="col-xs-3 text-right"><b class="c-red">*</b>公司地址</label>
+                    <input type="text" ng-verify="pattern:/[\u4e00-\u9fa5]/, errmsg:'需要输入中文'" class="form-control col-xs-4" ng-model="selectItem.customeraddress" placeholder="请输入中文" />
+                </div>
+                <div class="row top-10 clearfix" style="line-height:28px;">
+                    <label class="col-xs-3 text-right">咨询产品</label>
+                    <input type="text" ng-verify="min:1, max:100" class="form-control col-xs-4" ng-model="selectItem.productmodel" placeholder="请输入咨询的产品" />
+                </div>
+                <div class="row top-10 clearfix">
+                    <label class="col-xs-3 text-right"><b class="c-red">*</b>选择类型</label>
+                    <span>
+                        <select ng-model="selectItem.cluestatus">
+                            <option value="3">无效商机</option>
+                            <option value="4">成立客户，已跟进</option>
+                            <option value="6">成立客户，已签单</option>
+                            <option value="5">已存在客户</option>
+                        </select>
+                    </span>
+                </div>
+                <div class="row top-10 clearfix">
+                    <label class="col-xs-3 text-right"><b class="c-red">*</b>关闭描述</label>
+                    <span>
+                        <textarea class="col-xs-8" ng-verify="min:1, max:100" ng-model="mark" placeholder="请填写关闭描述"></textarea>
+                    </span>
+                </div>
+                <div class="text-right top-10">
+                    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="saveCluerecordResult(service.selectItem,selectItem.cluestatus,'由['+ (service.privateDateObj.usersData[selectItem.assignid].description) + ']'+ (cluestatus==3?'中止':'成交') +'了此商机,关闭描述：'+ mark)">
+                        确认关闭
+                    </button>
+                    <button class="btn btn-warnning btn-sm" type="button" ng-click="closeclueModal.toggle()">取消关闭</button>
+                </div>
+                <br />
+                <br />
+                <br />
+            </form>
+        </div>
+    </aside>    
+</block>
+<block name="scriptTemplate">
+</block>
+
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmschedule/Clue/index.js?v={$Think.const.CRM_VERSION}"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagebtn.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmschedule/Clue/uploadBtn.js"></script>
+    <!-- 配置文件 -->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}ueditor/1.4.3.3/ueditor.config.js"></script>
+    <!-- 编辑器源码文件 -->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}ueditor/1.4.3.3/ueditor.all.js"></script>
+</block>
+​

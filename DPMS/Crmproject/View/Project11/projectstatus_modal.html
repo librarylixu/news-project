@@ -1,0 +1,112 @@
+﻿            
+<div>
+    <!--加项目-->
+    <form name="Form" verify-scope >
+        <div ng-if="Source.Action==0">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <input type="text" ng-verify="min:1, max:25" ng-model="Source.selectItem.name" />
+                </div>
+                <button  ng-verify="control:'Form'" class="btn btn-xs btn-success"  ng-click="save(0,0,0);Source.addIsOpen = false;">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="Source.addIsOpen = false;Source.selectItem.name=service.selectItem.name;">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+        </div>
+        <!--改名字-->
+        <div ng-if="Source.Action==1">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <input type="text" ng-verify="min:1, max:25" ng-model="Source.selectItem.name" />
+                </div>
+                <button ng-verify="control:'Form'" class="btn btn-xs btn-success" ng-click="save(1,1,1);Source.editNameIsOpen = false;">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="Source.editNameIsOpen = false;Source.selectItem.name=service.selectItem.name;">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+        </div>
+        <!--改状态-->
+        <div ng-if="Source.Action==3" style="height:40px;">
+            <ui-select ng-model="statusSelected" on-select="save($item, $model,3,0)" style="display:inline-block">
+                <ui-select-match>
+                    <span ng-bind="$select.selected.name">
+                    </span>
+                </ui-select-match>
+
+                <ui-select-choices repeat="item in service.statusArrData">
+                    <div ng-bind="item.name"></div>
+                </ui-select-choices>
+            </ui-select>
+            <a ng-click="addProjectstatusClick()" title="新建项目状态"><i class="fa fa-plus green f-16"></i></a>
+
+        </div>
+        <!--改开始时间-->
+        <!--<div ng-if="Source.Action==4">
+            <div class="input-group">
+                <input type="text" ng-verify="{required:false}" ng-model="service.starttime" style="width:81%" uib-datepicker-popup is-open="service.popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" placeholder="请选择一个开始时间" />
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" style="margin-left:-29px;padding:4px 7px;" ng-click="service.open2()"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
+            </div>
+           
+        </div>-->
+        <!--改结束时间-->
+        <!--<div ng-if="Source.Action==5">
+            <div class="input-group">
+                <input type="text" ng-verify="{required:false}" ng-model="service.endtime" style="width:81%" uib-datepicker-popup is-open="service.popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" placeholder="请选择一个结束时间" />
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" style="margin-left:-29px;padding:4px 7px;" ng-click="service.open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
+            </div>
+            
+        </div>-->
+        <!--改最终用户-->
+        <div ng-if="false">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <input type="text" ng-verify="min:1, max:25" ng-model="Source.selectItem.clientname" />
+                </div>
+                <a href="javascript:;" class="btn btn-xs btn-success" ng-click="save('clientname',1,1);Source.clientnameIsOpen = false;">
+                    <i class="fa fa-save"></i>
+                </a>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="Source.clientnameIsOpen = false;Source.selectItem.clientname=service.selectItem.clientname;">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+        </div>
+        <!--改主要联系人-->
+        <div ng-if="Source.Action==7">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <input type="text" ng-verify="min:1, max:25" ng-model="Source.selectItem.principal" />
+                </div>
+
+                <a href="javascript:;" class="btn btn-xs btn-success" ng-click="save('principal',1,1);Source.principalIsOpen = false;">
+                    <i class="fa fa-save"></i>
+                </a>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="Source.principalIsOpen = false;Source.selectItem.principal=service.selectItem.principal;">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+        </div>
+        <!--改备注-->
+        <div ng-if="Source.Action==8">
+            <div class="input-content">
+                <div style="display:inline-block;width:300px;height:70px;">
+                    <textarea style="height:4em !important;" ng-model="Source.selectItem.mark"></textarea>
+                </div>
+                <a href="javascript:;" class="btn btn-xs btn-success" ng-click="save('mark',1,1);Source.markIsOpen = false;">
+                    <i class="fa fa-save"></i>
+                </a>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="Source.markIsOpen = false;Source.selectItem.mark=service.selectItem.mark;">
+                    <i class="fa fa-reply"></i>
+                </a>
+
+            </div>
+        </div>
+</form>
+</div>

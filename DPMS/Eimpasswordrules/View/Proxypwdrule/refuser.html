@@ -1,0 +1,12 @@
+﻿<div ng-controller="ruleRefuserController">
+    <ui-select multiple ng-model="Source.selectItem.refuserData" on-select="refuserSave($item, 0)" on-remove="refuserSave($item, 1)">
+        <ui-select-match>
+            <span ng-bind="$item.username"></span>
+        </ui-select-match>
+        <ui-select-choices repeat="item in service.usersArrData track by $index">
+            <div ng-bind-html="item.username"></div>
+        </ui-select-choices>
+    </ui-select>
+</div>
+   
+

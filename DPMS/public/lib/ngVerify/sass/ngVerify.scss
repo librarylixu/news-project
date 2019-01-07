@@ -1,0 +1,131 @@
+/**
+ * ngVerify style
+ *
+ * License: MIT
+ * Designed and built by Moer
+ * github   https://github.com/Moerj/ngVerify
+ *
+ */
+
+$errorColor: #d9534f;
+
+/*标红*/
+.verifyError{
+    /* 元素靠box-shadow来渲染边框,可以保证input和非input渲染统一 */
+    border:1px solid $errorColor !important;
+    &:focus{
+        border-color: transparent !important;
+        box-shadow: 0 0 2px 1px $errorColor !important;
+    }
+}
+.verifyError-dash{
+    border-style: dashed !important;
+    border-radius: 5px;
+}
+
+
+/*错误消息容器*/
+.verifyTips{
+    position: relative;
+    z-index: 9999;
+    display: block;
+    align-self: flex-end;//防止外容器为flex时，tip容器定位不靠底部
+
+    .tipMsg{
+        color: #333;
+        font-weight: normal;
+        font-size: 14px;
+        padding: 0;
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    .tipStyle{
+        display: inline-block;
+        visibility: hidden;
+        line-height: 1.4;
+        opacity: 0;
+        border: 1px $errorColor solid;
+        box-shadow: 0 0 3px 0px $errorColor;
+        border-radius: 5px;
+        padding: 5px 10px;
+        margin: 0;
+        background-color: #fff;
+        transition: .4s;
+        position: absolute;
+        i{
+            border-color: transparent transparent $errorColor transparent;
+            border-width: 7px;
+            border-style: solid;
+            width: 0;
+            height: 0;
+            padding: 0 !important;
+            margin: 0 !important;
+            position: absolute;
+            top: auto;
+            &::after{
+                content: '';
+                border-color: transparent transparent #fff transparent;
+                border-width: 6px;
+                border-style: solid;
+                width: 0;
+                height: 0;
+                position: absolute;
+            }
+        }
+    }
+
+    .tipStyle-0{
+        display: none !important;
+    }
+
+    //右上角浮动
+    .tipStyle-1{
+        @extend .tipStyle;
+        right: 0; //气泡的出现位置
+        margin-top: -8px;
+        transform: translate3d(0,0,0) scale3d(0,0,1);
+        // 气泡角标的位置
+        i{
+            border-color: $errorColor transparent transparent transparent;
+            transform: translate3d(0, 14px, 0);
+            bottom: 0;
+            right: 10px;
+            &::after{
+                border-color: #fff transparent transparent transparent;
+                top:-8px;
+                right: -6px;
+            }
+        }
+    }
+    //左下角占位
+    .tipStyle-2{
+        @extend .tipStyle;
+        left: 0;
+        margin-top: 9px;
+        transform: translate3d(0,-20px,0) scale3d(0,0,1);
+        // 气泡角标的位置
+        i{
+            top: -14px;
+            left: 10px;
+            &::after{
+                top: -4px;
+                left: -6px;
+            }
+        }
+    }
+
+    // 显示tip
+    .showTip-1{
+        visibility: visible;
+        opacity: .8;
+        transform: translate3d(0,-33px,0) scale3d(1,1,1);
+    }
+    .showTip-2{
+        visibility: visible;
+        opacity: .8;
+        transform: translate3d(0,0,0) scale3d(1,1,1);
+        position: static;
+    }
+
+}

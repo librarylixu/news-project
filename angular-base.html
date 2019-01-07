@@ -1,0 +1,102 @@
+﻿<!doctype html>
+<html style="height:100%">
+<head>
+    <title>{$pageTitle}</title>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="Cache-Control:public, max-age=31536000" content="no-siteapp" />
+    <link type="text/css" rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}bootstrap/css/bootstrap3.3.7.min.css">
+    <!--表单验证11-->
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ngVerify/lib/angular-datepicker.css">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ngVerify/lib/select.css">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ngVerify/css/ngVerify.css">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angular-aside/1.4.0/css/angular-aside.min.css">
+    <!-- ace styles -->
+    <!--<link type="text/css" rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/ace.css" class="ace-main-stylesheet" id="main-ace-style" />-->
+    <link type="text/css" rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}font-awesome-4.7.0/css/font-awesome.css" />
+    <!-- text fonts -->
+    <!--<link type="text/css" rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/ace-fonts.css" />-->
+    <!--公用的css和js-->
+    <script>  
+        var __URL = '__APP__/';
+        var __APPID = "{$appid}";
+        var __PAGEID = "{$id}";
+        // var __authid = "{$authid}";
+        //当前登录用户的权限　ids  '1,2,3,4'
+        var __ThisUserAuths = "{$_SESSION['user_ref_authids']}";
+        //当前登录的用户的ID
+        var _USERID = "{$_SESSION['userinfo']['idusers']}";
+        //当前登录的用户的name
+        var _USERNAME = "{$_SESSION['userinfo']['username']}";
+        var _DESCRIPTION = "{$_SESSION['userinfo']['description']}";
+        //当前登录的用户组的ID
+        var _USERGROUPID = "{$_SESSION['user_ref_groupids']}";
+    </script>
+    <!--canvi-->
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}canvi/v1.0.0/canvi.css">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}canvi/v1.0.0/normalize.css">
+
+    <link type="text/css" rel="stylesheet" href="{$Think.const.CSS_URL}EIMPublicTools.css?v={$Think.const.CRM_VERSION}" />
+    <script type="text/javascript" src="{$Think.const.JS_URL}EIMPublicTools.js?v={$Think.const.CRM_VERSION}"></script>
+    <!--数据交互-->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}vue/axios.min0.17.0.js"></script>
+    <block name="momentjs">
+        <!--此处为moment js文件-->
+    </block>
+    <!--angular-->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular/{$Think.const.ANGULAR_VERSION}angular.min.js"></script>
+    <!--动画-->
+    <!--<script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular/{$Think.const.ANGULAR_VERSION}angular-animate.js"></script>-->
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-sanitize/{$Think.const.ANGULAR_VERSION}angular-sanitize.min.js"></script>
+    <!--表单验证-->
+    <script src="{$Think.const.BOOTSTRAP_URL}ngVerify/lib/angular-datepicker.js"></script>
+    <!--引入中文国际化文件-->
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-datepicker/angular-locale_zh-cn.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}ngVerify/lib/select.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}ngVerify/js/ngVerify.js"></script>
+    <!--ui-grid-->
+    <script src="{$Think.const.BOOTSTRAP_URL}ui-grid/{$Think.const.UIGRID_VERSION}ui-grid.min.js"></script>
+
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ui-grid/ui-grid.min.css" type="text/css">
+    <!--angular-tree-->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}ui-bootstrap/2.5.0/ui-bootstrap-tpls.js"></script>
+    <!--angular-aside-->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular-aside/1.4.0/js/angular-aside.min.js"></script>
+    <!--canvi-->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}canvi/v1.0.0/canvi.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}angular-service-public.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}angular-controller-public.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}angular-module-public.js"></script>
+    <!-- 所有页面的查询数据方法 -->
+    <script type="text/javascript" src="{$Think.const.JS_URL}select_alldata.js?v={$Think.const.CRM_VERSION}"></script>
+    <block name="headcss">
+        <!--此处为css代码-->
+    </block>    
+    <block name="headjs">
+        <!--此处为顶部的js代码-->
+    </block>
+</head>
+<body ng-app="appModule" style="height:100%">
+    <div class="container-fluid" style="height:100%" ng-controller="{$mainController}">
+        <div class="row-fluid" style="height:100%">
+            <div class="col-xs-12" style="height:100%">
+                <block name="pageContent">
+                    <!--此处为正文-->
+                </block>
+            </div>
+        </div>
+    </div>
+    <block name="scriptTemplate">
+        <!--此处为script ng-template-->
+    </block>
+    <block name="footjs">
+        <!--此处为底部的js代码-->
+    </block>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}win10-ui/1.1.2.4/js/win10.child.js"></script>
+</body>
+</html>

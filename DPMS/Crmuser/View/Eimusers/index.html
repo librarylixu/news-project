@@ -1,0 +1,161 @@
+﻿<div class="page-header clearfix">
+    <div class="col-xs-12">
+        <a ng-click="add()" class="btn btn-success  btn-sm">
+            <i class="glyphicon glyphicon-plus"></i>
+            添加
+        </a>
+        <a ng-click="select()" class="btn btn-success btn-sm">
+            <i class="glyphicon glyphicon-refresh"></i>刷新
+        </a>
+        <a ng-click="uploadfile()" class="btn btn-warning btn-sm">
+            <i class="glyphicon glyphicon-upload"></i>批量导入
+        </a>
+        <div class="f-r">
+            <span class="input-icon">
+                <input type="text" ng-model="filename" placeholder="Search ..." class="nav-search-input">
+                <i class="ace-icon fa fa-search nav-search-icon"></i>
+            </span>
+        </div>
+    </div>
+</div>
+<div class="mt-5">
+    <div class="table-header">
+        账号管理
+        <a href="javascript:;" class="f-r" style="padding-right:20px;text-decoration:underline;color:#fff">
+            <i class="fa fa-download"></i>导出
+        </a>
+        <a href="javascript:;" class="f-r" style="padding-right:20px;text-decoration:underline;color:#fff">
+            <i class="glyphicon glyphicon-open"></i>导入
+        </a>
+    </div>
+    <table class="table table-striped table-bordered table-hover table-condensed table-responsive">
+        <tr>
+            <th>图标</th>
+            <th>帐号</th>
+            <th>昵称</th>
+            <th>创建时间</th>
+            <th>更改密码时间</th>
+            <th>上次登录时间</th>
+            <!--<th  >用户角色</th>-->
+            <th>用户组</th>
+            <th>操作</th>
+        </tr>
+        <tr ng-repeat="(key,item) in service.privateDateObj.usersData track by $index">
+            <td ng-bind="item.idusers"></td>
+            <td ng-bind="item.username"></td>
+            <td ng-bind="item.description"></td>
+            <td><span ng-bind="(item.createtime&&item.createtime!='0')?formatDate(item.createtime):'暂无'"></span></td>
+            <td><span ng-bind="(item.updatepwdtime&&item.updatepwdtime!='0')?formatDate(item.updatepwdtime):'暂无'"></span></td>
+            <td><span ng-bind="(item.lastlogintime&&item.lastlogintime!='0')?formatDate(item.lastlogintime):'暂无'"></span></td>
+            <!--<td >
+                <span ng-repeat="type in (item.reftypeCount?item.reftypeCount:[])" class="label label-info" ng-bind="type.typename"></span>
+                <a class="addref top-5 ng-scope" title="建立用户与用户角色关系" ng-click="refusertype(item)" href="javascript:;">
+                    <i class="glyphicon glyphicon-plus green"></i>
+                </a>
+            </td>-->
+            <td>
+                <span ng-repeat="id in (item.__refgroupids?item.__refgroupids:[])" class="left-5" ng-bind="(service.privateDateObj.usergroupData[id].__parentname?service.privateDateObj.usergroupData[id].__parentname+'->':'')+service.privateDateObj.usergroupData[id].groupname+'；'"></span>
+                <a class="addref top-5" title="建立用户与用户组关系" ng-click="refusergroup(item)" href="javascript:;">
+                    <i class="glyphicon glyphicon-plus green"></i>
+                </a>
+            </td>
+            <td>
+                <a href="javascript:;" class="green top-5" ng-click="updateInfo(item)"><i class="glyphicon glyphicon-pencil"></i></a>&nbsp;
+                <a href="javascript:;" class="red top-5" ng-click="remove(item)"><i class="glyphicon glyphicon-trash "></i></a>
+            </td>
+        </tr>
+    </table>
+</div>
+<script type="text/ng-template" id="Crmuser/Users/eim_modal">
+    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+    <!--  设置这个div的大小，超出部分显示滚动条style="max-height:200px;overflow:auto;" -->
+    <div class="modal-body">
+        <div class="form-container">
+            <form name="Form" verify-scope>
+                <table>
+                    <tr >
+                        <td>
+                            <label>账号</label>
+                            <input type="text" ng-verify="max:{{Source.privateDateObj.systemsettingData.usernameset.value.usernamemaxlength}},min:{{Source.privateDateObj.systemsettingData.usernameset.value.usernameminlength}}" class="form-control" ng-model="Source.selectItem.username" placeholder="输入用户名" />
+                        </td>
+                        <td>
+                            <label>昵称</label>
+                            <input ng-verify="{max:{{Source.privateDateObj.systemsettingData.namelength.value.maxlength}}}" type="text" class="form-control" ng-model="Source.selectItem.description" placeholder="输入用户昵称（非必填）" />
+                        </td>
+                    </tr>
+                    <tr >
+                        <td>
+                            <label>密码</label>
+                            <!-- 自定义字符长度 -->
+                            <input ng-verify="{max:{{Source.privateDateObj.systemsettingData.usernameset.value.passwordmaxlength}},min:{{Source.privateDateObj.systemsettingData.usernameset.value.passwordminlength}},required:{Source.Action==1 ? false : true}}，pattern:{{}}" name="pwd" type="password" ng-model="Source.selectItem.pwd" class="form-control" placeholder="{{Source.Action==1 ? '为空则表示不修改密码' : '必填'}}">
+                        </td>
+                       <td>
+                           <label>确认密码</label>
+                           <!-- 自定义字符长度 -->
+                           <input ng-verify="{recheck:'pwd'}" type="password" class="form-control" placeholder="{{Source.Action==1 ? '为空则表示不修改密码' : '密码为1-25位,必填'}}">
+                       </td>
+                    </tr>
+                   <tr>
+                       <td>
+                           <label>邮箱</label>
+                           <input ng-verify="{required:false}" type="email" class="form-control" ng-model="Source.selectItem.mail" placeholder="输入邮箱（非必填）" />
+                       </td>
+                       <td>
+                           <label>电话</label>
+                           <input ng-verify="{pattern:/^([0-9]|[-])+$/,errmsg:'电话号码格式不正确',required:false}" type="text" ng-model="Source.selectItem.phone" class="form-control" placeholder="输入电话号码（非必填）" />
+                       </td>
+                   </tr>
+                   <tr>
+                       <td>
+                           <label>手机</label>
+                           <!-- 默认支持的type类型 -->
+                           <input ng-verify="{required:false}" type="phone" class="form-control" placeholder="输入手机号码（非必填）" ng-model="Source.selectItem.mobelphone" />
+                       </td>
+                       <td>
+                           <label>紧急联系电话</label>
+
+                           <input ng-verify="{required:false}" type="phone" class="form-control" placeholder="输入手机号码（非必填）" ng-model="Source.selectItem.emergencyphone" />
+                       </td>
+                   </tr>
+                   <tr>
+                       <td colspan="2">
+                           <label>现居地址</label>
+                           <!-- 自定义正则,并自定义错误消息 -->
+                           <textarea ng-verify="pattern:/[\u4e00-\u9fa5]/, required:false, errmsg:'需要输入中文' " type="text" class="form-control" ng-model="Source.selectItem.homeaddress" placeholder="输入中文（非必填）"></textarea>
+                       </td>
+                   </tr>
+                   <tr>
+                       <td>
+                           <label class="f-l">关联用户组</label>
+                           <div class="f-l">
+                               <ui-select multiple ng-model="Source.selectItem.__refgroupids" style="width:100%;">
+                                   <ui-select-match placeholder="请选择关联用户组">
+                                       <span ng-bind="$item.value.groupname" style="margin-right: 5px;">
+                                       </span>
+                                   </ui-select-match>
+                                   <ui-select-choices repeat="item.key  as (key,item) in service.privateDateObj.usergroupData | filter: { value: { groupname: $select.search }}">
+                                       <div ng-if="item.value.pid!=0&&item.value.idusergroup!=Source.selectItem.idusergroup" ng-bind-html="item.value.__parentname+'->'+item.value.groupname | highlight: $select.search"></div>
+                                       <div ng-if="item.value.pid==0&&item.value.idusergroup!=Source.selectItem.idusergroup" ng-bind-html="item.value.groupname | highlight: $select.search"></div>
+                                   </ui-select-choices>
+                               </ui-select>
+                           </div>
+
+                       </td>
+                   </tr>
+                </table>              
+               
+            </form>
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save()">保存</button>
+        <button class="btn btn-primary btn-sm" ng-if="Source.Action==4" ng-verify="control:'Form'" type="button" ng-click="savegroup()">保存</button>
+        <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+    </div>
+
+
+</script>

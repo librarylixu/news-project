@@ -1,0 +1,81 @@
+﻿    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+   <div class="modal-body">
+    <div class="form-container">
+        <form name="Form" verify-scope class="myform">
+            <div ng-show="!idproduct">
+                <div class="form-group" ng-show="Source.Action < 4">
+                    <label>产品名称</label>
+                    <input type="text" ng-readonly="Source.Action==2 || Source.Action==3" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.name" placeholder="请输入1~25个字符" />
+                </div>
+
+
+                <div class="form-group" ng-show="Source.Action==0 || Source.Action==1">
+                    <label>简称</label>
+                    <input type="text" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.abbreviation" placeholder="请输入1~25个字符" />
+                </div>
+                <div class="form-group" ng-show="Source.Action==0 || Source.Action==1">
+                    <label>产品描述</label>
+                    <textarea ng-verify="pattern:/[\u4e00-\u9fa5]/, required:false, errmsg:'需要输入中文' " type="text" class="form-control" ng-model="Source.selectItem.description" placeholder="请输入中文（非必填）"></textarea>
+                </div>
+                <div class="form-group" ng-show="Source.Action >3">
+                    <label>型号名称</label>
+                    <input type="text" ng-readonly="Source.Action==5" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.name" placeholder="请输入1~25个字符" />
+                </div>
+                <div class="form-group" ng-show="Source.Action==4">
+                    <label>制造商</label>
+                    <input type="text" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.manufacturers" placeholder="请输入1~25个字符" />
+                </div>
+                <div class="form-group" ng-show="Source.Action==4">
+                    <label>型号描述</label>
+                    <input type="text" ng-verify="pattern:/[\u4e00-\u9fa5]/, required:false, errmsg:'需要输入中文'" class="form-control" ng-model="Source.selectItem.description" placeholder="请输入中文（非必填）" />
+                </div>
+                <div class="form-group" ng-show="Source.Action==4">
+                    <label>列表价</label>
+                    <input type="text" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.plist" placeholder="请输入1~25个字符" />
+                </div>
+                <div class="form-group" ng-show="Source.Action==4">
+                    <label>EU底价</label>
+                    <input type="text" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.peu" placeholder="请输入1~25个字符" />
+                </div>
+                <div class="form-group" ng-show="Source.Action==4">
+                    <label>SI底价</label>
+                    <input type="text" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.psi" placeholder="请输入1~25个字符" />
+                </div>
+                <div class="form-group" ng-show="Source.Action==4">
+                    <label>内部核算价</label>
+                    <input type="text" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.pinter" placeholder="请输入1~25个字符" />
+                </div>
+            </div>
+            <div ng-show="service.typeData&&idproduct">
+                <div class="form-group">
+                    <label class="f-l">关联产品型号</label>
+                    <div style="margin-left:10px;width:190px;" class="f-l">
+                        <ui-select multiple ng-model="productChildren" on-select="refSave($item, $model, 1, service.typeData)" on-remove="refSave($item, $model, 0, service.typeData)">
+                            <ui-select-match>
+                                <span ng-bind="$item.name">
+                                </span>
+                            </ui-select-match>
+
+                            <ui-select-choices repeat="item in (service.productmodelArrData | filter:$select.search) track by $index">
+                                <div ng-bind-html="item.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <!--<a ng-click="service.addProductmodelClick()" class="f-r" title="新建产品型号"><i class="fa fa-plus green f-16"></i></a>-->
+                </div>
+            </div>
+            
+           
+        </form>
+
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" type="button" ng-click="save(1)" ng-show="Source.Action==0 && !idproduct">保存</button>
+
+    <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+</div>
+

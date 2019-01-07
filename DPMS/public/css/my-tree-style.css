@@ -1,0 +1,58 @@
+﻿
+     treecontrol.tree-light {
+            position: relative;
+
+        }
+      body .tree-light .tree-label {
+            line-height:30px;
+        }
+       body treecontrol.tree-light li.tree-leaf i.tree-leaf-head  {
+            padding: 1px 10px;
+            background: url(../../public/lib/angularTree/images/node-child-closed-2.png) no-repeat;
+        }
+      .tree-light  ul::before {
+            display: inline-block;
+            content: "";
+            position: absolute;
+            top: 0px;
+            bottom:12px;
+            left: 0;
+            z-index: 1;
+            border: 1px dotted #67B2DD;
+            border-width: 0 0 0 1px;
+        }
+
+      .tree-light  li::before {
+            display: inline-block;
+            content: "";
+            position: absolute;
+            top: 13px;
+            left: -13px;
+            width: 33px;
+            height: 0;
+            border-top: 1px dotted #67B2DD;
+            z-index: 1;
+        }
+      .tree-light  ul ul::before {
+            display: inline-block;
+            content: "";
+            position: absolute;
+            top: 20px;
+            bottom: 16px;
+            left: 32px;
+            z-index: 1;
+            border: 1px dotted #67B2DD;
+            border-width: 0 0 0 1px;
+        }
+      .tree-light  ul ul li::before {
+            display: inline-block;
+            content: "";
+            position: absolute;
+            top: 13px;
+            left: 13px;
+            width: 7px;
+            height: 0;
+            border-top: 1px dotted #67B2DD;
+            z-index: 1;
+        }
+

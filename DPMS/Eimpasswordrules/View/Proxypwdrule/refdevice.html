@@ -1,0 +1,14 @@
+﻿<div ng-controller="ruleRefdeviceController">
+    <ui-select multiple ng-model="Source.selectItem.refassetslistData" on-select="refdeviceSave($item, 0)" on-remove="refdeviceSave($item, 1)">
+        <ui-select-match>
+            <span ng-bind="$item.devicename">
+            </span>
+        </ui-select-match>
+        <ui-select-choices repeat="item in service.assetsdeviceArrData">
+            <div ng-bind-html="item.devicename"></div>       
+        </ui-select-choices>
+    </ui-select>
+   
+</div>
+   
+

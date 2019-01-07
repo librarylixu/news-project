@@ -1,0 +1,14 @@
+﻿<div ng-controller="ruleRefpwdController">
+    <ui-select multiple ng-model="Source.selectItem.refpasswordData" on-select="refpasswordSave($item, 0)" on-remove="refpasswordSave($item, 1)">
+        <ui-select-match>
+            <span ng-bind="$item.login">
+            </span>
+        </ui-select-match>
+        <ui-select-choices repeat="item in service.proxypasswordArrData">
+            <div ng-bind-html="item.login"></div>
+        </ui-select-choices>
+    </ui-select>
+    <a href="javascript:;" ng-click="addPassword()" title="新增密码" class=""><i class="glyphicon glyphicon-plus green"></i></a>
+</div>
+   
+

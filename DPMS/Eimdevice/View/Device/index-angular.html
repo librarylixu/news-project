@@ -1,0 +1,717 @@
+<!--页头-->
+<div class="page-header text-center">
+   
+        <a ng-click="btn_add()" class="btn btn-success btn-sm">
+            <i class="glyphicon glyphicon-plus"></i>&nbsp;添加
+        </a>
+        <a ng-click="select(1)" class="btn btn-success btn-sm">
+            <i class="glyphicon glyphicon-refresh"></i>&nbsp;刷新
+        </a>
+        <a ng-click="opengateway()" class="btn btn-info btn-sm">
+            <i class="glyphicon fa fa-paperclip"></i>&nbsp;开启多会话
+        </a>
+        <a ng-click="uploadfile()" class="btn btn-warning btn-sm">
+            <i class="glyphicon glyphicon-upload"></i>&nbsp;批量导入
+        </a>
+    
+</div>
+<div class="row">
+    <div class="col-xs-2">
+        <select ng-model="service.treevalue" ng-change="service.gettreedata(treevalue)">          
+            <option  value="devicegroup">设备组</option>
+            <option value="usergroup">用户组</option>
+        </select>
+        <eim-tree></eim-tree>
+    </div>
+    <div class="col-xs-10">
+        <div class="mt-5">
+            <div class="table-header">
+                资产设备管理
+            </div>
+            <!--Device Show-->
+            <table class="table table-striped table-bordered table-hover table-condensed table-responsive">
+                <tr>
+                    <th ng-repeat="name in service.privateDateObj.systemsettingData.deviceset.value.assetlistth track by $index">
+                        <span ng-bind="service.privateDateObj.assetcolumnameData[name].name"></span>
+                    </th> 
+                    <th>操作</th>
+                </tr>
+                <tr ng-repeat="(key,item) in service.privateDateObj.assetsdeviceData" ng-if="!item.display">
+                    <td ng-if="service.privateDateObj.systemsettingData.deviceset.value.assetlistth.indexOf('opensessions')>-1" class="text-center"><input type="checkbox" name="opengateway" ng-click="service.gatewayData[key]=item;" /></td>
+                    <td  ng-if="service.privateDateObj.systemsettingData.deviceset.value.assetlistth.indexOf('idassetslist')>-1" ng-bind="item.idassetslist"></td>
+                    <td ng-if="service.privateDateObj.systemsettingData.deviceset.value.assetlistth.indexOf('networkstatus')>-1">
+                        <span ng-class="item.networkstatus==0?'label label-warning':'label label-success'" ng-bind="item.networkstatus==0?'离线':'在线'"></span>
+                    </td>
+                    <td  ng-if="service.privateDateObj.systemsettingData.deviceset.value.assetlistth.indexOf('devicename')>-1" ng-bind="item.devicename"></td>
+                    <td  ng-if="service.privateDateObj.systemsettingData.deviceset.value.assetlistth.indexOf('ipaddress')>-1" ng-bind="item.ipaddress"></td>
+                    <td ng-if="service.privateDateObj.systemsettingData.deviceset.value.assetlistth.indexOf('modeltypeid')>-1">
+                        <span ng-bind="service.privateDateObj.modeltypeData[item.modeltypeid].modelname"></span>
+                    </td>
+                    <td ng-if="service.privateDateObj.systemsettingData.deviceset.value.assetlistth.indexOf('contactpeople')>-1" ng-bind="item.contactpeople"></td>
+                    <td ng-if="service.privateDateObj.systemsettingData.deviceset.value.assetlistth.indexOf('remark')>-1"  ng-bind="item.remark"></td>
+                    <td ng-if="service.privateDateObj.systemsettingData.deviceset.value.assetlistth.indexOf('opensession')>-1" >
+                        <div style="display:inline-block;width:30px;padding:0 2px;"  ng-repeat="type in (item.devicesessiontypeids?item.devicesessiontypeids.split(','):[])">
+                            <div ng-if="type=='9'">
+                                <eim-local ></eim-local>
+                            </div>
+                            <div ng-if="type=='1'">
+                                <eim-ssh ></eim-ssh>
+                            </div>
+                            <div ng-if="type=='5'">
+                                <eim-vnc ></eim-vnc>
+                            </div>
+                            <div ng-if="type=='2'">
+                                <eim-telnet ></eim-telnet>
+                            </div>
+                            <div  ng-if="type=='3'">
+                                <eim-rdp></eim-rdp>
+                            </div>
+                            
+                        </div>                       
+                    </td>
+                    <td>
+                        <a href="javascript:;" class="green top-5" ng-click="updateInfo(item)"><i class="glyphicon glyphicon-pencil fa-lg"></i></a>&nbsp;
+                        <a href="javascript:;" class="red top-5" ng-click="btn_del(item)"><i class="glyphicon glyphicon-trash fa-lg"></i></a>
+                    </td>
+                </tr>
+            </table>
+            <div class="text-right">共<b class="blue" ng-bind="length(service.privateDateObj.assetsdeviceData)"></b>条</div>
+        </div>
+    </div>
+</div>
+<script type="text/ng-template" id='Eimdevice/Devicelist/openmodal'>
+    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="btn_cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+    <div class="modal-body">
+        <form name="Form" verify-scope >
+            <table class="table">
+                <tr class="info">
+                    <td colspan="4">基本信息</td>
+                </tr>
+                <tr>
+                    <td class="text-right">设备名称</td>
+                    <td>
+                        <input type="text" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.devicename" placeholder="请输入1~25个字符" />
+                    </td>
+                    <td>IP地址</td>
+                    <td>
+                        <input type="text" class="form-control" ng-model="Source.selectItem.ipaddress" ng-verify="min:1, max:25" placeholder="请输入设备IP地址" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">设备类型</td>
+                    <td>
+                        资产设备
+                    </td>
+                    <td>设备型号</td>
+                    <td>
+                        <select  ng-model="Source.selectItem.modeltypeid" ng-options="item.idmodeltype as item.modelname for item in OptionalmodeltypeData" ng-change="checked_modeltypeid();"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">账号</td>
+                    <td>
+                        <input type="text" class="form-control" ng-model="Source.selectItem.loginuser" />
+                    </td>
+                    <td>密码</td>
+                    <td>
+                        <input type="password" class="form-control" ng-model="Source.selectItem.loginpwd" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">负责人</td>
+                    <td colspan="3">
+                        <input type="text" class="form-control" ng-model="Source.selectItem.contactpeople" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">备注</td>
+                    <td colspan="3">
+                        <textarea class="form-control" rows="3" ng-model="Source.selectItem.remark" />
+                    </td>
+                </tr>
+                <tr class="info">
+                    <td colspan="4">访问信息</td>
+                </tr>
+                <tr>
+                    <td class="text-right">会话方式</td>
+                    <td colspan="3">
+                        <div class="checkbox" ng-repeat="item in service.privateDateObj.devicesessiontypeData">
+                            <label>
+                                <input type="checkbox"
+                                       name="{{item.typename}}"
+                                       ng-true-value="item.iddevicesessiontype"
+                                       ng-checked="Source.selectItem.devicesessiontypeids.indexOf(item.iddevicesessiontype)>-1"
+                                       ng-click="ngchange_devicesessiontype(item)" /> {{item.typename}}
+                            </label>
+                            <span class="btn btn-link btn-xs"                                 
+                                  ng-show="Source.selectItem.devicesessiontypeids.indexOf(item.iddevicesessiontype)>-1"
+                                  ng-click="btn_configinfo(item);">
+                                详细配置
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">会话控制中心</td>
+                    <td>
+                        <select class="form-control"
+                                ng-model="Source.selectItem.refsessioncenterid"
+                                ng-options="item.idsessioncenterlist as (item.name+':'+item.port) for item in service.sessioncenterData"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">手动输入密码</td>
+                    <td>
+                        <input type="checkbox" ng-model="Source.selectItem.isenterpwd" />是
+                    </td>
+                    <td class="text-right">关联用户</td>
+                    <td>
+                        <div ng-if="Source.selectItem.isenterpwd">
+                            <ui-select multiple ng-model="Source.selectItem.refenterpwd" style="width:100%;">
+                                <ui-select-match placeholder="请选择关联用户">
+                                    <span ng-bind="$item.value.description" style="margin-right: 5px;">
+                                    </span>
+                                </ui-select-match>
+                                <ui-select-choices repeat="item.value.idusers  as (key,item) in service.privateDateObj.usersData | filter: { value: { description: $select.search }}" style="max-height: 150px;">
+                                    <div ng-bind-html="item.value.description | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                        <div ng-if="!Source.selectItem.isenterpwd">无</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">设备组</td>
+                    <td colspan="3">
+                        <ui-select multiple ng-model="Source.selectItem.refdgroup" style="width:100%;">
+                            <ui-select-match placeholder="请选择设备组">
+                                <span ng-if="$item.value&&$item.value.pid!=0" ng-bind="$item.value.__parentname+'->'+$item.value.groupname" style="margin-right: 5px;">
+                                </span>
+                                <span ng-if="$item.value&&$item.value.pid==0" ng-bind="$item.value.groupname" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.key  as (key,item) in service.privateDateObj.devicegroupData | filter: { value: { groupname: $select.search }}" style="max-height: 150px;">
+                                <div ng-if="item.value.pid!=0"
+                                     ng-bind-html="item.value.__parentname+'->'+item.value.groupname | highlight: $select.search"></div>
+                                <div ng-if="item.value.pid==0"
+                                     ng-bind-html="item.value.groupname | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">用户组</td>
+                    <td colspan="3">
+                        <ui-select multiple ng-model="Source.selectItem.refugroup" style="width:100%;">
+                            <ui-select-match placeholder="请选择关联用户组">
+                                <span ng-if="$item.value.pid!=0" ng-bind="$item.value.__parentname+'->'+$item.value.groupname" style="margin-right: 5px;">
+                                </span>
+                                <span ng-if="$item.value.pid==0" ng-bind="$item.value.groupname" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.value.idusergroup  as (key,item) in service.privateDateObj.usergroupData | filter: { value: { groupname: $select.search }}" style="max-height: 150px;">
+                                <div ng-if="item.value.idusergroup!=Source.selectItem.idusergroup&&item.value.pid!=0"
+                                     ng-bind-html="item.value.__parentname+'->'+item.value.groupname | highlight: $select.search"></div>
+                                <div ng-if="item.value.idusergroup!=Source.selectItem.idusergroup&&item.value.pid==0"
+                                     ng-bind-html="item.value.groupname | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">用户</td>
+                    <td colspan="3">
+                        <ui-select multiple ng-model="Source.selectItem.refusers" style="width:100%;">
+                            <ui-select-match placeholder="请选择关联用户">
+                                <span ng-bind="$item.value.description" style="margin-right: 5px;">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.value.idusers  as (key,item) in service.privateDateObj.usersData | filter: { value: { description: $select.search }}" style="max-height: 150px;">
+                                <div ng-bind-html="item.value.description | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <div class="modal-footer" style="clear:both;">
+        <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button"  ng-click="btn_save();">保存</button>     
+        <button class="btn btn-danger btn-sm" type="button" ng-click="btn_cancel();">取消</button>
+    </div>
+</script>
+<script type="text/ng-template" id="Eimsystemsetting/Devicesessiontype/openmodalvncconfig">
+    <form name="Form" verify-scope>
+        <table class="table" style="margin-bottom:8px;">
+            <tr class="info">
+                <td colspan="4">基本配置</td>
+            </tr>
+            <tr>
+                <td style="width:25%;" class="text-right">端口</td>
+                <td style="width:25%;"><input type="text" ng-verify="min:1, max:25" class="form-control" ng-model="service.sessionsetting.setting.port" placeholder="请输入1~25个字符" /></td>
+                <td style="width:25%;" class="text-right">编码方式</td>
+                <td style="width:25%;">
+                    <select class="form-control" ng-model="service.sessionsetting.setting.encoding">
+                        <option value="ZRLE" ng-selected="true">ZRLE</option>
+                        <option value="Raw">Raw</option>
+                        <option value="Tight">Tight</option>
+                        <option value="Hextile">Hextile</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="text-right">宽度</td>
+                <td><input type="number" ng-verify class="form-control" ng-model="service.sessionsetting.setting.width" placeholder="请输入1~25个字符" /></td>
+                <td class="text-right">高度</td>
+                <td style="width:25%;">
+                    <input type="number" ng-verify class="form-control" ng-model="service.sessionsetting.setting.height" placeholder="请输入1~25个字符" />
+                </td>
+            </tr>
+            <tr>
+                <td class="text-right">图像质量</td>
+                <td>
+                    <select class="form-control" ng-model="service.sessionsetting.setting.quality">
+                        <option value="1">1 (Lowest quality)</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5" ng-selected="true">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9 (Best quality)</option>
+                    </select>
+                </td>
+                <td class="text-right">剪贴板</td>
+                <td style="width:25%;">
+                    <input type="checkbox" ng-model="service.sessionsetting.setting.mapClipboard" />启用
+                </td>
+            </tr>
+            <tr>
+                <td class="text-right">ZIP压缩</td>
+                <td>
+                    <select ng-model="service.sessionsetting.setting.compression">
+                        <option value="1">1(Little compression)</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6" ng-selected="true">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                    </select>
+                </td>
+                <td class="text-right">CopyReact编码</td>
+                <td style="width:25%;">
+                    <input type="checkbox" ng-model="service.sessionsetting.setting.UseCopyRect" /><br />
+                </td>
+            </tr>
+            <tr>
+                <td class="text-right">颜色</td>
+                <td>
+                    <select class="form-control" ng-model="service.sessionsetting.setting.color">
+                        <option value="32">Full color(24bit)</option>
+                        <option value="8">256 color</option>
+                        <option value="16" ng-selected="true">Full color(16bit,Tight encoding only)</option>
+                    </select>
+                </td>
+                <td class="text-right">共享服务</td>
+                <td style="width:25%;">
+                    <input type="checkbox" ng-model="service.sessionsetting.setting.share" />共享
+                </td>
+            </tr>
+            <tr>
+                <td class="text-right">审计记录</td>
+                <td>
+                    <select class="form-control" ng-model="service.sessionsetting.setting.sessionRecord">
+                        <option value="0">禁用</option>
+                        <option value="1" ng-selected="true">仅录制图形</option>
+                    </select>
+                </td>
+                <td class="text-right"></td>
+                <td style="width:25%;"></td>
+            </tr>
+        </table>
+        <div class="modal-footer">
+            <button class="btn btn-primary btn-sm" type="button" ng-click="config_save()">保存</button>
+            <button class="btn btn-warning btn-sm" type="button" ng-click="config_cancel()">取消</button>
+        </div>
+    </form>
+</script>
+<script type="text/ng-template" id="Eimsystemsetting/Devicesessiontype/openmodalrdpconfig">
+    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+    <div class="modal-body">
+        <form name="Form" verify-scope>
+            <table class="table" style="margin-bottom:8px;">
+                <tr class="info">
+                    <td colspan="4">基本配置</td>
+                </tr>
+                <tr>
+                    <td style="width:25%;" class="text-right">端口</td>
+                    <td style="width:25%;"><input type="text" ng-verify="min:1, max:25" class="form-control" ng-model="service.sessionsetting.setting.port" placeholder="请输入1~25个字符" /></td>
+                    <td style="width:25%;" class="text-right">域认证</td>
+                    <td style="width:25%;">
+                        <input type="text" ng-model="service.sessionsetting.setting.domain" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;" class="text-right">管理模式</td>
+                    <td style="width:25%;">
+                        <input type="checkbox" ng-model="service.sessionsetting.setting.console" /> 登录到主控会话或管理模式
+                    </td>
+                    <td style="width:25%;" class="text-right">兼容模式</td>
+                    <td style="width:25%;">
+
+                        <br />
+                        <input type="checkbox" ng-model="service.sessionsetting.setting.legacyMode" /> xrdp 或 VirtualBox RDP
+                    </td>
+                </tr>
+                <tr class="info">
+                    <td colspan="4">显示配置</td>
+                </tr>
+                <tr>
+                    <td class="text-right">宽度</td>
+                    <td><input type="number" ng-verify class="form-control" ng-model="service.sessionsetting.setting.width" placeholder="请输入1~25个字符" /></td>
+                    <td class="text-right">高度</td>
+                    <td>
+                        <input type="number" ng-verify class="form-control" ng-model="service.sessionsetting.setting.height" placeholder="请输入1~25个字符" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">颜色深度</td>
+                    <td>
+                        <select class="form-control" ng-model="service.sessionsetting.setting.server_bpp">
+                            <option value="8">256</option>
+                            <option value="16" ng-selected="true">高色彩(16位)</option>
+                            <option value="24">真彩色(24位)</option>
+                            <option value="32">最高质量(32位)</option>
+                        </select>
+                    </td>
+                    <td class="text-right">远程光标</td>
+                    <td>
+                        <input type="checkbox" ng-model="service.sessionsetting.setting.nocursor" />禁用远程光标
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">桌面背景</td>
+                    <td>
+                        <input type="checkbox" ng-model="service.sessionsetting.setting.background" />开启
+                    </td>
+                    <td class="text-right">字体平滑</td>
+                    <td>
+                        <input type="checkbox" ng-model="service.sessionsetting.setting.smoothfont" />开启
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">桌面组成</td>
+                    <td>
+                        <input type="checkbox" ng-model="service.sessionsetting.setting.composition" />开启
+                    </td>
+                    <td class="text-right">拖动时显示窗口内容</td>
+                    <td>
+                        <input type="checkbox" ng-model="service.sessionsetting.setting.contents" />开启
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">菜单和窗口动画</td>
+                    <td>
+                        <input type="checkbox" ng-model="service.sessionsetting.setting.animation" />开启
+                    </td>
+                    <td class="text-right">wingdows视觉风格</td>
+                    <td>
+                        <input type="checkbox" ng-model="service.sessionsetting.setting.styles" />开启
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">持久性位图缓存</td>
+                    <td>
+                        <input type="checkbox" ng-model="service.sessionsetting.setting.bitmap" />开启
+                    </td>
+                    <td class="text-right">网络级别认证CredSSP</td>
+                    <td>
+                        <select class="form-control" ng-model="service.sessionsetting.setting.credSSP">
+                            <option value="0">启用</option>
+                            <option value="1" ng-selected="true">禁用</option>
+                            <option value="2">自动</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">(32位彩色和局域网)RemoteFX</td>
+                    <td>
+                        <input type="checkbox" ng-model="service.sessionsetting.setting.remotefx" />（32位彩色和局域网）RemoteFX
+                    </td>
+                    <td class="text-right">会话审计</td>
+                    <td>
+                        <select class="form-control" ng-model="service.sessionsetting.setting.sessionRecord">
+                            <option value="0">禁用</option>
+                            <option value="1" ng-selected="true">仅录制图形</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">RDP6.1解压</td>
+                    <td>
+                        <input type="checkbox" ng-model="service.sessionsetting.setting.decompressingRDP61" />开启
+                    </td>
+                    <td class="text-right"></td>
+                    <td></td>
+                </tr>
+                <tr class="info">
+                    <td colspan="4">本地配置</td>
+                </tr>
+                <tr>
+                    <td class="text-right">远程音频播放</td>
+                    <td>
+                        <select class="form-control" style="width:120px;" ng-model="service.sessionsetting.setting.playSound">
+                            <option value="0" ng-selected="true">启用</option>
+                            <option value="1">禁用</option>
+                            <option value="2">仅在远程电脑上播放</option>
+                        </select>
+                    </td>
+                    <td class="text-right">质量</td>
+                    <td>
+                        <select class="form-control" style="width:120px;" ng-model="service.sessionsetting.setting.soundPref">
+                            <option value="0">低</option>
+                            <option value="1" ng-selected="true">高</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">剪贴板</td>
+                    <td>
+                        <input type="checkbox" ng-model="service.sessionsetting.setting.mapClipboard" />启用
+                    </td>
+                    <td class="text-right">上传/下载</td>
+                    <td>
+                        <input type="checkbox" ng-model="service.sessionsetting.setting.mapDisk" />启用
+                    </td>
+                </tr>
+                <!--<tr>
+                    <td class="text-right">远程打印机</td>
+                    <td>
+                        <input type="checkbox" ng-model="service.sessionsetting.setting.mapPrinter" />打印机,名称<input type="text" value="0" /><br />
+                    </td>
+                    <td class="text-right"></td>
+                    <td></td>
+                </tr>-->
+                <tr class="info">
+                    <td colspan="4">远程程序配置</td>
+                </tr>
+                <tr>
+                    <td class="text-right">连接时启动程序</td>
+                    <td>
+                        <input type="radio" ng-model="service.sessionsetting.setting.startProgram" value="shell" name="tab_program" />启用
+                    </td>
+                    <td class="text-right"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="text-right">程序路径</td>
+                    <td colspan="3">
+                        <input type="radio" ng-model="service.sessionsetting.setting.startProgram" value="shell" name="tab_program" />启用
+                        程序路径和文件名称 <br />
+                        从以下文件夹开始<input type="text" ng-model="service.sessionsetting.setting.directory" /><br />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">连接时启动发布程序</td>
+                    <td>
+                        <input type="radio" ng-model="service.sessionsetting.setting.startProgram" value="app" name="tab_program" />
+                    </td>
+                    <td class="text-right"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="text-right">程序路径</td>
+                    <td colspan="3">
+                        <input type="text" ng-model="service.sessionsetting.setting.exe" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">参数</td>
+                    <td colspan="3">
+                        参数<input type="text" ng-model="service.sessionsetting.setting.args" /><br />
+                        <hr />
+                        <input type="radio" ng-model="service.sessionsetting.setting.startProgram" ng-checked="true" value="noapp" name="tab_program" checked />没有
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary btn-sm" type="button" ng-click="config_save()">保存</button>
+        <button class="btn btn-warning btn-sm" type="button" ng-click="config_cancel()">取消</button>
+    </div>
+</script>
+<script type="text/ng-template" id="Eimsystemsetting/Devicesessiontype/openmodalsshconfig">
+    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+    <div class="modal-body">
+        <form>
+            <table class="table" style="margin-bottom:8px;">
+                <tr class="info">
+                    <td colspan="4">基本配置</td>
+                </tr>
+                <tr>
+                    <td style="width:25%;" class="text-right">端口</td>
+                    <td style="width:25%;">
+                        <input type="text" ng-model="service.sessionsetting.setting.port" /><br />
+                    </td>
+                    <td style="width:25%;" class="text-right">字体大小(px)</td>
+                    <td style="width:25%;">
+                        <input type="text" ng-model="service.sessionsetting.setting.fontSize" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="text-right">宽度</td>
+                    <td><input type="number" ng-verify class="form-control" ng-model="service.sessionsetting.setting.width" placeholder="请输入1~25个字符" /></td>
+                    <td class="text-right">高度</td>
+                    <td style="width:25%;">
+                        <input type="number" ng-verify class="form-control" ng-model="service.sessionsetting.setting.height" placeholder="请输入1~25个字符" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">剪贴板</td>
+                    <td>
+                        <input type="checkbox" ng-model="service.sessionsetting.setting.mapClipboard" />启用
+                    </td>
+                    <td class="text-right">SFTP</td>
+                    <td>
+                        <input type="checkbox" ng-model="service.sessionsetting.setting.mapDisk" />启用
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary btn-sm" type="button" ng-click="config_save()">保存</button>
+        <button class="btn btn-warning btn-sm" type="button" ng-click="config_cancel()">取消</button>
+    </div>
+</script>
+<script type="text/ng-template" id="Eimsystemsetting/Devicesessiontype/openmodaltelnetconfig">
+    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+    <div class="modal-body">
+        <form>
+            <table class="table" style="margin-bottom:8px;">
+                <tr class="info">
+                    <td colspan="4">基本配置</td>
+                </tr>
+                <tr>
+                    <td style="width:25%;" class="text-right">端口</td>
+                    <td style="width:25%;">
+                        <input type="text" ng-model="service.sessionsetting.setting.port" /><br />
+                    </td>
+                    <td style="width:25%;" class="text-right">字体大小(px)</td>
+                    <td style="width:25%;">
+                        <input type="text" ng-model="service.sessionsetting.setting.fontSize" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="text-right">宽度</td>
+                    <td><input type="number" ng-verify class="form-control" ng-model="service.sessionsetting.setting.width" placeholder="请输入1~25个字符" /></td>
+                    <td class="text-right">高度</td>
+                    <td style="width:25%;">
+                        <input type="number" ng-verify class="form-control" ng-model="service.sessionsetting.setting.height" placeholder="请输入1~25个字符" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">剪贴板</td>
+                    <td>
+                        <input type="checkbox" ng-model="service.sessionsetting.setting.mapClipboard" />启用
+                    </td>
+                    <td class="text-right"></td>
+                    <td></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary btn-sm" type="button" ng-click="config_save()">保存</button>
+        <button class="btn btn-warning btn-sm" type="button" ng-click="config_cancel()">取消</button>
+    </div>
+</script>
+<script type="text/ng-template" id="Eimdevice/Devicelist/opensessionmodel">
+    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="btn_cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+    <form name="Form" verify-scope style="max-height:80%;margin-top:8px;">
+        <div class="top-5">
+            <!--基本-->
+            <div class="panel panel-default" ng-show="tab_page=='tab_Basic'||tab_page==undefind">
+                <div class="panel-body">
+                    <div class="profile-user-info profile-user-info-striped">
+                        <div class="modal-body">
+                            <div ng-if="service.ismultiplepwdrules.length > 0">
+                                <div class="col-xs-6 text-right">选择密码</div>
+                                <div class="col-xs-6" ng-repeat="item in service.ismultiplepwdrules">
+                                    设备名称：[<span ng-bind="item.devicename"></span>]
+                                    <select ng-model="Source.refpasswordData" ng-options="item.idproxypassword as item.login for item in service.myproxypasswordData"></select>
+                                </div>
+                            </div>
+                            <div ng-if="service.ismanualinputpwd.length > 0">
+                                <div ng-repeat="item in service.ismanualinputpwd">
+                                    设备名称：[<span ng-bind="item.devicename"></span>]
+                                    <div class="clearfix" style="padding:10px;padding-top:0;">
+                                        <div class="col-xs-4 text-right">账号</div>
+                                        <div class="col-xs-6">
+                                            <input type="text" ng-model="Source.manualinputpwd[item.idassetslist].loginuser" />
+                                        </div>
+                                    </div>
+                                    <div class="clearfix" style="padding:10px;padding-top:0;">
+                                        <div class="col-xs-4 text-right">密码</div>
+                                        <div class="col-xs-6">
+                                            <input type="password" ng-model="Source.manualinputpwd[item.idassetslist].loginpwd" />
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div ng-if="service.isopensession.length > 0">
+                                <div ng-repeat="item in service.isopensession">
+                                    设备名称：[<span ng-bind="item.devicename"></span>]
+                                    <div class="col-xs-6 text-right">会话打开方式</div>
+                                    <div class="col-xs-6">
+                                        <select ng-model="Source.refsessionData">
+                                            <option value="1" ng-selected="true">抢占</option>
+                                            <option value="2">加入</option>
+                                            <option value="3">监控</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--<input type="text" class="form-control" ng-model="Source.selectItem.devicesessiontypeids" />-->
+
+    </form>
+
+    <div class="modal-footer" style="clear:both;">
+        <button class="btn btn-info btn-sm" ng-verify="control:'Form'" type="button" ng-click="btn_save();">确定</button>
+        <button class="btn btn-danger btn-sm" type="button" ng-click="btn_cancel();">取消</button>
+
+    </div>
+
+
+
+</script>

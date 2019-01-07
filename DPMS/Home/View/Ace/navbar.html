@@ -1,0 +1,41 @@
+<div class="navbar-container" ng-class="{'container': ace.settings.container}">
+    <button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
+        <!--当屏幕变小的时候，左上角出现一个菜单栏的按钮-->
+        <span class="sr-only">点击显示菜单</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </button>
+
+    <div class="navbar-header pull-left">
+        <a href="#" class="navbar-brand">
+            <small>
+                <img src="../../../DPMS/public/images/logo_index.png"
+                     style="width:auto;height:25px;margin-right:10px;vertical-align:middle;" />
+                <php>echo C("SystemIdentification")</php>&nbsp;
+                <small
+                <php>echo C("VERSION");</php>
+                
+            </small>
+        </a>
+    </div>
+
+    <div class="navbar-buttons navbar-header pull-right" role="navigation">
+        <ul class="nav ace-nav">
+            <!--顶部右侧通知栏-->
+            <if condition="$_SESSION['OnlineChat']['Value'] neq '0'">
+                <li class="purple" id="test">
+                    <a href="javascript:;">
+                        <i class="ace-icon fa fa-bell icon-animated-bell"></i>
+                        <!--<span class="badge badge-important">8</span>-->
+                    </a>
+                </li>
+            </if>
+            <!--<li uib-dropdown class="grey" ng-include src="'__APP__/Home/Ace/page_m_navbar_msg/status/tasks'"></li>-->
+            <!--<li uib-dropdown class="purple" ng-include src="'__APP__/Home/Ace/page_m_navbar_msg/status/notifications'"></li>-->
+            <li uib-dropdown class="green" ng-include src="'__APP__/Home/Ace/page_m_navbar_msg/status/messages'"></li>
+            <li uib-dropdown class="light-blue" ng-include src="'__APP__/Home/Ace/page_m_navbar_msg/status/usermenu'"></li>
+        </ul>
+    </div>
+</div>

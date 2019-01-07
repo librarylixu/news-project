@@ -1,0 +1,24 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{service.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="$dismiss()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+<div class="modal-body" style="padding-top:10px;">
+    <form name="Form" class="container-fluid" verify-scope="tipStyle: 0">
+        <div class="row">
+            <label class="col-xs-3">改派给</label>
+            <select class="col-xs-6" ng-model="assign" placeholder="{{service.placeholder}}" ng-options="item.idusers as item.description for item in service.usersArrData"></select>
+        </div>
+        <div class="row top-10">
+            <label class="col-xs-3">原因描述</label>
+            <div class="col-xs-9" style="padding-left:0px;">
+                <textarea style="width:100%;" ng-verify="min:1, max:100" ng-model="mark" placeholder="{{service.placeholder}}"></textarea>         
+            </div>          
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+        <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="$close({'mark':mark,'assign':assign})">
+            确认改派
+        </button>
+        <button class="btn btn-warnning btn-sm" type="button" ng-click="$dismiss()">取消改派</button>   
+</div>

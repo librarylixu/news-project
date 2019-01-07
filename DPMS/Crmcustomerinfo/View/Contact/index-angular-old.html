@@ -1,0 +1,346 @@
+<extend name="angular-base.html" />
+<block name="headcss">
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}upload.css" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angularTree/css/tree-control.css" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angularTree/css/tree-control-attribute.css" />
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}my-tree-style.css" />    
+</block>
+<block name="headjs">
+    <script src="{$Think.const.BOOTSTRAP_URL}angularTree/js/angular-tree-control.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-sanitize/{$Think.const.ANGULAR_VERSION}angular-sanitize.min.js"></script>    
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-file-upload/angular-file-upload.min.js"></script>
+    <script>
+        //初始化module并定义service
+        appModuleInit(['ui.bootstrap', 'ui.grid', 'ui.grid.emptyBaseLayer', 'angularFileUpload',
+     'ui.grid.pagination', 'ui.grid.resizeColumns', 'ui.grid.autoResize', 'ngVerify', 'datePicker', 'ui.select', 'treeControl']);
+
+        /*
+        service 数据源
+        数据表名称+Data或业务名称+Data
+        contactData
+
+        addContactData
+        */ 
+        
+        //要在表格中显示的字段及名称，提取出来便于更改和查看
+        function columns(vm, uiGridConstants) {
+            return [{
+                name: 'idcontact', displayName: '图标', enableColumnMenu: false, enableFiltering: false, cellClass: 'text-center',
+                cellTemplate: '<i class="fa fa-address-book-o bigger-120"></i>',
+            },
+             { 
+                 name: 'name',
+                 displayName: '姓名',
+                 enableFiltering: true,
+                 enableColumnMenu: true,
+                 menuItems: [{
+                     title: '检索',
+                     icon: 'ui-grid-icon-search',
+                     action: function () {
+                         vm.toggleFiltering(vm, uiGridConstants);
+                     }
+                 }], cellClass: 'text-center', cellTemplate: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                     return '<span uib-popover="{{row.entity.name}}" popover-trigger="\'mouseenter\'" popover-placement="top-left" popover-append-to-body="true" style="white-space:nowrap;">{{row.entity.name}}</span>';
+                 }
+             },
+             {
+                 name: 'mobilephone', displayName: '手机', enableFiltering: true,
+                 menuItems: [{
+                     title: '检索',
+                     icon: 'ui-grid-icon-search',
+                     action: function () {
+                         vm.toggleFiltering(vm, uiGridConstants);
+                     }
+                 }], cellClass: 'text-center'
+             },
+             {
+                 name: 'phone', displayName: '联系电话', enableFiltering: true,
+                 menuItems: [{
+                     title: '检索',
+                     icon: 'ui-grid-icon-search',
+                     action: function () {
+                         vm.toggleFiltering(vm, uiGridConstants);
+                     }
+                 }], cellClass: 'text-center'
+             },
+             {
+                 name: 'cusRefuser', displayName: '用户', enableFiltering: false, cellClass: 'text-center', visible: false,
+                 cellTemplate: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                     return '<a class="addref top-5 ng-scope" title="建立联系人与用户关系" ng-click="grid.appScope.refuser(grid, row, col, rowRenderIndex, colRenderIndex,3)" href="javascript:;"><i class="glyphicon glyphicon-resize-small"></i>(<span ng-bind="grid.appScope.getTypeRefSouceLength(row,0)"></span>)</a>'
+                 }
+             },
+             {
+                 name: 'cusRefusertype', displayName: '用户角色', enableFiltering: false, cellClass: 'text-center', visible: false,
+                 cellTemplate: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                     return '<a class="addref top-5 ng-scope" title="建立联系人与用户角色关系" ng-click="grid.appScope.refusertype(grid, row, col, rowRenderIndex, colRenderIndex,4)" href="javascript:;"><i class="glyphicon glyphicon-resize-small"></i>(<span ng-bind="grid.appScope.getTypeRefSouceLength(row,1)"></span>)</a>'
+                 }
+             },
+             {
+                 name: 'cusRefusergroup', displayName: '用户组', enableFiltering: false, cellClass: 'text-center', visible: false,
+                 cellTemplate: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                     return '<a class="addref top-5 ng-scope" title="建立联系人与用户组关系" ng-click="grid.appScope.refusergroup(grid, row, col, rowRenderIndex, colRenderIndex)" href="javascript:;"><i class="glyphicon glyphicon-resize-small"></i>(<span ng-bind="grid.appScope.getTypeRefSouceLength(row,2)"></span>)</a>'
+                 }
+             },
+             {
+                  name: 'del', displayName: '操作', enableColumnMenu: true, enableFiltering: false, cellClass: 'text-left',
+                  cellTemplate: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                      return '<a href="javascript:;" class="green top-5" ng-show="grid.appScope.service.refedit"  ng-click="grid.appScope.updateInfo(grid, row, col, rowRenderIndex, colRenderIndex)"><i class="glyphicon glyphicon-pencil bigger-120"></i></a>&nbsp;&nbsp;<a href="javascript:;" class="red top-5" ng-show="grid.appScope.service.refdel" ng-click="grid.appScope.remove(grid, row, col, rowRenderIndex, colRenderIndex)"><i class="glyphicon glyphicon-trash bigger-120"></i></a> '
+                  }
+             }];
+        }
+
+        //主控制器
+        appModule.controller('crmContactController', ['$scope','i18nService', 'dataService', 'uiGridConstants', 'alert', function ($scope,i18nService, dataService, uiGridConstants, alert) {            
+            // 国际化；
+            i18nService.setCurrentLang("zh-cn");
+            $scope.service = dataService;//要显示到页面上的数据源
+            //显示到页面上的数据源
+            $scope.customerinfoData = [];
+            //ui-grid改变高度方法
+            $scope.changeHeight = function () {
+                 var newHeight = document.body.clientHeight-115;
+                     angular.element(document.getElementsByClassName('ui-grid')[0]).css('height', newHeight + 'px');
+            };
+            
+            /*
+                查询联系人（本页面使用）数据
+            */
+            $scope.select = function () {
+                $scope.service.postData(__URL + 'Crmcustomerinfo/Contact/select_page_data', {}).then(function (data) {
+                    $scope.service.contactData = data;
+                    $scope.gridOptions.data = $scope.service.contactData;
+                    $scope.changeHeight();
+                    // $scope.toggleFiltering();
+                    //查询用户/用户角色/用户组
+                    $scope.refselectuser();//与用户关系
+                    $scope.refselectusertype();//与用户角色关系
+                    $scope.refselectusergroup();//与用户组关系
+                    $scope.selectuser();//用户
+                    $scope.selectusertype();//用户角色
+                    $scope.selectusergroup();//用户组
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+           
+            //表格配置对象
+            $scope.gridOptions = publicControllerGridOptions($scope);
+           
+            //显示、隐藏检索方法
+            $scope.toggleFiltering = function () {
+                $scope.gridOptions.enableFiltering = !$scope.gridOptions.enableFiltering;
+                $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
+            };
+            //表格列头
+            $scope.gridOptions.columnDefs = columns($scope, uiGridConstants);
+            //获取联系人与之相关联数据的数量      
+            $scope.getTypeRefSouceLength = function (row, type) {
+                var refCount = 0;
+                if (type == 0) {
+                    //用户
+                    angular.forEach($scope.service.refuserData, function (value, key) {
+                        if (value.contactid == row.entity.idcontact) {
+                            refCount++;
+                        }
+                    });
+                } else if (type == 1) {
+                    //用户组
+                    angular.forEach($scope.service.refusertypeData, function (value, key) {
+                        if (value.contactid == row.entity.idcontact) {
+                            refCount++;
+                        }
+                    });
+                } else if (type == 2) {
+                    //权限
+                    angular.forEach($scope.service.refusergroupData, function (value, key) {
+                        if (value.contactid == row.entity.idcontact) {
+                            refCount++;
+                        }
+                    });
+                }
+                return refCount;
+            };
+            //刷新按钮
+            $scope.refresh = refresh;
+            //添加按钮
+            $scope.add = function () {
+                $scope.service.title = '新建客户联系人';
+                $scope.modalHtml = __URL + 'Crmcustomerinfo/Contact/openmodal';
+                $scope.modalController = 'modalContactController';
+                //给一个默认的颜色
+                $scope.service.selectItem = { labelclass: "#5661c9" };
+                $scope.service.selectItem = '';
+                publicControllerAdd($scope);
+            }
+            //批量导入
+            $scope.btn_import = function () {
+                $scope.service.title = '批量导入客户联系人';
+                $scope.modalHtml = __URL + 'Crmbase/Baseinfo/uploadbtn';
+                $scope.modalController = 'modaluploadfileController';
+                $scope.service.type = 'contact';
+                $scope.service.name = '客户联系人';
+                $scope.service.selectItem = '';
+                publicControllerAdd($scope);
+            }
+            //修改按钮
+            $scope.updateInfo = function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                $scope.service.title = "修改联系人";
+                $scope.modalHtml = __URL + 'Crmcustomerinfo/Contact/openmodal';
+                $scope.modalController = 'modalContactController';
+                $scope.service.selectItem = row.entity;
+                publicControllerUpdate($scope);
+            }
+            //删除按钮
+            $scope.remove = function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                $scope.service.title = '删除联系人';
+                $scope.modalHtml = __URL + 'Crmcustomerinfo/Contact/openmodal';
+                $scope.modalController = 'modalContactController';
+                $scope.service.selectItem = row.entity;
+                publicControllerDel($scope);
+            }
+            //关联用户按钮
+            $scope.refuser = function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                $scope.service.title = '关联用户';
+                $scope.service.Action = 3;
+                $scope.modalHtml = __URL + 'Crmcustomerinfo/Contact/openmodal';
+                $scope.modalController = 'modalContactController';
+                $scope.service.selectItem = grid.options.data[rowRenderIndex];
+                publicControllerRef($scope);
+            }
+            //关联用户角色按钮
+            $scope.refusertype = function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                $scope.service.title = '关联用户角色';
+                $scope.service.Action = 4;
+                $scope.modalHtml = __URL + 'Crmcustomerinfo/Contact/openmodal';
+                $scope.modalController = 'modalContactController';
+                $scope.service.selectItem = grid.options.data[rowRenderIndex];
+                publicControllerRef($scope);
+            }
+            //关联用户组按钮
+            $scope.refusergroup = function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                $scope.service.title = '关联用户组';
+                $scope.service.Action = 5;
+                $scope.modalHtml = __URL + 'Crmcustomerinfo/Contact/openmodal';
+                $scope.modalController = 'modalContactController';
+                $scope.service.selectItem = grid.options.data[rowRenderIndex];
+                publicControllerRef($scope);
+            }
+            /*
+            查询与用户关系数据
+            */
+            $scope.refselectuser = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                dataService.postData(__URL + 'Crmcustomerinfo/RefcontactRefuser/select_page_data', params).then(function (data) {
+                    $scope.service.refuserData = data;
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+            /*
+            查询用户数据
+            */
+            $scope.selectuser = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                dataService.postData(__URL + 'Crmuser/Users/select_page_data', params).then(function (data) {
+                    $scope.service.usersData = data;
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+            /*
+            查询与用户角色关系数据
+            */
+            $scope.refselectusertype = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                dataService.postData(__URL + 'Crmcustomerinfo/RefcontactRefuserty/select_page_data', params).then(function (data) {
+                    $scope.service.refusertypeData = data;
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+            /*
+            查询用户角色数据
+            */
+            $scope.selectusertype = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                dataService.postData(__URL + 'Crmuser/Usertype/select_page_data', params).then(function (data) {
+                    $scope.service.usertypeData = data;
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+            /*
+            查询与用户组关系数据
+            */
+            $scope.refselectusergroup = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                dataService.postData(__URL + 'Crmcustomerinfo/RefcontactRefusergr/select_page_data', params).then(function (data) {
+                    $scope.service.refusergroupData = data;
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+            /*
+            查询用户组数据
+            */
+            $scope.selectusergroup = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                dataService.postData(__URL + 'Crmuser/Usergroup/select_page_data', params).then(function (data) {
+                    $scope.service.usergroupData = data;
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+
+
+            //页面加载完成后，查询数据
+            $scope.select();
+          
+
+        }]);       
+
+    </script>
+</block>
+<block name="pageContent">
+    <!--页头-->
+    <div class="page-header clearfix">
+        <h1 class="col-xs-3 text-left">
+            {$MenuName}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {$PageName}
+            </small>
+        </h1>
+        <div class="col-xs-4 text-center">
+            <page-btn></page-btn>
+            <button type="button" class="btn btn-sm btn-warning" ng-click="btn_import()">批量导入</button>
+        </div>
+    </div>
+    <!--快速检索-->
+    <div class="table-header clearfix">
+        <div class="col-xs-6">{$MenuName}<small><i class="ace-icon fa fa-angle-double-right"></i>{$PageName}</small></div>
+    </div>
+    <div>
+        <div ui-grid="gridOptions" ui-grid-auto-resize ui-grid-empty-base-layer ui-grid-resize-columns ui-grid-pagination></div>
+    </div>
+</block>
+
+<block name="scriptTemplate">
+ 
+</block>
+
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Contact/uploadBtn.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Contact/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmuser/Users/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmuser/Usergroup/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmuser/Usertype/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagebtn.js"></script>
+    
+</block>

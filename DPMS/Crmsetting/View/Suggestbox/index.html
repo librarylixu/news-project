@@ -1,0 +1,241 @@
+﻿<extend name="angular-base.html" />
+<block name="headcss">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angular-bootstrap-colorpicker/3.0.32/css/colorpicker.min.css">
+    <!--评论组件-->
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}my-comments.css" />
+    <!--展示附件-->
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}my-gallery.css" />
+</block>
+<block name="headjs">
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular-bootstrap-colorpicker/3.0.32/js/bootstrap-colorpicker-module.js"></script>
+    <script>
+        //初始化modal并定义service
+        appModuleInit(['ui.bootstrap','ngSanitize']);
+        //主控制器
+        appModule.controller('SuggestionController', ['$scope', '$q',  'dataService',  'alert', function ($scope, $q, dataService, alert) {
+            _$scope = $scope;
+            _$q = $q;
+            $scope.Source = angular.copy(dataService);
+            $scope.service = dataService;
+            var _toolBars = [
+                         'fullscreen',
+                         //文字操作                          
+                         'bold', //加粗  
+                         'italic', //斜体
+                         'underline', //下划线
+                         'strikethrough', //删除线
+                         'forecolor', //字体颜色
+                         'backcolor', //背景色
+                         'formatmatch', //格式刷
+                         'justifyleft', //居左对齐
+                         'justifyright', //居右对齐
+                         'justifycenter', //居中对齐
+                         'justifyjustify', //两端对齐
+                         'insertorderedlist', //有序列表
+                         'insertunorderedlist', //无序列表               
+                         //表格
+                         'inserttable', //插入表格 
+                         'deletetable', //删除表格
+                         //其他功能
+                         'insertcode', //代码语言
+                         'fontfamily', //字体
+                         'fontsize', //字号
+                         'paragraph', //段落格式  
+                         'template', //模板
+                         'attachment', //附件 
+                         'emotion', //表情
+                         'map', //Baidu地图
+                         'snapscreen', //截图  
+
+            ];
+            /*清空编辑器中的内容                    
+         */
+            $scope.EditorClearHtml = function () {
+                UE.getEditor('container').setContent('', false);
+            }
+
+            //实例化编辑器
+            //通过设置前端配置项，定制编辑器的特性，配置方法主要通过修改ueditor.config.js，另外在编辑器实例化的时候也可以传入配置参数
+            $scope._ueConfig = {
+                elementPathEnabled: false, //删除元素路径
+                wordCount: false,    //删除字数统计
+                autoHeight: false,
+                toolbars: [_toolBars],
+                autoHeightEnabled: true,
+                autoFloatEnabled: true
+
+            };
+            //创建评论插件
+            $scope.ue = UE.getEditor('container', $scope._ueConfig);
+            //按钮显示控制
+            $scope.ue.addListener('contentChange', function () {
+                var content = UE.getEditor('container').getContent();
+                if (content.replace(' ', '').length > 0) {
+                    $scope.$applyAsync(function () {
+                        $scope.submitBtn = true;
+                    });
+                } else {
+                    $scope.$applyAsync(function () {
+                        $scope.submitBtn = false;
+                    });
+                }
+            });
+            //时间戳转换为时间
+            $scope.formatDate = function (time) {
+                if (time == undefined || time == 0) {
+                    return '暂无';
+                } else {
+                    return formatDate(time);
+                }
+            }
+            //获取内容、去除html标签的并且剪到20位
+            $scope.getmessage = function (message, num) {
+                if (message == undefined) {
+                    return;
+                }
+                $scope.oldmessage = message.replace(/<\/?.+?>/g, "");
+                $scope.newmessage = $scope.oldmessage.replace(/ /g, "");//dds为得到后的内容
+                return $scope.newmessage.substring(0,num);//截取
+            }
+            //处理状态  建议处理状态0待处理 1 处理中 2 待反馈 3 处理完毕
+            $scope.setstatusname = function (status) {
+                var statusname = '';
+                if(status == 0){
+                    statusname = '待处理';
+                }else if(status == 1){
+                    statusname = '处理中';
+                }else if(status == 2){
+                    statusname = '待反馈';
+                }else if(status == 3){
+                    statusname = '处理完毕';
+                }
+                return statusname;
+            }
+            /*
+                查询本页面数据
+            */
+            $scope.select = function () {
+                $scope.Source.postData(__URL + 'Crmsetting/Suggestbox/select_page_data', {}).then(function (data) {
+                    if (data != null) {
+                        $scope.SuggestionData = data;
+                        $scope.selectusers();
+                    } else {
+                        $scope.SuggestionData = {};
+                    }
+                });
+            }
+            /*
+                查询用户数据
+            */
+            $scope.selectusers = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                select_user(params);
+            }
+            //添加意见
+            $scope.addSuggestion = function () {
+                var content = UE.getEditor('container').getContent();
+                $scope.params = new URLSearchParams();
+                $scope.params.append('message', content);
+                if ($scope.isanonymous == undefined) {
+                    $scope.params.append('isanonymous', 0);
+                } else {
+                    $scope.params.append('isanonymous', 1);
+                }
+                $scope.Source.postData(__URL + 'Crmsetting/Suggestbox/insert_page_data', $scope.params).then(function (data) {
+                    if (data['_id'] != undefined) {
+                        //更新数据源
+                        $scope.selectItem = {
+                            _id: data._id,
+                            stime:Date.parse(new Date())/1000,
+                            message: content,
+                            isanonymous: $scope.isanonymous == undefined ? 0 : 1,
+                            status: 0,
+                            userid:$scope.service.userid
+                        }
+                        $scope.SuggestionData.push($scope.selectItem);
+                        $scope.EditorClearHtml();//清空编辑器中的内容
+                        parent.layer.msg('发表成功,感谢您的建议我们将会尽快解决您所提出的问题!', { icon: 6 });
+                    } else {
+                        parent.layer.msg('发表失败!', { icon: 5 });
+                    }
+                });
+            }
+            //查看详细
+            $scope.selectmessage = function (item) {
+                $scope.service.title = '详细内容';
+                $scope.modalHtml = __URL + 'Crmsetting/Suggestbox/openmodal';
+                $scope.modalController = 'modalSuggestboxController';
+                $scope.service.selectItem = item;
+                publicControllerRef($scope);
+            }
+            $scope.select();
+            //刷新按钮
+            $scope.refresh = refresh;
+        }]);
+       
+
+    </script>
+</block>
+<block name="pageContent">
+    <!--页头-->
+    <div class="page-header clearfix">
+        <h1 class="col-xs-3 text-left">
+            {$MenuName}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {$PageName}
+            </small>
+        </h1>
+        <div class="col-xs-4 text-center">
+            <a ng-click="refresh()" class="btn btn-success btn-sm">
+                <!-- 此处可暂时保留原方法（防止带有编辑/添加/删除等按钮） -->
+                <i class="glyphicon glyphicon-refresh"></i>刷新
+            </a>
+        </div>
+    </div>
+    <div class="col-xs-12">
+        <!-- 加载编辑器的容器 -->
+        <div class="col-xs-12 top-10">
+            <script id="container" type="text/plain"></script>
+        </div>
+        <div class="col-xs-12 text-right" style="padding:10px;padding-bottom:20px;">
+            <input type="checkbox" ng-model="isanonymous" value="1"/>是否匿名发布
+            <button class="btn btn-success" ng-show="submitBtn" ng-click="addSuggestion();submitBtn=false">发布</button>
+        </div>
+    </div>
+    <div class="col-xs-12">
+        <table class="table">
+            <tr>
+                <th>序号</th>
+                <th>建议内容</th>
+                <th>建议人</th>
+                <th>发布时间</th>
+                <th>处理状态</th>
+                <th>处理结果</th>
+                <th>处理完毕时间</th>
+                <th>查看详细内容</th>
+            </tr>
+            <tr ng-repeat="item in SuggestionData | orderBy:item.stime:'desc'">
+                <td ng-bind="$index+1"></td>
+                <td ><span ng-bind="getmessage(item.message,20)"></span><span ng-if="item.message.length>20">...</span></td>
+                <td ng-bind="item.isanonymous == 0?service.usersData[item.userid].description:'匿名'"></td>
+                <td ng-bind="item.stime?formatDate(item.stime):''"></td>
+                <td ng-bind="setstatusname(item.status)"></td>
+                <td ><span ng-bind="getmessage(item.result,10)"></span><span ng-if="item.result.length>10">...</span></td>
+                <td ng-bind="item.etime?formatDate(item.etime):''"></td>
+                <td><a href="javascript:;" class="green top-5" ng-click="selectmessage(item)"><i class="fa fa-list-alt bigger-120"></i></a></td>
+               
+            </tr>
+        </table>
+    </div>
+</block>
+<block name="scriptTemplate">
+</block>
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmsetting/Suggestbox/modal.js"></script>
+    <!-- 配置文件 -->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}ueditor/1.4.3.3/ueditor.config.js"></script>
+    <!-- 编辑器源码文件 -->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}ueditor/1.4.3.3/ueditor.all.js"></script>
+</block>

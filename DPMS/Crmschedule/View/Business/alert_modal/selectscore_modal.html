@@ -1,0 +1,22 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{selectItem.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="$dismiss()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+<div class="modal-body" style="padding-top:10px;">
+    <div>
+        <label>反馈评分</label>
+        <span style="color: #009688;" uib-rating ng-model="selectItem.feedback" read-only="true" titles="反馈评分" aria-labelledby="default-rating"></span>
+        <span class="label" ng-class="{'label-warning': selectItem.feedback<2, 'label-info': selectItem.feedback>=2 && selectItem.feedback<4, 'label-success': selectItem.feedback>=4}">{{selectItem.feedback}}星</span>
+    </div>
+    <div>
+        <label>及时评分</label>
+        <span></span>
+    </div>
+    <div>
+        <label>附加评分</label>
+        <span></span>
+    </div>
+</div>
+<div class="modal-footer">
+
+</div>

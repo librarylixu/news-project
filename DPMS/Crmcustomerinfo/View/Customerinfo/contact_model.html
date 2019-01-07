@@ -1,0 +1,35 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{service.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="$dismiss();service.contact = {};"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+
+<div class="modal-body" style="padding-top:8px;">
+    <form name="Form" class="container-fluid" verify-scope="tipStyle: 0">
+        <div class="row" style="line-height:28px;">
+            <label class="col-xs-4 text-right"><b class="c-red">*</b>姓名</label>
+            <input class="col-xs-4"  ng-verify="min:1, max:25" type="text" ng-model="Source.contact.name" />
+        </div>
+        <div class="row top-10" style="line-height:28px;">
+            <label class="col-xs-4 text-right"><b class="c-red">*</b>职位</label>
+            <input class="col-xs-4" ng-verify="min:1, max:25" type="text"  ng-model="Source.contact.position" />
+        </div>
+        <div class="row  top-10" style="line-height:28px;">
+            <label class="col-xs-4 text-right"><b class="c-red">*</b>手机/座机</label>
+            <input class="col-xs-4" ng-verify="min:1, max:20" ng-model="Source.contact.mobilephone" />
+        </div>
+        <div class="row  top-10" style="line-height:28px;">
+            <label class="col-xs-4 text-right">办公电话</label>
+            <input class="col-xs-4"  type="text" ng-verify="{pattern:/^0\d{2,3}-\d{7,8}(-\d{1,6})?$/,errmsg:'电话号码格式不正确',required:false}"  ng-model="Source.contact.phone"/>
+        </div>
+        <div class="row  top-10" style="line-height:28px;">
+            <label class="col-xs-4 text-right">邮箱</label>
+            <input class="col-xs-4" type="text" ng-verify="{pattern:/^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/,errmsg:'邮箱格式不正确',required:false}"  ng-model="Source.contact.email" />
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="$close({'name':Source.contact.name,'position':Source.contact.position,'mobilephone':Source.contact.mobilephone,'phone':Source.contact.phone?Source.contact.phone:[],'email':Source.contact.email?Source.contact.email:[]});service.contact = {};">
+        保存
+    </button>
+    <button class="btn btn-warning btn-sm" type="button" ng-click="$dismiss();service.contact = {};">取消</button>
+</div> 

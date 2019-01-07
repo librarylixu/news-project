@@ -1,0 +1,54 @@
+<extend name="angular-base.html" />
+<block name="momentjs">
+</block>
+<block name="headcss">
+
+</block>
+<block name="headjs">
+    <!--select start-->
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/select.css">
+    <script src="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/select.js"></script>
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/select2.css">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/selectize.default.css">
+    <!--select end-->
+    <link rel="stylesheet" href="{$Think.const.PAGE_URL}css/crmSchedule/Workerorder/workerorder.css" /><!-- 这里公用了工单css -->
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}upload.css" />
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-file-upload/angular-file-upload.min.js"></script>
+    <script src='{$Think.const.BOOTSTRAP_URL}textAngular/textAngular-rangy.min.js'></script>
+    <script src='{$Think.const.BOOTSTRAP_URL}textAngular/textAngular-sanitize.min.js'></script>
+    <script src='{$Think.const.BOOTSTRAP_URL}textAngular/textAngular.min.js'></script>
+
+    <!-- charts图标引入文件 -->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}echarts/4.1.0/echarts.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}echarts/4.1.0/echarts-gl.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}echarts/4.1.0/ecStat.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}echarts/4.1.0/dataTool.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}echarts/map/js/china.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}echarts/map/js/world.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}echarts/4.1.0/bmap.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}echarts/4.1.0/simplex.js"></script>
+</block>
+<block name="pageContent">
+    <div class="page-header clearfix">
+        <h4 class="blue" style="font-weight: bold; ">系统行为操作柱状图<br /><small>数据来自CRM日志统计</small></h4>
+        <h6>时间：<small ng-bind="service.time"></small></h6>
+        <div class="text-right">
+            <button class="btn btn-info" ng-click="ischarts()">按{{ischart?"月份":"总数"}}统计</button>
+            <button class="btn btn-info" ng-click="onDownloadChartData()" ng-if="ischart">生成报表</button>
+        </div>
+    </div>
+    <div class="top-5 " style="height:80%;">
+        <div  id="container" style="width:100%;height:100%;"></div>
+    </div>
+</block>
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmlog/Systemlog/charts.js?v={$Think.const.CRM_VERSION}"></script>
+    <script>
+        var userid = "{$userid}";
+        var _appid = "{$appid}";
+
+    </script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagebtn.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmlog/Systemlog/uploadBtn.js"></script>
+</block>

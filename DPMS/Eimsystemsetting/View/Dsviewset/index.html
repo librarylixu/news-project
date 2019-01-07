@@ -1,0 +1,101 @@
+
+<!--页头-->
+<div class="page-header clearfix">
+    <div class="col-xs-12 text-center">      
+        <a ng-click="select()" class="btn btn-success btn-sm">
+            <i class="glyphicon glyphicon-refresh"></i>刷新
+        </a>
+        <!--<a ng-click="" class="btn btn-warning btn-sm">
+            <i class="glyphicon glyphicon-refresh"></i>导入
+        </a>-->
+    </div>
+</div>
+<div class="top-5">
+
+    <div class="table-header">
+       Dsview设置中心
+    </div>
+    <div class="mt-5" style="margin:10px auto;width:60%;">
+
+            <form name="Form" verify-scope>
+                <div class="form-group">
+                    <label><b class="red">*</b>名称</label>
+                    <input type="text" ng-verify="min:1, max:15" class="form-control" ng-model="Source.data.dsvname" placeholder="请输入1~15个字符" />
+                </div>
+                <div class="form-group">
+                    <label><b class="red">*</b>地址</label>
+                    <input type="text" ng-verify="min:1, max:15" class="form-control" ng-model="Source.data.ip" placeholder="请输入1~15个字符" />
+                </div>
+                <div class="form-group">
+                    <label>登录账号</label>
+                    <input type="text" ng-verify="min:1, max:25" class="form-control" ng-model="Source.data.loginuser" />
+                </div>
+                <div class="form-group">
+                    <label>登录密码</label>
+                    <input type="password" ng-verify="min:1, max:25" class="form-control" ng-model="Source.data.loginpwd" />
+                </div>
+                <div class="form-group">
+                    <label>数据库登录账号</label>
+                    <input type="text" ng-verify="min:1, max:25" class="form-control" ng-model="Source.data.dbuser" />
+                </div>
+                <div class="form-group">
+                    <label>数据库登录密码</label>
+                    <input type="password" ng-verify="min:1, max:25" class="form-control" ng-model="Source.data.dbpwd" />
+                </div>
+                <div class="form-group">
+                    <label>更新时间</label>
+                    <span ng-bind="service.formatDate(Source.data.sessiontime)"></span>
+                </div>
+                <div class="form-group">
+                    <label>SesionID</label>
+                    <span ng-bind="Source.data.sessionid"></span>
+                </div> 
+                <div class="form-group ">
+                    <label style="vertical-align:top;">证书</label>
+                    <textarea readonly="readonly" ng-model="Source.data.httpscertificate" style="vertical-align:top;width:62%;height:340px!important;"></textarea>
+                </div>
+                            
+                <div class="text-right">
+                    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="opensyncModel()">同步设备</button>
+                    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save()">保存</button>
+                </div>              
+            </form>
+
+    </div>
+    
+</div>
+<script type="text/ng-template" id="Eimdevice/Dsviewset/open_sync_model">
+    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+    <div class="modal-body">    
+        <div ng-if="display">更新失败列表
+            <span ng-repeat="item in alldsvData.parent_data track by $index" ng-if="item.error" class="red">{{$index}}.<b ng-bind="item.deivcename?item.deivcename:item.portname"></b></span>
+        </div>   
+        <div>
+            <table class="table table-striped table-bordered table-hover table-condensed table-responsive">
+                <thead>
+                    <tr>
+                        <th>同步</th>
+                        <th>设备名称</th>
+                    </tr>
+                </thead>
+                <tbody ng-repeat="item in alldsvData.parent_data track by $index">
+                    <tr>
+                        <td><input type="checkbox" name="sync" ng-click="checkDevice(item)"/></td>
+                        <td ng-bind="item.devicename"></td>
+                    </tr>
+                    <tr ng-repeat="value in alldsvData.child_data track by $index" ng-if="value.poid==item.oid">
+                        <td><input type="checkbox" name="sync" ng-click="checkDevice(value)" /></td>
+                        <td class="text-center" ng-bind="value.portname"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save()">保存</button>
+        <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+    </div>
+</script>

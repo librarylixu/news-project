@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>CRM</title>
+    <style>
+        .section-yin {
+            margin-top: 1em;
+            max-width: 100%;
+            box-sizing: border-box;
+            display: inline-block;
+            font-size: 24px;
+            color: rgb(32, 209, 253);
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+        }
+    </style>
+    <script type="text/javascript" src="{$Think.const.JS_URL}EIMPublicTools.js"></script>
+    <script>
+        if (!P_browser_iekernel()) {
+            //说明已经更改完内核了，自动跳转到登录页面
+            window.location.href = '__APP__/Home/Login/login';
+        }
+        //alert(P_browser_iekernel());
+    </script>
+</head>
+<body>
+    <div style="align-content:center;">
+        <p style="font-size: 32px; color: black; text-align: center">昕辰企业管理平台</p>
+        <div class ="container">
+            您的浏览器不兼容，请使用以下两种办法修复此问题。
+            <div>
+                <div>
+                    <h2>一、更改浏览器内核已解决此问题</h2>
+                    <p>根据图示：点击地址栏右侧的内核图标，选择“极速模式”！</p>
+                    <div>
+                        <img src="{$Think.const.IMG_URL}gif/q1-02.jpg" style="width:90%;"/>
+                    </div>
+                    <p>更改成功没有反应？请点击：<a href="__APP__/Home/Login/login">重新登录</a></p>
+                </div>
+                <div>
+                    <h2>二、下载火狐浏览器已解决此问题</h2>
+                    <p>下载链接：<a href="https://download-ssl.firefox.com.cn/releases-sha2/stub/official/zh-CN/Firefox-latest.exe">火狐浏览器</a></p>
+                </div>
+            </div>
+        </div>
+        <footer class="footer navbar-fixed-bottom ">
+            <div class="container">
+                <p style="font-size: 12px; color: black; text-align: center">Copyright © 2016-2018 By xinchen Allrights Reserved.</p>
+                <p style="font-size: 12px; color: black; text-align: center">北京昕辰清虹科技有限公司</p>
+                <p style="font-size: 12px; color: black; text-align: center">010-64126508</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

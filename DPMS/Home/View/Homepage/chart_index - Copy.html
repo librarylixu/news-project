@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}bootstrap/css/bootstrap3.3.7.min.css">
+    <!-- ace styles -->
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/ace.css" class="ace-main-stylesheet" id="main-ace-style" />
+    <!-- text fonts -->
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/font-awesome4.7.0.css" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/ace-fonts.css" />
+    <link href="{$Think.const.CSS_URL}EIMPublicTools.css" rel="stylesheet" type="text/css" />
+    <script src="{$Think.const.BOOTSTRAP_URL}echarts3/echarts.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}echarts3/echarts-liquidfill.js"></script>
+    <title>首页</title>
+    <script>
+        var __URL = " __MODULE__/";
+        var __APP = " __APP__/";
+        //定时刷新间隔 单位秒
+        var _intervalTime = 1 * 1000;
+        var vm = null;
+    </script>   
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}vue/vue2.5.1.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}vue/axios.min0.17.0.js"></script>
+     
+</head>
+<body >
+    <div id="main-container" class="main-container">
+        <div class="main-content">
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="page-header">
+                            <h1>
+                                {$MenuName}
+                                <small>
+                                    <i class="ace-icon fa fa-angle-double-right"></i>
+                                    {$PageName}
+                                </small>
+                               
+                                <a href="javascript:_reload();"><i class="api fa  fa-undo  smaller-80"></i></a>
+                                <!--<a href="__MODULE__/Question/event_list_log_instr_page" target="_blank"><i class="api fa fa-question-circle-o "></i></a>-->
+                            </h1>
+                        </div>
+
+                        <!--饼图-->
+                        <div class="col-xs-12">
+                            <!--服务器实时信息-->
+                            <div class="col-sm-6" id="app">
+                                <div class="widget-box">
+                                    <div class="widget-header widget-header-flat">
+                                        <h5 class="widget-title lighter">
+                                            <i class="ace-icon fa fa-signal"></i>                                            
+                                            <span v-text="baseinfo.title"></span>
+                                        </h5>
+                                    </div>
+                                    <div class="widget-body">
+                                        <div class="widget-main" style="padding:51px;">
+                                            <table class="table table-border">
+                                                <tbody>                                                    
+                                                    <tr>
+                                                        <td><label>当前时间:</label><label v-text="baseinfo.labservertime"></label></td>
+                                                        <td><label>运行时间:</label><label v-text="baseinfo.labserverruntime"></label></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><label>全部空间:</label><label v-text="baseinfo.labdiskspace"></label>GB</td>
+                                                        <td><label>剩余空间:</label><label v-text="baseinfo.lblfreeSpace"></label>GB</td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td><label>物理内存:</label><label v-text="baseinfo.lblTotalMemory"></label></td>
+                                                        <td><label>真实内存:</label><label v-text="baseinfo.lblmemRealUsed"></label></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td><label>网络流量:</label><label v-text="baseinfo.NetInput2"></label>GB</td>
+                                                        <td><label>授权类型:</label><label>{$_SESSION['S_type']}</label></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td><label>授权设备:</label><label>{$_SESSION['S_device_num']}台</label></td>
+                                                        <td><label>已使用设备:</label><label>{$_SESSION['S_device_num_has']}台</label><span class="c-red">{$_SESSION['S_device_num_has_txt']}</span></td>
+                                                    </tr>
+                                                    <tr><td><label>授权用户:</label><label>{$_SESSION['S_task']}</label></td><td></td></tr>
+                                                </tbody>
+                                            </table>
+                                        </div><!-- /.widget-main -->
+                                    </div><!-- /.widget-body -->
+                                </div>
+                            </div>
+                            <!--设备数量-->
+                            <div class="col-sm-6">
+                                <div class="widget-box">
+                                    <div class="widget-header widget-header-flat">
+                                        <h5 class="widget-title lighter">
+                                            <i class="ace-icon fa fa-signal"></i>
+                                            设备统计--<small>资产设备统计</small>
+                                        </h5>
+                                    </div>
+
+                                    <div class="widget-body" style="height:354px;">
+                                        <div class="widget-main no-padding" style="height:100%">
+                                            <div id="devicechart" style="width:100%;height:100%"></div>
+                                        </div><!-- /.widget-main -->
+                                    </div><!-- /.widget-body -->
+                                </div>
+                            </div> 
+                        </div>
+
+                        <div id="divmemoryRow" class="col-xs-12">
+                            <!--用户组，用户的数量-->
+                            <div class="col-sm-6">
+                                <div class="widget-box">
+                                    <div class="widget-header  widget-header-flat">
+                                        <h5 class="widget-title lighter">
+                                            <i class="ace-icon fa fa-signal"></i>
+                                            系统用户信息
+                                        </h5>
+                                    </div>
+
+                                    <div class="widget-body" style="height:354px;">
+                                        <div class="widget-main no-padding" style="height:100%">
+                                            <div id="container2" style="width:100%;height:100%"></div>
+                                        </div><!-- /.widget-main -->
+                                    </div><!-- /.widget-body -->
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="widget-box">
+                                    <div class="widget-header widget-header-flat">
+                                        <h5 class="widget-title lighter">
+                                            <i class="ace-icon fa fa-signal"></i>
+                                            磁盘使用率--<small>服务器磁盘</small>
+                                        </h5>
+                                    </div>
+
+                                    <div class="widget-body" style="height:354px;">
+                                        <div class="widget-main no-padding" style="height:100%">
+                                            <div id="container1" style="width:100%;height:100%"></div>
+                                        </div><!-- /.widget-main -->
+                                    </div><!-- /.widget-body -->
+                                </div>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="{$Think.const.APP_PUBLIC}jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}bootstrap/js/bootstrap3.3.7.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}ace/js/ace.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}EIMPublicTools.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Home/Homepage/home_index.js"></script>
+  
+</body>
+</html>

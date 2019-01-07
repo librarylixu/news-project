@@ -1,0 +1,73 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+<div class="modal-body" style="max-height:800px;">
+    <div class="class=" form-container"">
+        <form name="Form" verify-scope class="myform">
+            <div class="form-group">
+                <label>组名称</label>
+                <input type="text" ng-if="Source.Action==0" ng-disabeld="Source.Action==2" ng-model="Source.selectItem.groupname" ng-verify="min:1, max:25" placeholder="输入1~25位角色名称" />
+                <input type="text" ng-if="Source.Action!=0" ng-model="Source.selectItem.groupname" ng-verify="min:1, max:25" class="form-control" placeholder="请输入1~25个字符" ng-disabeld="Source.Action==2" />
+            </div>
+            <div ng-show="Source.Action==0||Source.Action==1" style="min-height:30px;">
+                <div class="text-right col-xs-12">
+                    <a href="javascript:;" title="点击隐藏/显示其余属性" ng-click="hideOther=!hideOther">
+                        <i class="fa" ng-class="{'fa-chevron-circle-down':hideOther,'fa-chevron-circle-up':!hideOther}" aria-hidden="true"></i>
+                        <span>{{hideOther?'展开其他':'隐藏'}}属性</span>
+                    </a>
+                </div>
+            </div>
+            <div ng-show="!hideOther&&(Source.Action==0||Source.Action==1)">
+                <div class="form-group">
+                    <label>父级分类</label>
+                    <!--<input type="text" ng-show="Source.Action==0&&Source.selectItem.pid" disabeld ng-model="service.usergroupData[service.selectItem.pid].groupname" />-->
+                    <div>
+                        <treecontrol class="tree-light" tree-model="Source.treedata" on-selection="showSelected(node)">
+                            <span class="fa bigger-120" ng-class="node.isParent == true?'fa-user-circle-o':'fa-user'"></span>
+                            <input ng-if="node.idusergroup != Source.selectItem.idusergroup" type="radio" name="group" ng-checked="node.checked">
+                            <span ng-bind="node.groupname"></span>
+                        </treecontrol>
+                    </div>
+
+                </div>
+            </div>
+            <div ng-show="Source.Action==3">
+                <div class="form-group">
+                    <label>关联用户角色</label>
+                    <div class="mycheckbox">
+                        <div class="checkbox" ng-repeat="usertype in Source.usertypeData">
+                            <label style="text-align:left;">
+                                <input type="checkbox" ng-model="usertype.checked" ng-change="save(3,usertype)" />{{usertype.typename}}
+                            </label>
+                        </div>
+                        <!--<a ng-click="addUsertypeClick()" title="新建用户角色"><i class="fa fa-plus green f-16"></i></a>-->
+                    </div>
+                </div>
+            </div>
+            <div ng-show="Source.Action==4">
+                <div class="form-group">
+                    <label class="col-xs-3 text-right">关联用户</label>
+                    <div class="col-xs-8">
+                        <ui-select multiple ng-model="Source.selectItem.usersData" on-select="save_refuser($item, 1)" on-remove="save_refuser($item, 0)">
+                            <ui-select-match>
+                                <span ng-bind="$item.username"></span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item in (Source.usersArrData | filter:$select.search) track by $index">
+                                <div ng-bind-html="item.username"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save(1)" ng-show="Source.Action==0">连续保存</button>
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save(0)" ng-show="Source.Action==0||Source.Action==1">保存</button>
+    <button class="btn btn-primary btn-sm" type="button" ng-click="save(2)" ng-show="Source.Action==2">删除</button>
+    <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+</div>
+

@@ -1,0 +1,8 @@
+﻿<p ng-init="spanvisible=1;inputvisible=0" ng-attr-title="{{value[confixname]}}">
+    <span ng-show="spanvisible" style="cursor:pointer;border-bottom:1px dashed #478FCA;color:#478FCA;  " ng-bind="value[confixname]==''?'暂无':value[confixname]" ng-click="spanvisible=0;inputvisible=1;"></span>
+    <span style="display:inline-block;"><input ng-show='inputvisible' ng-verify="{{verify}}" ng-model="value[confixname]" type="confixtype" /></span>
+    <!--<span class="btn  btn-xs btn-info" ng-show="editbtn" ng-click="editbtn=spanvisible=0;inputvisible=savebtn=backbtn=1;" title="编辑"><i class="fa fa-edit"></i></span>-->    
+    <button class="btn  btn-xs btn-info" type="submit" ng-verify="control:'Form'" ng-show="inputvisible" ng-click="newvalue =value[confixname]; saveconfix(value,confixname);oldvalue=newvalue;spanvisible=1;inputvisible=0;" title="提交"><i class="fa fa-save"></i></button>
+    <span class="btn  btn-xs btn-warning" ng-show="inputvisible" ng-click="value[confixname] =newvalue;spanvisible=1;inputvisible=0;" title="撤销"><i class="fa fa-reply"></i></span>
+</p>
+

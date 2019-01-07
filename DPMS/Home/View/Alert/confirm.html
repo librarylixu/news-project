@@ -1,0 +1,14 @@
+﻿  <!--确认框-->
+
+    <div class="modal-header">
+        <h3 class="modal-title">{{vm.title}}</h3>
+    </div>
+    <div class="modal-body">
+        <div class="row text-center">
+            {{vm.message}}
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="vm.close()">确定</button>
+        <button class="btn btn-primary" ng-click="vm.cancel()">取消</button>
+    </div>

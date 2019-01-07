@@ -1,0 +1,69 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+<div class="modal-body">
+    <div class="form-container">
+        <form name="Form" verify-scope class="myform">
+            <div class="form-group">
+                <label>按钮名称</label>
+                <input type="text" ng-model="Source.selectItem.bname"  ng-verify="min:1, max:25" class="form-control"  ng-readonly="readonly" placeholder="请输入1~25个字符" />
+            </div>
+            <div class="form-group" ng-show="Source.Action!=2">
+                <label>按钮代码</label>
+                <textarea  class="form-control" style="height:4em!important;" ng-verify="{pattern:/<(?<tag>[^\s>]+)[^>]*>(.|\n)*?</\k<tag>>/, required:false, errmsg:'需要输入html代码'}" ng-model="Source.selectItem.content"   placeholder="输入中文（非必填）"></textarea>                    
+                
+            </div>
+            <div ng-show="Source.Action!=2">
+                <div class="row">
+                    <div class="text-right col-xs-12">
+                        <a href="javascript:;" title="点击隐藏/显示其余属性" ng-click="hideOther=!hideOther">
+                            <i class="fa" ng-class="{'fa-chevron-circle-down':hideOther,'fa-chevron-circle-up':!hideOther}" aria-hidden="true"></i>
+                            <span>{{hideOther?'展开其他':'隐藏'}}属性</span>
+                        </a>
+                    </div>
+                </div>
+                <!--其他属性-->
+                <div ng-show="!hideOther">
+                    
+                </div>
+            </div>
+        </form>
+        
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" type="button" ng-click="save(1)" ng-show="Source.Action==0">连续保存</button>
+    <button class="btn btn-primary btn-sm" type="button" ng-click="save(0)" ng-show="Source.Action!=2">保存</button>
+    <button class="btn btn-primary btn-sm" type="button" ng-click="save(2)" ng-show="Source.Action==2">删除</button>
+    <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+</div>
+</script>
+<script type="text/ng-template" id="refusers.html">
+<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">添加用户到用户组</h4>
+    <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-xs-6">
+            <h5 class="">用户列表</h5>
+            <treecontrol class="tree-classic" tree-model="myusergroup" on-selection="showSelected(node)">
+                <div class="inline" ng-show="node.type=='user'" ng-attr-title="{{node.status?'点击进行关联':'该用户已经关联'}}">
+                    {{node.name}}
+                </div>
+                <span class="lbl" ng-show="node.type=='group'">组:{{node.groupname}}</span>
+            </treecontrol>
+        </div>
+
+        <ul class="col-xs-6">
+            <li class="col-xs-12" ng-repeat="option in usergroup1[thisGid].children" ng-click="unRef(option)">
+                <span>{{option.name}}</span>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" type="button" ng-click="save(0)">保存</button>
+    <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+</div>

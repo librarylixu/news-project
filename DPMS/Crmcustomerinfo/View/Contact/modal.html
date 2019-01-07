@@ -1,0 +1,87 @@
+
+<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+
+<div class="modal-body">
+    <div class="form-container">
+        <form name="Form" verify-scope class="myform">           
+            <div class="form-group">
+                <label>联系人</label>
+                <input type="text" id="contant"  ng-verify="min:1, max:25" ng-readonly="Source.Action==2" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.name" placeholder="请输入1~25个字符" />
+            </div>
+            <div class="form-group" ng-show="Source.Action==0||Source.Action==1">
+                <label>手机</label>
+                <!-- 默认支持的type类型 -->
+                <input ng-verify="" type="phone" ng-readonly="Source.Action==2" class="form-control" placeholder="请输入手机号码" ng-model="Source.selectItem.mobilephone" />
+            </div>
+            <div ng-show="Source.Action==0||Source.Action==1" style="min-height:30px;">
+                <div class="text-right col-xs-12">
+                    <a href="javascript:;" title="点击隐藏/显示其余属性" ng-click="hideOther=!hideOther">
+                        <i class="fa" ng-class="{'fa-chevron-circle-down':hideOther,'fa-chevron-circle-up':!hideOther}" aria-hidden="true"></i>
+                        <span>{{hideOther?'展开其他':'隐藏'}}属性</span>
+                    </a>
+                </div>
+            </div>
+            <!--其他属性-->
+            <div ng-show="!hideOther&&(Source.Action==0 || Source.Action==1)">
+                <div class="form-group">
+                    <label>电话</label>
+                    <input ng-verify="{pattern:/^(\(\d{3,4}\)|\d{3,4}-|\s)?\d{7,14}$/,errmsg:'电话号码格式不正确',required:false}" type="text" ng-model="Source.selectItem.phone" class="form-control" placeholder="输入电话号码（非必填）" />
+                </div>
+            </div>
+            <div ng-show="Source.Action==3">
+                <div class="form-group">
+                    <label>关联用户</label>
+                    <div class="mycheckbox">
+                        <div class="checkbox" ng-repeat="user in Source.usersData track by $index">
+                            <label style="text-align:left;">
+                                <input type="checkbox" ng-model="user.checked" ng-change="save(user)" />{{user.username}}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div ng-show="Source.Action==4">
+                <div class="form-group">
+                    <label>关联用户角色</label>
+                    <div class="mycheckbox">
+                        <div class="checkbox" ng-repeat="usertype in Source.usertypeData track by $index">
+                            <label style="text-align:left;">
+                                <input type="checkbox" ng-model="usertype.checked" ng-change="save(usertype)" />{{usertype.typename}}
+                            </label>
+                        </div>
+                        <a ng-click="addUsertypeClick()" title="新建用户角色"><i class="fa fa-plus green f-16"></i></a>
+                    </div>
+
+                </div>
+            </div>
+            <div ng-show="Source.Action==5">
+                <div class="form-group">
+                    <label>关联用户组</label>
+                    <div class="mycheckbox">
+                        <div>
+                            <treecontrol class="tree-light" tree-model="service.treedata" on-selection="showSelected(node)">
+                                <span ng-mouseenter="mouseenter=true" ng-mouseleave="mouseenter=false">
+                                    <span ng-class="node.isParent == true?'fa fa-user-circle-o bigger-120 ng-scope':'fa fa-user bigger-120 ng-scope'" ng-class="node.type"></span>
+                                    <input type="checkbox" ng-checked="node.checked">
+                                    <span ng-bind="node.groupname"></span>
+                                    <i class="fa fa-plus green" uib-popover="为【{{node.groupname}}】添加一个子集分组" popover-trigger="'mouseenter'" popover-placement="top-left" popover-append-to-body="true" style="white-space:nowrap;" ng-show="mouseenter" ng-click="addUsergroupClick(node)"></i>
+                                </span>
+                            </treecontrol>
+                        </div>
+                        <a ng-click="addUsergroupClick()" title="新建用户组"><i class="fa fa-plus green f-16"></i></a>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save(1)" ng-show="Source.Action==0">连续保存</button>
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save(0)" ng-show="Source.Action==0||Source.Action==1">保存</button>
+    <button class="btn btn-primary btn-sm" type="button" ng-click="save(2)" ng-show="Source.Action==2">删除</button>
+    <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+</div>

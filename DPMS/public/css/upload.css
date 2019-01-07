@@ -1,0 +1,27 @@
+﻿.filename {
+            width: 300px;
+            height: 40px;
+            line-height: 40px;
+        }
+
+        .choose-file-area a {
+            width: 50px;
+            text-align: center;
+            height: 40px;
+            line-height: 30px;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .choose-file-area a input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+        }
+
+        #r-result {
+            width: 100%;
+        }

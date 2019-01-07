@@ -1,0 +1,255 @@
+<extend name="angular-base.html" />
+<block name="headcss">
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}upload.css" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angularTree/css/tree-control.css" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angularTree/css/tree-control-attribute.css" />
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}my-tree-style.css" />
+</block>
+<block name="headjs">
+    <script src="{$Think.const.BOOTSTRAP_URL}angularTree/js/angular-tree-control.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-sanitize/{$Think.const.ANGULAR_VERSION}angular-sanitize.min.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-file-upload/angular-file-upload.min.js"></script>
+    <script>
+        //初始化module并定义service
+        appModuleInit(['ui.bootstrap', 'angularFileUpload', 'ngVerify', 'datePicker', 'ui.select', 'treeControl']);
+        /*
+        联系人管理业务:
+        1.获取所有联系人(后台要根据当前用户的权限进行过滤的)
+        2.html页面ng-repeat展示每个联系人
+        */
+        /*
+        service 数据源
+        数据表名称+Data或业务名称+Data
+        contactData
+
+        addContactData
+        */
+
+
+        //主控制器
+        appModule.controller('crmContactController', ['$scope', 'dataService', 'alert', '$q', function ($scope, dataService, alert, $q) {
+            _$scope = $scope;
+            _$q = $q;
+            $scope.service = dataService;//要显示到页面上的数据源
+            //显示到页面上的数据源
+            $scope.service.contactData = [];
+            /*
+                查询联系人（本页面使用）数据
+            */
+            $scope.select = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                select_customer_contact(params).then(function (res) {
+                    // 查询客户数据
+                    $scope.selectcustomer();
+                    //查询用户
+                    $scope.selectuser();//用户
+                });
+            }
+            /*
+               查询客户数据
+           */
+            $scope.selectcustomer = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                select_customerinfo(params).then(function (res) {
+                    //组建每个联系人的客户数据
+                    $scope.bulidContact_customer();
+                });
+            }
+            /*
+              组建每个联系人的客户数据
+          */
+            $scope.bulidContact_customer = function () {
+                angular.forEach($scope.service.customerinfoData, function (value) {
+                    if (value.refcontactids) {
+                        angular.forEach(value.refcontactids.split(','), function (val) {
+                            if (!$scope.service.contactData[val].customerid) {
+                                $scope.service.contactData[val].customerid = [];
+                            }                           
+                            $scope.service.contactData[val].customerid.push(value.idcustomerinfo);
+                        });
+                    }
+                });
+
+            }
+            //刷新按钮
+            $scope.refresh = refresh;
+            //添加按钮
+            $scope.add = function () {
+                $scope.service.title = '新建客户联系人';
+                $scope.modalHtml = __URL + 'Crmcustomerinfo/Contact/openmodal';
+                $scope.modalController = 'modalContactController';
+                //给一个默认的颜色
+                $scope.service.selectItem = { labelclass: "#5661c9" };
+                $scope.service.selectItem = '';
+                publicControllerAdd($scope);
+            }
+            //批量导入
+            $scope.uploadfile = function () {
+                $scope.service.title = '批量导入客户联系人';
+                $scope.modalHtml = __URL + 'Crmbase/Baseinfo/uploadbtn';
+                $scope.modalController = 'modaluploadfileController';
+                $scope.service.type = 'contact';
+                $scope.service.name = '客户联系人';
+                $scope.service.selectItem = '';
+                publicControllerAdd($scope);
+            }
+            //修改按钮
+            $scope.updateInfo = function (row) {
+                $scope.service.title = "修改联系人";
+                $scope.modalHtml = __URL + 'Crmcustomerinfo/Contact/openmodal';
+                $scope.modalController = 'modalContactController';
+                $scope.service.selectItem = row;
+                publicControllerUpdate($scope);
+            }
+            //删除按钮
+            $scope.remove = function (row) {
+                $scope.service.title = '删除联系人';
+                $scope.modalHtml = __URL + 'Crmcustomerinfo/Contact/openmodal';
+                $scope.modalController = 'modalContactController';
+                $scope.service.selectItem = row;
+                publicControllerDel($scope);
+            }
+            //关联用户按钮
+            $scope.refuser = function (row) {
+                $scope.service.title = '关联用户';
+                $scope.service.Action = 3;
+                $scope.modalHtml = __URL + 'Crmcustomerinfo/Contact/openmodal';
+                $scope.modalController = 'modalContactController';
+                $scope.service.selectItem = row;
+                publicControllerRef($scope);
+            }
+            //关联用户角色按钮
+            $scope.refusertype = function (row) {
+                $scope.service.title = '关联用户角色';
+                $scope.service.Action = 4;
+                $scope.modalHtml = __URL + 'Crmcustomerinfo/Contact/openmodal';
+                $scope.modalController = 'modalContactController';
+                $scope.service.selectItem = row;
+                publicControllerRef($scope);
+            }
+            //关联用户组按钮
+            $scope.refusergroup = function (row) {
+                $scope.service.title = '关联用户组';
+                $scope.service.Action = 5;
+                $scope.modalHtml = __URL + 'Crmcustomerinfo/Contact/openmodal';
+                $scope.modalController = 'modalContactController';
+                $scope.service.selectItem = row;
+                publicControllerRef($scope);
+            }
+            /*
+            查询用户数据
+            */
+            $scope.selectuser = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                select_user(params).then(function (res) {
+                    //$scope.selectusertype();//查询用户角色
+                });
+            }
+            /*
+            查询用户角色数据
+            */
+            $scope.selectusertype = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                select_usertype(params).then(function (res) {
+                   // $scope.selectusergroup();//查询用户组
+                });
+            }
+            /*
+            查询用户组数据
+            */
+            $scope.selectusergroup = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                select_usergroup(params);
+            }
+            //页面加载完成后，查询数据
+            $scope.select();
+        }]);
+
+    </script>
+</block>
+<block name="pageContent">
+    <!--页头-->
+    <div class="page-header clearfix">
+        <h1 class="col-xs-3 text-left">
+            {$MenuName}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {$PageName}
+            </small>
+        </h1>
+        <div class="col-xs-4 text-center">
+            <page-btn></page-btn>
+        </div>
+    </div>
+    <!--快速检索-->
+    <div class="table-header clearfix">
+        <div class="col-xs-6">{$MenuName}<small><i class="ace-icon fa fa-angle-double-right"></i>{$PageName}</small></div>
+    </div>
+    <div>
+        <div class="widget-header widget-header-small">
+            <h4 class="widget-title blue smaller">
+                <i class="ace-icon fa fa-rss orange"></i>
+                联系人信息列表(<span ng-init="contactDataCount={count:0}" ng-bind="contactDataCount.count"> </span>)
+            </h4>
+            <div class="widget-toolbar action-buttons">
+                快速检索：<input type="text" ng-model="filtername" />
+            </div>
+        </div>
+        <table class="table">
+            <tr>
+                <th>图标</th>
+                <th>姓名</th>
+                <th>手机</th>
+                <th>联系电话</th>
+                <th>所属客户</th>
+                <!--<th>用户角色</th>
+                <th>用户组</th>-->
+                <th>共享</th>
+            </tr>
+            <tr ng-repeat="(key, row)  in service.contactData |filterByAttr:filtername:contactDataCount">
+                <td><i class="fa fa-address-book-o bigger-120"></i></td>
+                <td ng-bind="row.name"></td>
+                <td ng-bind="row.mobilephone"></td>
+                <td ng-bind="row.phone"></td>
+                <td >
+                    <span ng-if="row.customerid&&row.customerid.length>0" ng-repeat="id in row.customerid">
+                        <span ng-bind="service.customerinfoData[id].name" class="label c-info "></span>
+                    </span>
+                    <span ng-if="!row.customerid||row.customerid.length<1" class="label c-info " >无</span>
+                </td>
+                <td>
+                    <a ng-show="service.userid == row.userid" class="addref top-5" title="建立联系人与用户关系" ng-click="refuser( row,3)" href="javascript:;"><i class="glyphicon glyphicon-resize-small"></i>(<span ng-bind="row.refusers?row.refusers.split(',').length:0"></span>)</a>
+                </td>
+                <!--<td>
+                    <a class="addref top-5" title="建立联系人与用户角色关系" ng-click="refusertype(row,4)" href="javascript:;"><i class="glyphicon glyphicon-resize-small"></i>(<span ng-bind="getTypeRefSouceLength(row,1)"></span>)</a>
+                </td>
+                <td>
+                    <a class="addref top-5" title="建立联系人与用户组关系" ng-click="refusergroup(row)" href="javascript:;"><i class="glyphicon glyphicon-resize-small"></i>(<span ng-bind="getTypeRefSouceLength(row,2)"></span>)</a>
+                </td>-->
+                <td>                  
+                    <a href="javascript:;" class="green top-5" ng-show="service.refedit && service.userid == row.userid" ng-click="updateInfo( row)"><i class="glyphicon glyphicon-pencil bigger-120"></i></a>&nbsp;&nbsp;
+                    <a href="javascript:;" class="red top-5" ng-show="service.refdel && service.userid == row.userid" ng-click="remove(row)"><i class="glyphicon glyphicon-trash bigger-120"></i></a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</block>
+
+<block name="scriptTemplate">
+
+</block>
+
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Contact/uploadBtn.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Contact/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmuser/Users/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmuser/Usergroup/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmuser/Usertype/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagebtn.js"></script>
+
+</block>

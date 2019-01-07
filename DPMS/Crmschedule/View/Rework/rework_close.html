@@ -1,0 +1,157 @@
+<extend name="angular-base.html" />
+<block name="momentjs">
+</block>
+<block name="headcss">
+
+</block>
+<block name="headjs">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/select.css">
+    <script src="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/select.js"></script>
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/select2.css">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/selectize.default.css">
+    <link rel="stylesheet" href="{$Think.const.PAGE_URL}css/crmSchedule/Workerorder/workerorder.css" /><!-- 这里公用了工单css -->
+    <style>
+        .table > tbody > tr > td {
+            border-bottom: 1px solid #ccc !important;
+            background-color: #fff;
+            padding-left: 12px;
+            padding-right: 12px;
+            padding-top: 6px;
+            padding-bottom: 6px;
+            box-sizing: border-box;
+            word-break: break-all;
+            line-height: 20px;
+            color: #666;
+        }
+    </style>
+    <script>
+        var userid = "{$userid}";
+    </script>
+</block>
+<block name="pageContent">
+    <main class="js-canvi-content canvi-content">
+        <div class="col-xs-12">
+            <!--操作区域-->
+            <div class="btn-box">
+                <!--展示检索条件区域-->
+                <div class="search-box text-right">
+                    <ui-select multiple ng-model="service.refcustomer" on-select="addTags('refcustomerid', $item)" class="f-l" style="width:32%;">
+                        <ui-select-match placeholder="下拉检索客户" ng-bind=""></ui-select-match>
+                        <ui-select-choices repeat="person.value as (key, person) in selectCustomerinfoData | filter: { value: { name: $select.search }} track by $index">
+                            <div ng-bind-html="person.value.name | highlight: $select.search" title="{{person.value.name}}"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                    <select class="select" style="width:20%;" ng-model="index" ng-options="v.name for v in closetypeData" ng-change="addTags('index');"><option value='' disabled selected style='display:none;' ng-selected="">检索状态</option> </select>
+                    <select class="select" ng-model="user" ng-options="v.description for v in selectUserData" ng-change="addTags('user');"><option value='' disabled selected style='display:none;' ng-selected="">检索负责人</option> </select>
+                    <span class="input-search">
+                        <input type="text" placeholder="标题检索 ..." class="search-input" ng-model="filtername">
+                        <i class="fa fa-search search-icon"></i>
+                    </span>
+                </div>
+            </div>
+            <!--条件检索区-->
+            <div class="text-right">
+                <span class="tag" ng-repeat="item in tagsData" ng-class="item.key">
+                    <span ng-if="item.key=='index'" ng-bind="item.value.name"></span>
+                    <span ng-if="item.key=='userid'" ng-bind="item.value.description"></span>
+                    <span ng-if="item.key=='refcustomerid'" ng-bind="item.value.name"></span>
+                    <button type="button" class="close" ng-click="removeTag(item)">×</button>
+                </span>
+            </div>
+        </div>
+
+        <!--表格展示区-->
+        <div class="col-xs-12">
+
+            <table class="table" ng-init="workorderDataCount={count:0};orderName='-createtime'" style="margin-bottom:2px;">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th style="width:15%;" class="mousehand" ng-click="orderName=(orderName=='name'?'-name':'name')">工单名称<i class="fa" ng-class="orderName=='name'?'fa-caret-up':'fa-caret-down'"></i></th>
+                        <th class="mousehand" ng-click="orderName=(orderName=='index'?'-index':'index')">关闭状态<i class="fa" ng-class="orderName=='index'?'fa-caret-up':'fa-caret-down'"></i></th>
+                        <th class="mousehand" ng-click="orderName=(orderName=='userid'?'-userid':'userid')">创建人<i class="fa" ng-class="orderName=='userid'?'fa-caret-up':'fa-caret-down'"></i></th>
+                        <th class="mousehand" ng-click="orderName=(orderName=='userid'?'-userid':'userid')">指派人<i class="fa" ng-class="orderName=='userid'?'fa-caret-up':'fa-caret-down'"></i></th>
+                        <th style="width:15%;" class="mousehand">客户/项目</th>
+                        <th class="mousehand" ng-click="orderName=(orderName=='createtime'?'-createtime':'createtime')">开始时间<i class="fa" ng-class="orderName=='createtime'?'fa-caret-up':'fa-caret-down'"></i></th>
+                        <th class="mousehand" ng-click="orderName=(orderName=='endtime'?'-endtime':'endtime')">关闭时间<i class="fa" ng-class="orderName=='endtime'?'fa-caret-up':'fa-caret-down'"></i></th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="(key,item) in service.workorderCloseArrData | orderBy:orderName?orderName:'createtime' |filterByAttr:filtername:workorderDataCount track by $index" class="profile-activity">
+                        <td><span class="badge" ng-bind="key+1"></span></td>
+                        <td ng-bind="item.title"></td>
+                        <td><span ng-bind="service.privateDateObj.workerorderStatus[item.status].name" class="label" ng-class="service.privateDateObj.workerorderStatus[item.status].type"></span></td>
+                        <td ng-bind="service.privateDateObj.usersData[item.userid].description"></td>
+                        <td ng-bind="service.privateDateObj.usersData[item.assignid].description"></td>
+                        <td>
+                            <!-- 客户标签 -->
+                            <span ng-repeat="id in (item.refcustomerid?item.refcustomerid.split(','):[]) track by $index" class="label label-default left-5"
+                                  ng-bind="selectCustomerinfoData[id].name"></span>
+                            <span ng-repeat="id in (item.refcustomerid?item.refcustomerid.split(','):[]) track by $index" class="label label-info"
+                                  ng-bind="selectCustomerinfoData[id].name"></span>
+                        </td>
+                        <td><span ng-bind="formatDate(item.createtime)"></span></td>
+                        <td><span ng-bind="formatDate(item.endtime)"></span></td>
+                        <td>
+                            <a href="javascript:;" ng-click="selectdetailed(item)" title="详细" class="btn btn-xs green"><i class="ace-icon fa fa-search"></i>&nbsp;详细</a>
+                            <a href="javascript:;" ng-if="item.status=='3'" ng-click="selectscore(item)" title="查看评分" class="btn btn-xs blue"><i class="ace-icon fa fa-line-chart"></i>&nbsp;查看评分</a>
+                        </td>
+                    </tr>
+                </tbody>
+
+
+            </table>
+            <div class="text-right">
+                共<b class="blue" ng-if="service.privateDateObj.workorderData" ng-bind="service.workorderCloseArrData.length"></b>条已关闭工单信息
+            </div>
+        </div>
+    </main>
+    <!-- 结束工单中查看操作 -->
+    <aside class="workerordermodalselectscore canvi-navbar">
+        <div class="canvi-user-info">
+            <div class="canvi-user-info__data">
+                <span class="canvi-user-info__title" ng-bind="workerorderselectscoreModal.title"></span>
+                <!--<a href="#" class="canvi-user-info__meta">XXXX编辑</a>-->
+                <div class="canvi-user-info__close" ng-click="workerorderselectscoreModal.toggle();"></div>
+            </div>
+
+        </div>
+        <div class="modal-body" style="padding-top:10px;">
+            <div style="line-height:28px;">
+                <label>工单标题：</label>
+                <span ng-bind="selectItem.title"></span>
+            </div>
+            <div style="line-height:28px;">
+                <label>反馈评分：</label>
+                <span style="color: #009688;" uib-rating ng-model="selectItem.feedback" max="max" read-only="true" titles="selectItem.feedback" aria-labelledby="default-rating"></span>
+                <span class="label" ng-class="{'label-warning': selectItem.feedback<2, 'label-info': selectItem.feedback>=2 && selectItem.feedback<4, 'label-success': selectItem.feedback>=4}">{{selectItem.feedback}}星</span>
+            </div>
+            <div style="line-height:28px;">
+                <label>及时评分：</label>
+                <span style="color: #009688;" uib-rating ng-model="selectItem.timely" max="max" read-only="true" titles="selectItem.timely" aria-labelledby="default-rating"></span>
+                <span class="label" ng-class="{'label-warning': selectItem.timely<2, 'label-info': selectItem.timely>=2 && selectItem.timely<4, 'label-success': selectItem.timely>=4}">{{selectItem.timely}}星</span>
+            </div>
+            <div style="line-height:28px;">
+                <label>附加评分：</label>
+                <span style="color: #009688;" uib-rating ng-model="selectItem.additional" max="max" read-only="true" titles="selectItem.additional" aria-labelledby="default-rating"></span>
+                <span class="label" ng-class="{'label-warning': selectItem.additional<2, 'label-info': selectItem.additional>=2 && selectItem.additional<4, 'label-success': selectItem.additional>=4}">{{selectItem.additional}}星</span>
+            </div>
+            <div style="line-height:28px;">
+                <label>综合评分：</label>
+                <span class="label c-info"><span ng-bind="selectItem.totalscore == null?'暂未评分':selectItem.totalscore+'分'"></span></span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary btn-sm" type="button" ng-click="workerorderselectscoreModal.close();">
+                关闭
+            </button>
+        </div>
+    </aside>
+</block>
+<block name="scriptTemplate">
+</block>
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmschedule/Workorder/workorder_close.js"></script>
+</block>
+​

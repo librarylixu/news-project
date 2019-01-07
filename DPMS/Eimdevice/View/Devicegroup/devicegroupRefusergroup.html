@@ -1,0 +1,9 @@
+<div ng-controller="usergrouptree">
+    <treecontrol class="tree-light" tree-model="service.treeusergroupdata" on-selection="showSelected(node)">
+        <span ng-mouseenter="mouseenter=true" ng-mouseleave="mouseenter=false">
+            <span ng-class="node.isParent == true?'fa fa-user-circle-o bigger-120 ng-scope':'fa fa-user bigger-120 ng-scope'" ng-class="node.type"></span>
+            <input ng-if="ifchecked" type="checkbox" ng-checked="node.checked">
+            <span ng-bind="node.groupname"></span>
+        </span>
+    </treecontrol>
+</div>

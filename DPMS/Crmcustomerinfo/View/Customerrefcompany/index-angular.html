@@ -1,0 +1,140 @@
+﻿<extend name="angular-base.html" />
+<block name="headcss">
+</block>
+<block name="headjs">
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-sanitize/{$Think.const.ANGULAR_VERSION}angular-sanitize.min.js"></script>
+
+    <script>
+        //初始化modal并定义service
+        appModuleInit(['ui.bootstrap', 'ui.grid', 'ui.grid.emptyBaseLayer', 'ui.grid.pagination', 'ui.grid.resizeColumns', 'ui.grid.autoResize', 'ngVerify', 'datePicker', 'ui.select']);
+
+        //主控制器
+        appModule.controller('crmCustomerrefcompanyController', ['$scope', 'i18nService', 'dataService', 'uiGridConstants', 'alert', function ($scope, i18nService, dataService, uiGridConstants, alert) {
+            // 国际化；
+            i18nService.setCurrentLang("zh-cn");
+            $scope.service = dataService;//要显示到页面上的数据源
+            //ui-grid改变高度方法
+            $scope.changeHeight = function () {
+                var newHeight = document.body.clientHeight - 115;
+                angular.element(document.getElementsByClassName('ui-grid')[0]).css('height', newHeight + 'px');
+            };
+            /*
+                查询用户（本页面使用）数据
+            */
+            $scope.select = function () {
+                $scope.service.postData(__URL + 'Crmcustomerinfo/Customerrefcompany/select_page_data', {}).then(function (data) {
+                    $scope.service.customerrefcompanyData = data;
+                    $scope.changeHeight();
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+            //显示到页面上的数据源
+            $scope.customerrefcompanyData = [];
+            //刷新按钮
+            $scope.refresh = refresh;
+            //添加按钮
+            $scope.add = function () {
+                $scope.service.title = '新建公司信息';
+                $scope.modalHtml = __URL + 'Crmcustomerinfo/Customerrefcompany/openmodal';
+                $scope.modalController = 'modelCustomerrefcompanyController';
+                $scope.service.selectItem = '';
+                publicControllerAdd($scope);
+            }
+            //修改按钮
+            $scope.updateInfo = function (row) {
+                $scope.service.title = "修改公司信息";
+                $scope.modalHtml = __URL + 'Crmcustomerinfo/Customerrefcompany/openmodal';
+                $scope.modalController = 'modelCustomerrefcompanyController';
+                $scope.service.selectItem = row;
+                publicControllerUpdate($scope);
+            }
+            //删除按钮
+            $scope.remove = function (row) {
+                $scope.service.title = '删除公司信息';
+                $scope.modalHtml = __URL + 'Crmcustomerinfo/Customerrefcompany/openmodal';
+                $scope.modalController = 'modelCustomerrefcompanyController';
+                $scope.service.selectItem = row;
+                publicControllerDel($scope);
+            }
+            /*
+            查询客户与公司信息关系数据
+            */
+            $scope.refselecttype = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                dataService.postData(__URL + 'Crmuser/RefutypeRefauth/select_page_data', params).then(function (data) {
+                    $scope.service.refusertypeData = data;
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+            /*
+            查询角色数据
+            */
+            $scope.selecttype = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                dataService.postData(__URL + 'Crmuser/Usertype/select_page_data', params).then(function (data) {
+                    $scope.service.usertypeData = data;
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+            //查看详细按钮
+            $scope.selectdetailed = function (grid, row, col, rowRenderIndex, colRenderIndex) {
+
+                parent.Win10.openUrl(__URL + 'Crmcustomerinfo/Customercompany/selectdetailed?id=' + row.entity.idcustomercompany, '<i class="fa fa-newspaper-o icon red"></i>' + row.entity.brand);
+            }
+            //页面加载完成后，查询数据
+            $scope.select();
+        }]);
+    </script>
+
+</block>
+<block name="pageContent">
+    <!--页头-->
+    <div class="page-header clearfix">
+        <h1 class="col-xs-3 text-left">
+            {$MenuName}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {$PageName}
+            </small>
+        </h1>
+        <div class="col-xs-4 text-center">
+            <page-btn></page-btn>
+        </div>
+    </div>
+    <!--快速检索-->
+    <div class="table-header clearfix">
+        <div class="col-xs-6">{$MenuName}<small><i class="ace-icon fa fa-angle-double-right"></i>{$PageName}</small></div> 
+    </div>
+    <div>
+        <table class="table">
+            <tr>
+                <th>图标</th>
+                <th>经营品牌</th>
+                <th>经营范围</th>
+                <th>描述信息</th>
+                <th>操作</th>
+            </tr>
+            <tr ng-repeat="item in service.customerrefcompanyData">
+                <td><i class="fa fa-user bigger-120"></i></td>
+                <td ng-bind="item.brand"></td>
+                <td ng-bind="item.range"></td>
+                <td ng-bind="item.description"></td>
+                <td><a href="javascript:;" class="green top-5" ng-show="service.refedit" ng-click="updateInfo(item)"><i class="glyphicon glyphicon-pencil bigger-120"></i></a>&nbsp;<a href="javascript:;" class="red top-5" ng-show="service.refdel" ng-click="remove(item)"><i class="glyphicon glyphicon-trash bigger-120"></i></a></td>
+            </tr>
+        </table>
+    </div>
+</block>
+
+<block name="scriptTemplate">
+
+</block>
+
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customerrefcompany/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagebtn.js"></script>
+</block>

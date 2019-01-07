@@ -1,0 +1,42 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+<div class="modal-body">
+    绑定地址<input type="text" ng-model="Source.configData.bindAddr" />(如果你有多个IP地址并且想要绑定到其中的一个)<br />
+    端口 (Default is 80 or 443(SSL))<input type="text" ng-model="Source.configData.port" placeholder="默认1336" value="1336" /><br />
+    配置密码<input type="password" ng-model="Source.configData.password" /><br />
+    <input type="checkbox" ng-model="Source.configData.ssl" /> SSL (https and wss)<br />
+    <input type="checkbox" ng-model="Source.configData.credSSP" value="false" />  Network Level Authentication（CredSSP）<br />
+    <input type="checkbox" ng-model="Source.configData.ssh" ng-checked="true" />启用SSH<br />
+    <input type="checkbox" ng-model="Source.configData.telnet" ng-checked="true" />启用Telnet<br />
+    客户端连接排队数量<input type="text" ng-model="Source.configData.backlog" placeholder="50" value="50" /><br />
+    HTML根目录<input type="text" ng-model="Source.configData.html" value="C:\\wamp\\apps\\SparkGateway\\html\\" /><br />
+    默认网页<input type="text" ng-model="Source.configData.directoryIndex" value="index.html" /><br />
+    许可证文件的路径<input type="text" ng-model="Source.configData.license" value="C:\\wamp\\apps\\SparkGateway\\license" /><br />
+    日志文件的路径<input type="text" ng-model="Source.configData.logfile" placeholder="为空则不记录日志" value="C:\\wamp\\apps\\SparkGateway\\logs\\runlog.log" /><br />
+    单日志文件的大小(字节)<input type="text" ng-model="Source.configData.maxbytes" placeholder="30M" value="30720000" /><br />
+    日志文件的最大数量<input type="text" ng-model="Source.configData.maxfiles" placeholder="99" value="99" /><br />
+    <input type="checkbox" ng-model="Source.configData.showMessage" value="false" />显示警告，错误消息给用户<br />
+    plugin<input type="text" ng-model="Source.configData.plugin" value="com.myname.SimpleManager" /><br />
+    pluginFile<input type="text" ng-model="Source.configData.pluginFile" value="C:\\wamp\\apps\\SparkGateway\\myplugin.jar" /><br />
+    <!--<input type="checkbox" ng-model="Source.configData.remoteManage" value="false" />启用远程管理-->
+    <!--远程管理密码<input type="password" ng-model="Source.configData.password" /><br />-->
+    临时目录(用于下载/上传)<input type="text" ng-model="Source.configData.tmpdir" value="C:\\wamp\\apps\\SparkGateway\\html\\tempdir\\" /><br />
+    会话记录
+    <select class="form-control" ng-model="Source.configData.sessionRecord">
+        <option value="0">禁用</option>
+        <option value="1" ng-selected="true">仅录制图形</option>
+    </select>
+    <br />
+    会话记录保存目录<input type="text" ng-model="Source.configData.recdir" value="C:\\wamp\\apps\\SparkGateway\\html\\session_file\\" /><br />
+    <input type="checkbox" ng-model="Source.configData.recwarning" value="false" />警告用户有关会话录制
+    <!--<input type="checkbox" ng-model="Source.configData.shadowing" />允许用户加入会话-->
+    会话缓存时间(分钟,0:禁用会话缓存)<input type="text" ng-model="Source.configData.maxCacheTime" placeholder="默认为禁用" value="0" /><br />
+    会话空闲超时(毫秒)<input type="text" ng-model="Source.configData.idleUserSession" placeholder="默认1小时" value="3600000" /><br />
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" type="button" ng-click="btn_save()">保存</button>
+    <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+</div>

@@ -1,0 +1,137 @@
+<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="btn_cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+
+<form name="Form" verify-scope class="modal-body" style="max-height:80%;">
+    <div class="btn-group btn-group-sm">
+        <button type="button" class="btn" ng-class="tab_page=='tab_Basic'||tab_page==undefind?'btn-primary':'btn-default'" ng-click="tab_page = 'tab_Basic'">基本信息</button>
+        <button type="button" class="btn" ng-class="tab_page=='tab_link'?'btn-primary':'btn-default'" ng-show="Source.Action!=2" ng-click="tab_page = 'tab_link'">关联属性</button>
+        <!--<button type="button" class="btn" ng-class="tab_page=='tab_program'?'btn-primary':'btn-default'" ng-click="tab_page = 'tab_program'">程序</button>-->
+        <!--<button type="button" class="btn" ng-class="tab_page=='tab_advanced'?'btn-primary':'btn-default'" ng-click="tab_page = 'tab_advanced'">高级</button>-->
+    </div>
+    <div class="top-5">
+        <!--基本-->
+        <div class="panel panel-default" ng-show="tab_page=='tab_Basic'||tab_page==undefind">
+            <div class="panel-body">
+                <div class="profile-user-info profile-user-info-striped">
+                    <div class="profile-info-row">
+                        <div class="profile-info-name">端口别名</div>
+                        <div class="profile-info-value">
+                            <input type="text" ng-if="Source.Action<2" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.displayname" placeholder="输入1~25位端口别名" />
+                            <span ng-show="Source.Action==2" class="label label-info" ng-bind="Source.selectItem.displayname"></span>
+                        </div>
+                    </div>
+                    <div class="profile-info-row" ng-if="Source.Action<2">
+                        <div class="profile-info-name">端口状态</div>
+                        <div class="profile-info-value">
+                            <input type="radio" ng-if="Source.Action<2" ng-model="Source.selectItem.portstatus" value="1"/>开启
+                            <input type="radio" ng-if="Source.Action<2" ng-model="Source.selectItem.portstatus" value="0"/>关闭
+                        </div>
+                    </div>
+                    <div class="profile-info-row" ng-if="Source.Action<2">
+                        <div class="profile-info-name">告警值</div>
+                        <div class="profile-info-value">
+                            <input type="text" ng-if="Source.Action<2" ng-verify="min:1, max:25, required:false" class="form-control" ng-model="Source.selectItem.alarmcurrentvalue" placeholder="请输入1~25个字符" />
+                            <span ng-show="Source.Action==2" class="label label-info" ng-bind="Source.selectItem.alarmcurrentvalue"></span>
+                        </div>
+                    </div>
+                    <div class="profile-info-row" ng-if="Source.Action<2">
+                        <div class="profile-info-name">故障值</div>
+                        <div class="profile-info-value">
+                            <input type="text" ng-if="Source.Action<2" ng-verify="min:1, max:25, required:false" class="form-control" ng-model="Source.selectItem.errorcurrentvalue" placeholder="请输入1~25个字符" />
+                            <span ng-show="Source.Action==2" class="label label-info" ng-bind="Source.selectItem.errorcurrentvalue"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--关联属性-->
+        <div class="panel panel-default" ng-show="tab_page=='tab_link'">
+            <div class="panel-body">
+                <div class="profile-user-info profile-user-info-striped">
+                    <div class="profile-info-row" ng-if="Source.Action<2">
+                        <div class="profile-info-name">关联设备组</div>
+                        <div class="profile-info-value">
+                            <ui-select multiple ng-model="Source.selectItem.refdgroup">
+                                <ui-select-match>
+                                    <span ng-bind="$item.groupname">
+                                    </span>
+                                </ui-select-match>
+                                <ui-select-choices repeat="item in service.devicegroupDataArr track by $index">
+                                    <div ng-bind-html="item.groupname"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="profile-info-row" ng-if="Source.Action<2">
+                        <div class="profile-info-name">关联设备</div>
+                        <div class="profile-info-value">
+                            <ui-select multiple ng-model="Source.selectItem.refusers">
+                                <ui-select-match>
+                                    <span ng-bind="$item">
+                                    </span>
+                                </ui-select-match>
+                                <ui-select-choices repeat="item in service.usersDataArr track by $index">
+                                    <div ng-bind-html="item.description"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="profile-info-row" ng-if="Source.Action<2">
+                        <div class="profile-info-name">关联用户组</div>
+                        <div class="profile-info-value">
+                            <ui-select multiple ng-model="Source.selectItem.refugroup">
+                                <ui-select-match>
+                                    <span ng-bind="$item.groupname">
+                                    </span>
+                                </ui-select-match>
+                                <ui-select-choices repeat="item in service.usergroupDataArr track by $index">
+                                    <div ng-bind-html="item.groupname"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="profile-info-row" ng-if="Source.Action<2">
+                        <div class="profile-info-name">关联用户角色</div>
+                        <div class="profile-info-value">
+                            <ui-select multiple ng-model="Source.selectItem.refutype">
+                                <ui-select-match>
+                                    <span ng-bind="$item.typename">
+                                    </span>
+                                </ui-select-match>
+                                <ui-select-choices repeat="item in service.usertypeDataArr track by $index">
+                                    <div ng-bind-html="item.typename"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="profile-info-row" ng-if="Source.Action<2">
+                        <div class="profile-info-name">关联用户</div>
+                        <div class="profile-info-value">
+                            <ui-select multiple ng-model="Source.selectItem.refusers">
+                                <ui-select-match>
+                                    <span ng-bind="$item.description">
+                                    </span>
+                                </ui-select-match>
+                                <ui-select-choices repeat="item in service.usersDataArr track by $index">
+                                    <div ng-bind-html="item.description"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!--<input type="text" class="form-control" ng-model="Source.selectItem.devicesessiontypeids" />-->
+
+</form>
+
+<div class="modal-footer" style="clear:both;">
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-if="Source.Action<2" ng-click="btn_saveport();">保存</button>
+    <button class="btn btn-primary btn-sm" type="button" ng-if="Source.Action==2" ng-click="btn_saveport()" ng-show="Source.Action==2">删除</button>
+    <button class="btn btn-danger btn-sm" type="button" ng-click="btn_cancel();">取消</button>
+
+</div>

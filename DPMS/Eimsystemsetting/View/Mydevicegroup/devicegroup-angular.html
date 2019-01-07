@@ -1,0 +1,33 @@
+﻿<!--页头-->
+<div class="page-header clearfix">
+    <div class="col-xs-12 text-center">
+        <a ng-click="btn_add()" class="btn btn-success btn-sm">
+            <i class="glyphicon glyphicon-plus"></i>&nbsp;添加
+        </a>
+        <a ng-click="select(1)" class="btn btn-success btn-sm">
+            <i class="glyphicon glyphicon-refresh"></i>&nbsp;刷新
+        </a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <div widget-box="" class="widget-box transparent " wb-reloading="is_activity_reloading">
+            <div class="widget-header widget-header-small">
+                <h4 class="widget-title blue smaller">
+                    <i class="ace-icon fa fa-rss orange"></i>
+                    设备组关系列表(<span ng-init="assetsdeviceDataCount={count:0}" ng-bind="assetsdeviceDataCount.count"> </span>)
+                </h4>
+                <div class="widget-toolbar action-buttons">
+                    快速检索：<input type="text" ng-model="filtername" />
+                </div>
+            </div>
+            <div class="widget-body" style="width: 80%; margin: auto">
+                <div class="widget-main padding-8">
+                    <div acs-scroll options="activityScroll">
+                        <div ng-include="'__MODULE__/Mydevicegroup/mydevicegrouptreedata'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

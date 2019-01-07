@@ -1,0 +1,196 @@
+﻿<!doctype html>
+<html style="height:100%">
+<head>
+    <title>{$pageTitle}</title>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link type="text/css" rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}bootstrap/css/bootstrap3.3.7.min.css">
+    <!--表单验证-->
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ngVerify/lib/angular-datepicker.css">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ngVerify/lib/select.css">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ngVerify/css/ngVerify.css">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angular-aside/1.4.0/css/angular-aside.min.css">
+    <!-- ace styles -->
+    <link type="text/css" rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/ace.css" class="ace-main-stylesheet" id="main-ace-style" />
+    <link type="text/css" rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/font-awesome4.7.0.css" />
+    <!-- text fonts -->
+    <link type="text/css" rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/ace-fonts.css" />
+    <!--公用的css和js-->
+    <link type="text/css" rel="stylesheet" href="{$Think.const.CSS_URL}EIMPublicTools.css" />
+    <script type="text/javascript" src="{$Think.const.JS_URL}EIMPublicTools.js"></script>
+    <!--数据交互-->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}vue/axios.min0.17.0.js"></script>
+ 
+    <!--angular-->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular/{$Think.const.ANGULAR_VERSION}angular.min.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-sanitize/{$Think.const.ANGULAR_VERSION}angular-sanitize.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular-route/{$Think.const.ANGULAR_VERSION}angular-route.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}ocLazyLoad/1.0.10/ocLazyLoad.min.js"></script>
+    <!--表单验证-->
+    <script src="{$Think.const.BOOTSTRAP_URL}ngVerify/lib/angular-datepicker.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}ngVerify/lib/select.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}ngVerify/js/ngVerify.js"></script>
+    <!--angular-tree-->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}ui-bootstrap/2.5.0/ui-bootstrap-tpls.js"></script>
+    <!--angular-aside-->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular-aside/1.4.0/js/angular-aside.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}angular-service-public.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}angular-controller-public.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}angular-module-public.js"></script>
+    <!-- 所有页面的查询数据方法 -->
+    <script type="text/javascript" src="{$Think.const.JS_URL}select_alldata.js"></script>
+    
+    <script>
+        var __URL = '__APP__/';
+        var __APPID = "{$appid}";
+        // var __authid = "{$authid}";
+        //当前登录用户的权限　ids  '1,2,3,4'
+        var __ThisUserAuths = "{$_SESSION['user_ref_authids']}";
+        //当前登录的用户的ID
+        var _USERID = "{$_SESSION['userinfo']['idusers']}";
+    </script>
+    <script>
+        var app = angular.module('eimModule', ['ngRoute', 'oc.lazyLoad']);
+        //配置路由
+        app.config(['$routeProvider', ('$routeProvider', function ($routeProvider) {
+            $routeProvider
+            .when(
+            '/', {
+                templateUrl: '/index.php/Crmuser/Users/index',
+                resolve: {
+                    lazyLoad: ['$ocLazyLoad', function ($ocLazyLoad) {
+                        return $ocLazyLoad.load(
+                            [
+                                {
+                                    files: ['{$Think.const.BOOTSTRAP_URL}angular-aside/1.4.0/js/angular-aside.min.js']
+                                },
+                                {
+                                    files: ['{$Think.const.BOOTSTRAP_URL}angular-aside/1.4.0/js/angular-aside.min.js']
+                                }
+                            ]);
+                    }]
+                }
+            })
+            .when(
+            '/computers', {
+                templateUrl: '/index.php/Crmuser/Usergroup/openmodal',
+                resolve: {
+                    lazyLoad: ['$ocLazyLoad', function ($ocLazyLoad) {
+                        return $ocLazyLoad.load(
+                            [
+                                {
+                                    files: ['{$Think.const.BOOTSTRAP_URL}angular-aside/1.4.0/js/angular-aside.min.js']
+                                },
+                                {                                   
+                                    files: ['{$Think.const.BOOTSTRAP_URL}angular-aside/1.4.0/js/angular-aside.min.js']
+                                }
+                            ]);
+                    }]
+                }
+            })
+            .when(
+            '/printers', {
+                templateUrl: '/index.php/Crmuser/Usertype/openmodal',
+                resolve: {
+                    lazyLoad: ['$ocLazyLoad', function ($ocLazyLoad) {
+                        return $ocLazyLoad.load(
+                            [
+                                {
+                                    files: ['{$Think.const.BOOTSTRAP_URL}angular-aside/1.4.0/js/angular-aside.min.js']
+                                },
+                                {
+                                    files: ['{$Think.const.BOOTSTRAP_URL}angular-aside/1.4.0/js/angular-aside.min.js']
+                                }
+                            ]);
+                    }]
+                }
+            
+            }).otherwise({
+                //404导航
+                redirectTo: '/'
+            });
+        })]);
+        /*
+        主页面菜单数据
+        */
+        app.controller('leftMenuController', ('$scope',function ($scope) {
+            //菜单栏的数据源
+            $scope.sidebar = {
+                //root 左侧的节点
+                root: [
+                    {
+                        url: '#/',
+                        icon: 'menu-icon ng-scope fa fa-tachometer',
+                        title: 'Test1',
+                        label: '右侧label的内容',
+                    },
+                    {
+                        url: '#/computers',
+                        icon: 'menu-icon ng-scope fa fa-tachometer',
+                        title: '电脑',                        
+                    },
+                    {
+                        url: '#/printers',
+                        icon: 'menu-icon ng-scope fa fa-tachometer',
+                        title: 'Test2',
+                        submenu: [
+                            {
+                                url: '#/',
+                                icon: 'menu-icon ng-scope fa fa-tachometer',
+                                title: 'Test2-1',
+                            },
+                        ]
+                    },
+                ],
+                
+            };
+
+
+        }));
+    </script>
+</head>
+<body ng-app="eimModule" style="height:100%">    
+    <!--顶部-->
+    <div class="navbar navbar-default" ng-class="{'navbar-fixed-top': ace.settings.navbar}" ng-include="'__APP__/Home/Ace/page_m_navbar'"></div>
+    <!--主要显示-->
+    <div class="main-container" ng-class="{'container': ace.settings.container}">
+        <!--左侧菜单-->
+        <div id="sidebar" class="sidebar responsive" 
+             ace-sidebar props="ace.sidebar"
+             ng-controller="leftMenuController"
+             scroll="true" 
+             hover="true" 
+             ng-class="{'menu-min': ace.sidebar.minimized, 'sidebar-fixed': ace.settings.sidebar, 'compact': ace.settings.compact}" 
+             ng-include="'__APP__/Home/Ace/page_m_sidebar'">
+        </div>
+        <!--页面展示-->
+        <div class="main-content">
+            <div class="main-content-inner">
+                <!--页面顶头的查询、面包屑导航-->
+                <div class="breadcrumbs"
+                     ng-class="{'breadcrumbs-fixed': ace.settings.breadcrumbs}" 
+                     ng-include="'__APP__/Home/Ace/page_m_breadcrumbs'">
+                </div>
+                <div class="page-content">
+                    <!--右侧悬浮设置-->
+                    <div class="ace-settings-container"                         
+                         ng-include="'__APP__/Home/Ace/page_m_settings'">
+                    </div>
+                   <!--页面占位符-->
+                    <div ng-view></div>
+                </div>
+            </div>
+        </div>
+        <!--底部-->
+        <div class="footer" ng-include="'__APP__/Home/Ace/page_m_footer'"></div>
+        <!--返回顶层插件-->
+        <a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
+            <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
+        </a>
+    </div>
+    <!--加载动画-->
+    <div ng-show="viewContentLoading" class="ajax-loading-overlay ajax-overlay-body"><i class="ajax-loading-icon fa fa-spin fa-spinner fa-2x orange"></i> </div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="btn_cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+
+<form name="Form" verify-scope class="modal-body" style="max-height:80%;">
+    <div class="profile-user-info profile-user-info-striped">
+        <div class="profile-info-row">
+            <div class="profile-info-name">规则名称</div>
+            <div class="profile-info-value">
+                <input type="text" ng-verify="min:1, max:25" ng-if="Source.Action!=2&&!service.ref" class="form-control" ng-model="Source.selectItem.name" placeholder="请输入1~25个字符" />
+                <b ng-bind="Source.selectItem.name" ng-if="Source.Action==2||service.ref"></b>
+            </div>
+        </div>
+        <div class="profile-info-row" ng-if="Source.Action!=2&&(!service.ref||service.ref=='all')">
+            <div class="profile-info-name">状态</div>
+            <div class="profile-info-value">
+                <select class="form-control" ng-model="Source.selectItem.status">
+                    <option value="0" ng-selected="Source.selectItem.status==0">启用</option>
+                    <option value="1" ng-selected="Source.selectItem.status==1">禁用</option>
+                </select>
+            </div>
+        </div>
+        <div class="profile-info-row" ng-if="Source.Action!=2&&(!service.ref||service.ref=='all')">
+            <div class="profile-info-name">规则到期时间</div>
+            <div class="profile-info-value">
+                <input type="text" class="form-control" ng-model="Source.selectItem.invalidtime" />
+            </div>
+        </div>
+
+        <div class="profile-info-row" ng-if="Source.Action!=2&&(!service.ref||service.ref=='all')">
+            <div class="profile-info-name">备注</div>
+            <div class="profile-info-value">
+                <textarea class="form-control" ng-model="Source.selectItem.remark" />
+            </div>
+        </div>
+        <div class="profile-info-row" ng-if="Source.Action!=2&&(service.ref=='refgroup'||service.ref=='all')">
+            <div class="profile-info-name">用户组</div>
+            <div class="profile-info-value" ng-include="'__MODULE__/Proxypwdrule/ref_ugroup'"></div>
+        </div>
+        <div class="profile-info-row" ng-if="Source.Action!=2&&(service.ref=='refuser'||service.ref=='all')">
+            <div class="profile-info-name">用户</div>
+            <div class="profile-info-value" ng-include="'__MODULE__/Proxypwdrule/ref_user'"></div>
+        </div>
+
+        <div class="profile-info-row" ng-if="Source.Action!=2&&(service.ref=='refdevicegroup'||service.ref=='all')">
+            <div class="profile-info-name">设备组</div>
+            <div class="profile-info-value" ng-include="'__MODULE__/Proxypwdrule/ref_dgroup'"></div>
+        </div>
+        <div class="profile-info-row" ng-if="Source.Action!=2&&service.ref=='refpwd'">
+            <div class="profile-info-name">托管密码</div>
+            <div class="profile-info-value" ng-include="'__MODULE__/Proxypwdrule/ref_pwd'"></div>
+        </div>
+        <div class="profile-info-row" ng-if="Source.Action!=2&&service.ref=='all'">
+            <div class="profile-info-name">托管密码</div>
+            <div class="profile-info-value">
+                <span ng-bind="service.pwdData.login"></span>
+            </div>
+        </div>
+        <div class="profile-info-row" ng-if="Source.Action!=2&&(service.ref=='refdevice'||service.ref=='all')">
+            <div class="profile-info-name">关联设备</div>
+            <div class="profile-info-value" ng-include="'__MODULE__/Proxypwdrule/ref_device'"></div>
+        </div>
+        
+    </div>
+
+</form>
+<div class="modal-footer" style="clear:both;">
+    <button class="btn btn-primary btn-sm" ng-show="Source.Action!==2&&!Source.ref" ng-verify="control:'Form'" type="button" ng-click="btn_save();">保存</button>
+    <button class="btn btn-primary btn-sm" type="button" ng-click="btn_save()" ng-show="Source.Action==2">删除</button>
+    <button class="btn btn-danger btn-sm" type="button" ng-click="btn_cancel();" ng-show="(!Source.ref||service.ref=='all')">取消</button>
+
+</div>
+
+
+

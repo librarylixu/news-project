@@ -1,0 +1,46 @@
+﻿    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+   <div class="modal-body">
+    <div class="form-container">
+        <form name="Form" verify-scope class="myform">
+            <div class="form-group">
+                <label>型号名称</label>
+                <input type="text" ng-readonly="Source.Action==2" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.name" placeholder="请输入1~25个字符" />
+            </div>
+            <div class="form-group" ng-show="Source.Action!=2">
+                <label>制造商</label>
+                <input type="text" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.manufacturers" placeholder="请输入1~25个字符" />
+            </div>
+            <div class="form-group" ng-show="Source.Action!=2">
+                <label>型号描述</label>
+                <textarea ng-verify="pattern:/[\u4e00-\u9fa5]/, required:false, errmsg:'需要输入中文' " type="text" class="form-control" ng-model="Source.selectItem.description" placeholder="请输入中文（非必填）"></textarea>
+            </div>
+            <div class="form-group" ng-show="Source.Action!=2">
+                <label>列表价</label>
+                <input type="text" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.plist" placeholder="请输入1~25个字符" />
+            </div>
+            <div class="form-group" ng-show="Source.Action!=2">
+                <label>EU底价</label>
+                <input type="text" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.peu" placeholder="请输入1~25个字符" />
+            </div>
+            <div class="form-group" ng-show="Source.Action!=2">
+                <label>SI底价</label>
+                <input type="text" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.psi" placeholder="请输入1~25个字符" />
+            </div>
+            <div class="form-group" ng-show="Source.Action!=2">
+                <label>内部核算价</label>
+                <input type="text" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.pinter" placeholder="请输入1~25个字符" />
+            </div>
+        </form>
+
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save(1)" ng-show="Source.Action==0">连续保存</button>
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save(0)" ng-show="Source.Action==0||Source.Action==1">保存</button>
+    <button class="btn btn-primary btn-sm" type="button" ng-click="save(2)" ng-show="Source.Action==2">删除</button>
+    <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+</div>
+

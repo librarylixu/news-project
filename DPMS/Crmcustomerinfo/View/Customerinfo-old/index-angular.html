@@ -1,0 +1,150 @@
+﻿<extend name="angular-base.html" />
+
+<block name="headcss">
+    <link rel="stylesheet" href="{$Think.const.PAGE_URL}css/crmProject/my_widget.css" />
+    <link rel="stylesheet" href="{$Think.const.PAGE_URL}css/crmProject/my-project-info.css" />
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}my-comments.css" />
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}upload.css" />
+    <style type="text/css">
+         .modal-lg{
+            width:90% !important;
+        }
+    </style>
+</block>
+<block name="headjs">
+    <script>
+        //当前登录的用户下能访问的客户信息
+        var _userrefcus = "{$cusRefuser}";
+        //已经过滤好的客户信息
+        var _customerinfoRefauth = "{$customerinfoRefauth}";
+        //用户id
+        var _userid = "{$userid}";
+    </script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-sanitize/{$Think.const.ANGULAR_VERSION}angular-sanitize.min.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-file-upload/angular-file-upload.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customerinfo/index-angular.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=zpVzOQ0lYreh1hZELnPhHGbGLvVvzjnk"></script>
+</block>
+<block name="pageContent">
+    <!--页头-->
+    <div class="page-header clearfix">
+        <h1 class="col-xs-3 text-left">
+            {$MenuName}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {$PageName}
+            </small>
+        </h1>
+        <div class="col-xs-4 text-center">
+            <page-btn></page-btn>
+        </div>
+    </div>
+    <!--快速检索-->
+    <div class="table-header clearfix">
+        <div class="col-xs-6">{$MenuName}<small><i class="ace-icon fa fa-angle-double-right"></i>{$PageName}</small></div>
+    </div>
+    <div>
+        <div widget-box="" class="widget-box transparent " wb-reloading="is_activity_reloading">
+            <div class="widget-header widget-header-small">
+                <h4 class="widget-title blue smaller">
+                    <i class="ace-icon fa fa-rss orange"></i>
+                    客户信息列表(<span ng-init="customerinfoDataCount={count:0}" ng-bind="customerinfoDataCount.count"> </span>)
+                </h4>
+                <div class="widget-toolbar action-buttons">
+                    快速检索：<input type="text" ng-model="filtername" />
+                </div>
+            </div>
+
+            <div class="widget-body">
+                <div class="widget-main padding-8">
+                    <div ace-scroll options="activityScroll">
+                        <div class="profile-feed">
+                            <div ng-repeat="item in service.customerinfoArrData | orderBy:item.idcustomerinfo:'desc' | filterByAttr:filtername:customerinfoDataCount" class="profile-activity clearfix">
+                                <div>
+                                    <img class="pull-left" ng-if="item.name" alt="{{item.name}}" ng-src="../../../DPMS/public/lib/win10-ui/img/icon/group.png" />
+                                    <a class="user" href="" ng-click="selectdetailed(item)" ng-bind="item.name"></a>
+                                    <div>
+                                        <!-- 客户创建人 -->
+                                        <span class="label c-info" ng-bind="(service.usersData[item.userid].description ? service.usersData[item.userid].description :service.usersData[item.userid].username)"></span>
+                                        <!-- 客户类型标签 -->
+                                        <span ng-repeat="id in item.reftypeids.split(',') track by $index">
+                                            <span class="label" ng-bind="service.customertypeData[id].typename" ng-style="{'background-color':(service.customertypeData[id].labelclass != '')?service.customertypeData[id].labelclass:'#ccc'}"></span>
+                                        </span>
+                                        <!-- 客户等级标签 -->
+                                        <span ng-repeat="id in item.reflevelids.split(',') track by $index">
+                                            <span class="label" ng-bind="service.customerlevelData[id].levelname" ng-style="{'background-color':(service.customerlevelData[id].labelclass != '')?service.customerlevelData[id].labelclass:'#ccc'}"></span>
+                                        </span>
+                                        <!-- 客户行业标签 -->
+                                        <span ng-repeat="id in item.refindustryids.split(',') track by $index">
+                                            <span class="label" ng-bind="service.customerindustryData[id].industryname" ng-style="{'background-color':(service.customerindustryData[id].labelclass != '')?service.customerindustryData[id].labelclass:'#ccc'}"></span>
+                                        </span>
+                                        <!-- 客户来源标签 -->
+                                        <span ng-repeat="id in item.refsourceids.split(',') track by $index">
+                                            <span class="label" ng-bind="service.customersourceData[id].name" ng-style="{'background-color':(service.customersourceData[id].labelclass != '')?service.customersourceData[id].labelclass:'#ccc'}"></span>
+                                        </span>
+                                        <!-- 客户阶段标签 -->
+                                        <span ng-repeat="id in item.refstageids.split(',') track by $index">
+                                            <span class="label" ng-bind="service.customerstageData[id].name" ng-style="{'background-color':(service.customerstageData[id].labelclass != '')?service.customerstageData[id].labelclass:'#ccc'}"></span>
+                                        </span>
+                                        <!-- 客户状态标签 -->
+                                        <span ng-repeat="id in item.refstatusids.split(',') track by $index">
+                                            <span class="label" ng-bind="service.customerstatusData[id].status" ng-style="{'background-color':(service.customerstatusData[id].labelclass != '')?service.customerstatusData[id].labelclass:'#ccc'}"></span>
+                                        </span>
+                                        <!-- 客户信用等级标签 -->
+                                        <span ng-repeat="id in item.refcreditids.split(',') track by $index">
+                                            <span class="label" ng-bind="service.customercreditData[id].name" ng-style="{'background-color':(service.customercreditData[id].labelclass != '' )?service.customercreditData[id].labelclass:'#ccc'}"></span>
+                                        </span>
+                                        <!-- 客户市场标签 -->
+                                        <span ng-repeat="id in item.refmarketids.split(',') track by $index">
+                                            <span class="label" ng-bind="service.customermarketData[id].name" ng-style="{'background-color':(service.customermarketData[id].labelclass != '')?service.customermarketData[id].labelclass:'#ccc'}"></span>
+                                        </span>
+                                    </div>
+                                    <div class="time"><i class="ace-icon fa fa-clock-o bigger-110"></i> <span ng-bind="service.formatDate(item.createtime)"></span></div>
+                                </div>
+                                <div class="tools action-buttons">
+                                    <a href="" ng-show="service.refedit && service.userid == item.userid" ng-click="updateInfo(item)" class="blue"><i class="ace-icon fa fa-pencil bigger-125"></i></a>
+                                    <a href="" ng-show="service.refdel && service.userid == item.userid" ng-click="remove(item)" class="red"><i class="ace-icon fa fa-times bigger-125"></i></a>
+                                    <a href="" ng-click="selectdetailed(item)" class="pink"><i class="ace-icon fa fa-search bigger-125"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</block>
+
+<block name="scriptTemplate">
+
+</block>
+
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customerinfo/mapmodal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customerinfo/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customerinfo/contact.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customertype/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customercredit/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customerindustry/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customerlevel/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customermarket/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customersource/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customerstage/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customerstatus/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customerrefcompany/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmuser/Users/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmuser/Usergroup/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmuser/Usertype/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagebtn.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customerinfo/uploadBtn.js"></script>
+    <!-- 单元格编辑自定义 -->
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.editconfix.js"></script>
+
+
+    <!-- 配置文件 -->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}ueditor/1.4.3.3/ueditor.config.js"></script>
+    <!-- 编辑器源码文件 -->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}ueditor/1.4.3.3/ueditor.all.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagecomment.js"></script>
+
+</block>

@@ -1,0 +1,94 @@
+﻿<extend name="angular-base.html" />
+<block name="headcss">
+</block>
+<block name="headjs">
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-sanitize/1.6.7/angular-sanitize.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmuser/Usersystemsetting/index.grid.js"></script>
+    <script>
+        var __URL = '__APP__/';
+        var _dt_pagelength = parseInt("{$_SESSION['PagedataCount']}");
+        var _id = "idusersystemsetting";//当前页面数据表中的id字段名称
+        var _operationname = "用户设置";//传入js,编辑或删除后的文字
+        var _serviceinitial = {
+            _id: null, type: null, value: null, userid: 0, path: null, createtime: 0, deltime: 0, uploaduser: null, uploadaddress: null           //字段   在service中存储的初始值
+        }
+    </script>
+</block>
+<block name="pageContent">
+    <!--页头-->
+    <div class="page-header clearfix">
+        <h1 class="col-xs-3 text-left">
+            {$MenuName}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {$PageName}
+            </small>
+        </h1>
+        <div class="col-xs-4 text-center">
+            <page-btn></page-btn>
+        </div>
+    </div>
+    <!--快速检索-->
+    <div class="table-header clearfix">
+        <div class="col-xs-6">{$MenuName}<small><i class="ace-icon fa fa-angle-double-right"></i>{$PageName}</small></div>
+    </div>
+    <div>
+        <div ui-grid="gridOptions" ui-grid-grouping ui-grid-edit ui-grid-auto-resize ui-grid-resize-columns ui-grid-pagination></div>
+    </div>
+</block>
+
+<block name="scriptTemplate">
+    <script type="text/ng-template" id="add.html">
+        <div class="modal-header clearfix">
+            <h4 class="modal-title f-l">{{Source.title}}</h4>
+            <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="form-group">
+                    <label class="col-xs-3 control-label text-right  top-5">名称:</label>
+                    <div class="col-xs-5 text-left">
+                        <input type="text" ng-model="Source.selectItem.name" placeholder="必填" required />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label class="col-xs-3 control-label text-right  top-5">值:</label>
+                    <div class="col-xs-5 text-left">
+                        <input type="text" ng-model="Source.selectItem.path" placeholder="必填" required />
+                    </div>
+                </div>
+            </div>
+            <div class="row ">
+                <div class="text-right col-xs-12">
+                    <a href="javascript:;" title="点击隐藏/显示其余属性" ng-click="hideOther=!hideOther">
+                        <i class="fa" ng-class="{'fa-chevron-circle-down':hideOther,'fa-chevron-circle-up':!hideOther}" aria-hidden="true"></i>
+                        <span>{{hideOther?'展开其他':'隐藏'}}属性</span>
+                    </a>
+                </div>
+            </div>
+            <!--其他属性-->
+            <div ng-show="!hideOther">
+                <div class="row  top-5">
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label text-right  top-5">用户名称:</label>
+                        <div class="col-xs-9 text-left">
+                            <input type="text" placeholder="选填" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary btn-sm" type="button" ng-click="save(1)" ng-show="Source.Action==0">连续保存</button>
+            <button class="btn btn-primary btn-sm" type="button" ng-click="save(0)">保存</button>
+            <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+        </div>
+    </script>
+</block>
+
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagebtn.js"></script>
+</block>
+

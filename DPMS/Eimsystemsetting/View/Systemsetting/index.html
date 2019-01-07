@@ -1,0 +1,132 @@
+﻿<form name="Form" >
+    <table class="table table-detail" > 
+        <tr class="info">
+            <td colspan="4">公共配置项</td>
+        </tr> 
+        <tr>
+            <td class="text-right">名称最大长度</td>
+            <td ><input type="text" ng-model="Source.privateDateObj.systemsettingData.namelength.value.maxlength" /></td>
+            <td class="text-right">名称最小长度</td>
+            <td><input type="text" ng-model="Source.privateDateObj.systemsettingData.namelength.value.minlength" /></td>
+            </tr>
+        <tr>
+            <td colspan="4" class="text-right"> <button class="btn btn-sm btn-success " ng-click="save('namelength')">保存</button></td>
+        </tr>
+        <tr class="info">
+            <td colspan="4">用户设置项</td>
+        </tr>
+        <tr>
+            <td class="text-right" rowspan="3">账号设置</td>
+            <td>账号长度</td>
+            <td >不小于<input type="text"  ng-model="Source.privateDateObj.systemsettingData.usernameset.value.usernameminlength" />位
+            </td>  
+            <td>不大于<input type="text" ng-model="Source.privateDateObj.systemsettingData.usernameset.value.usernamemaxlength" />位</td>            
+        </tr>               
+        <tr>
+            <td >账号密码复杂度</td>
+            <td>
+                <ui-select multiple ng-model="Source.privateDateObj.systemsettingData.usernameset.value.passwordcomplexity" style="width:40%;">
+                    <ui-select-match placeholder="请选择密码校验复杂度">
+                        <span ng-bind="$item.value.value" style="margin-right: 5px;"></span>
+                    </ui-select-match>
+                    <ui-select-choices repeat="item.value.type  as (key,item) in service.privateDateObj.passwordcomplexityData | filter: { value: { value: $select.search }}" style="max-height: 150px;">
+                        <div ng-bind-html="item.value.value | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </td>
+            <td>
+                不小于<input type="text" ng-model="Source.privateDateObj.systemsettingData.usernameset.value.passwordminlength" />位,
+                不大于<input type="text" ng-model="Source.privateDateObj.systemsettingData.usernameset.value.passwordmaxlength" />位
+            </td>
+        </tr> 
+        <tr>
+            <td>账号锁定规则</td>
+            <td colspan="2">密码在<input type="text" ng-model="Source.privateDateObj.systemsettingData.usernameset.value.errtimeperiod" style="width:80px;" />分钟内，连续输入错误<input type="number" ng-model="Source.privateDateObj.systemsettingData.usernameset.value.errtime" style="width:80px;" />次以上,账号锁定<input type="number" ng-model="Source.privateDateObj.systemsettingData.usernameset.value.locktime" style="width:80px;" />分钟。</td>
+        </tr> 
+        <tr>
+            <td colspan="4" class="text-right"> <button class="btn btn-sm btn-success " ng-click="save('usernameset',true)">保存</button></td>
+        </tr>             
+        <tr class="info">
+            <td colspan="4">设备列表设置项</td>
+        </tr>
+        <tr>
+            <td class="text-right" >公共配置项</td>
+            <td>账号</td>
+            <td >最大长度<input type="text" ng-model="Source.privateDateObj.systemsettingData.deviceset.value.deviceaccountmaxlength" /></td>
+            <td>最小长度<input type="text" ng-model="Source.privateDateObj.systemsettingData.deviceset.value.deviceaccountminlength" /></td>
+        </tr>         
+        <tr>
+            <td rowspan="4" class="text-right">列头自定义</td>
+            <td>资产设备</td>
+            <td colspan="2">
+                <ui-select multiple  ng-model="Source.privateDateObj.systemsettingData.deviceset.value.assetlistth"   style="width:40%;">
+                    <ui-select-match placeholder="请选择要显示的列头">
+                        <span ng-bind="$item.value.name" style="margin-right: 5px;"></span>
+                    </ui-select-match>
+                    <ui-select-choices repeat="item.value.type  as (key,item) in service.privateDateObj.assetcolumnameData | filter: { value: { name: $select.search }}" style="max-height: 150px;">
+                        <div ng-bind-html="item.value.name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </td>
+        </tr>  
+        <tr>         
+            <td>KVM设备</td>
+            <td colspan="2">
+                <ui-select multiple ng-model="Source.privateDateObj.systemsettingData.deviceset.value.kvmlistth"  style="width:40%;">
+                    <ui-select-match placeholder="请选择要显示的列头">
+                        <span ng-bind="$item.value.name" style="margin-right: 5px;"></span>
+                    </ui-select-match>
+                    <ui-select-choices repeat="item.value.type  as (key,item) in service.privateDateObj.kvmcolumnameData | filter: { value: { name: $select.search }}" style="max-height: 150px;">
+                        <div ng-bind-html="item.value.name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </td>
+           
+        <tr>           
+            <td>PDU设备</td>
+            <td colspan="2">
+                <ui-select multiple ng-model="Source.privateDateObj.systemsettingData.deviceset.value.dpulistth" style="width:40%;">
+                    <ui-select-match placeholder="请选择要显示的列头">
+                        <span ng-bind="$item.value.name" style="margin-right: 5px;"></span>
+                    </ui-select-match>
+                    <ui-select-choices repeat="item.value.type  as (key,item) in service.privateDateObj.dpucolumnameData | filter: { value: { name: $select.search }}" style="max-height: 150px;">
+                        <div ng-bind-html="item.value.name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </td>
+        </tr>  
+        <tr>           
+            <td>虚拟机设备</td>
+            <td colspan="2">          
+                <ui-select multiple ng-model="Source.privateDateObj.systemsettingData.deviceset.value.exslistth"  style="width:40%;">
+                    <ui-select-match placeholder="请选择要显示的列头">
+                        <span ng-bind="$item.value.name" style="margin-right: 5px;"></span>
+                    </ui-select-match>
+                    <ui-select-choices repeat="item.value.type  as (key,item) in service.privateDateObj.esxcolumnameData | filter: { value: { name: $select.search }}" style="max-height: 150px;">
+                        <div ng-bind-html="item.value.name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </td>
+        </tr> 
+        <tr>
+            <td colspan="4" class="text-right"> <button class="btn btn-sm btn-success " ng-click="save('deviceset',true)">保存</button></td>
+        </tr> 
+        <tr class="info">
+            <td colspan="4">密码规则设置项</td>
+        </tr> 
+        <tr>
+            <td class="text-right">规则到期时间</td>
+            <td colspan="3">
+                <label>默认到期时间</label>
+                <select ng-model="Source.privateDateObj.systemsettingData.ruleexpirtime.value">
+                    <option value="30">30</option>
+                    <option value="60">60</option>
+                    <option value="90">90</option>
+                </select><span>天</span>
+            </td>
+        </tr> 
+        <tr>
+            <td colspan="4" class="text-right"> <button class="btn btn-sm btn-success " ng-click="save('ruleexpirtime')">保存</button></td>
+        </tr> 
+    </table>
+</form>

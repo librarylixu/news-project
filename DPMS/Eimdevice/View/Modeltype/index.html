@@ -1,0 +1,100 @@
+<!--页头-->
+<div class="page-header clearfix">   
+    <div class="col-xs-12 text-center">
+        <a ng-click="btn_add()" class="btn btn-success btn-sm">
+            <i class="glyphicon glyphicon-plus"></i>添加
+        </a>
+        <a ng-click="select()" class="btn btn-success btn-sm">
+            <i class="glyphicon glyphicon-refresh"></i>刷新
+        </a>
+    </div>    
+</div>
+<div>
+    <div class="table-header">
+        设备型号
+    </div>
+    <table class="table table table-striped table-bordered table-hover table-condensed table-responsive">
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>名称</th>
+                <th>设备类型</th>
+                <th>标签</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="(key,item) in service.privateDateObj.modeltypeData">
+                <td ng-bind="item.idmodeltype"></td>
+                <td ng-bind="item.modelname"></td>
+                <td ng-bind="service.privateDateObj.devicetypeData[item.typeid].typename"></td>
+                <td>
+                    <label class="label" ng-bind="item.modelname" style="background-color:{{item.labelclass}}"></label>
+                </td>
+                <td>
+                    <a href="javascript:;" title="编辑" class="green top-5" ng-click="updateInfo(item)">
+                        <i class="fa fa-pencil fa-lg"></i>
+                    </a>
+                    &nbsp;&nbsp;
+                    <a href="javascript:;" title="删除" class="red top-5" ng-click="btn_del(item)">
+                        <i class="fa fa-trash fa-lg"></i>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="text-right">共<b class="blue" ng-bind="length(service.privateDateObj.modeltypeData)"></b>条</div>
+</div>
+<script type="text/ng-template" id="Eimdevice/Modeltype/openmodal">
+    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+    <form name="Form" class="container-fluid" verify-scope>
+        <table class="table" style="margin-bottom:8px;">
+            <tr>
+                <td class="text-right"><b class="c-red">*</b>设备型号名称</td>
+                <td colspan="3"><input type="text"  ng-verify="min:{{Source.privateDateObj.systemsettingData.namelength.value.minlength}}, max:{{Source.privateDateObj.systemsettingData.namelength.value.maxlength}}" class="form-control" ng-model="Source.selectItem.modelname" placeholder="请输入1~25个字符" /></td>
+            </tr>
+            <tr>
+                <td class="text-right"><b class="c-red">*</b>标签颜色</td>
+                <td colspan="3">
+                    <a href="javascript:;" style="display:block;width:1em;height:1em;" class="colorpick" colorpicker ng-model="Source.selectItem.labelclass" ng-style="{'background-color':Source.selectItem.labelclass?Source.selectItem.labelclass:'#5661c9'}"></a>
+                </td>
+            </tr>
+            <tr>
+                <td class="text-right">设备类型</td>
+                <td colspan="3">                 
+                    <ui-select style="width:100%" ng-model="Source.selectItem.typeid">
+                        <ui-select-match placeholder="请选择客户类型">
+                            <span ng-bind="$select.selected.value.typename" style="margin-right: 5px;">
+                            </span>
+                        </ui-select-match>
+                        <ui-select-choices repeat="item.value.iddevicetype  as (key,item) in service.privateDateObj.devicetypeData | filter: { value: { typename: $select.search }} " style="max-height: 150px;">
+                            <div ng-bind-html="item.value.typename | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </td>
+            </tr>
+            <tr>
+                <td class="text-right">会话方式</td>
+                <td colspan="3">
+                    <ui-select multiple ng-model="Source.selectItem.devicesessiontypeids" style="width:100%;">
+                        <ui-select-match placeholder="请选择会话方式">
+                            <span ng-bind="$item.value.typename" style="margin-right: 5px;">
+                            </span>
+                        </ui-select-match>
+                        <ui-select-choices repeat="item.value.iddevicesessiontype  as (key,item) in  service.privateDateObj.devicesessiontypeData | filter: { value: { typename: $select.search }}" style="max-height: 150px;">
+                            <div ng-bind-html="item.value.typename | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div class="modal-footer">
+        <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save()">保存</button>
+        <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+    </div>   
+</script>
+

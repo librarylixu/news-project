@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}bootstrap/css/bootstrap3.3.7.min.css" />
+
+
+
+    <script src="{$Think.const.BOOTSTRAP_URL}jquery/2.2.1/jquery.min.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}layer/3.0/layer.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular/{$Think.const.ANGULAR_VERSION}angular.min.js"></script>
+    <!--数据交互-->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}vue/axios.min0.17.0.js"></script>
+    <!--公共-->
+    <script type="text/javascript" src="{$Think.const.JS_URL}EIMPublicTools.js"></script>
+    <!--Gateway-->
+    <script src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/resource.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/hi5core_min.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/hi5_min.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}xcsessioncenter/5.6.863/config_min.js"></script>
+    <script src="{$Think.const.PAGE_URL}js/Eimsystemsetting/Sessioncenterlist/actionconnection.js"></script>
+    <script type="text/javascript">
+        var __URL = '__APP__/';
+        var idsessioncenterlist = "{$idsessioncenterlist}";
+    </script>
+</head>
+<body ng-app="myapp" ng-controller="eimsessionconfigController">
+
+    <div>
+        会话控制中心：<input type="text" id="gateway" ng-model="selectItem.xcsessioncenter" />
+        密码：<input type="password" id="gwPwd" ng-model="selectItem.password" /><br>
+    </div>
+    <div>
+        <header>
+
+            <input type="button" value="刷新" ng-click="btn_refresh()" />
+            (共<span id="sessions.size">0</span>条记录)
+            <button type="button" title="给所有会话发送消息" ng-click="btn_sendmsg_session(0)" >广播</button>
+
+        </header>
+        <table id="sessions.rows" class="table hidden" style="display:none;">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Server</th>
+                    <th scope="col">Client IP</th>
+                    <th scope="col">Browser</th>
+                    <th scope="col">Start Time</th>
+                    <th scope="col">NumericId</th>
+                    <th scope="col">User</th>
+                    <th scope="col">Domain</th>
+                    <th scope="col">Join</th>
+                    <th scope="col">Protocol</th>
+                    <th scope="col">Symlink</th>
+                    <th scope="col">Thumbnail</th>
+                    <th scope="col">Port</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="cursor: pointer">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <button type="button" ng-click="btn_join_session($event)"><i class="fa fa-eye fa-lg" title="监控"></i></button>
+                        &nbsp;
+                        <i class="fa fa-times fa-lg" name="remove" title="断开连接"></i>
+                        &nbsp;
+                        <i class="fa fa-paper-plane fa-lg" name="send" title="发送消息"></i>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col" class="">Server</th>
+                    <th scope="col">sessionid</th>
+                    <th scope="col">客户端IP</th>
+                    <th scope="col" class="hidden">浏览器</th>
+                    <th scope="col">开启时间</th>
+                    <th scope="col">用户</th>
+                    <th scope="col">域</th>
+                    <th scope="col">加入</th>
+                    <th scope="col">连接方式</th>
+                    <th scope="col" class="hidden">Symlink</th>
+                    <th scope="col" class="hidden">Thumbnail</th>
+                    <th scope="col">端口</th>
+                    <th scope="col">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in service.sessions">
+                    <td ng-bind="$index" class="hidden"></td>
+                    <td ng-bind="item.id"></td>
+                    <td ng-bind="item.server" class=""></td>
+                    <td ng-bind="item.numericid"></td>
+                    <td ng-bind="item.clientip"></td>
+                    <td ng-bind="item.browser" class="hidden"></td>
+                    <td ng-bind="item.starttime"></td>
+                    <td ng-bind="item.user"></td>
+                    <td ng-bind="item.domain"></td>
+                    <td ng-bind="item.join"></td>
+                    <td ng-bind="item.protocol"></td>
+                    <td ng-bind="item.symlink" class="hidden"></td>
+                    <td ng-bind="item.thumbnail" class="hidden"></td>
+                    <td ng-bind="item.port"></td>
+                    <td>
+                        <button type="button" ng-click="btn_join_session(item)" title="加入会话">加入</button>
+                        &nbsp;
+                        <button type="button" ng-click="btn_remove_session(item)" title="断开连接">断开</button>
+                        &nbsp;
+                        <button type="button" ng-click="btn_sendmsg_session(item)" title="发送消息">发送消息</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
+

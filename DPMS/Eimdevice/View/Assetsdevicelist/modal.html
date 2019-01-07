@@ -1,0 +1,116 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="btn_cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+
+<form name="Form" verify-scope class="modal-body" style="max-height:80%;">
+    <div class="profile-user-info profile-user-info-striped">
+        <div class="profile-info-row">
+            <div class="profile-info-name">设备名称</div>
+            <div class="profile-info-value">
+                <input type="text" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.devicename" placeholder="请输入1~25个字符" />
+            </div>
+        </div>
+        <!--<div class="profile-info-row">
+            <div class="profile-info-name">设备类型</div>
+            <div class="profile-info-value">
+                <select ng-model="Source.selectItem.devicetypeid" ng-change="checked_devicetypeid();" >
+                    <option ng-repeat="item in service.devicetypeData" value="{{item.iddevicetype}}">{{item.typename}}</option>
+                </select>
+            </div>
+        </div>-->
+        <!--<div class="profile-info-row">
+            <div class="profile-info-name">设备型号</div>
+            <div class="profile-info-value">
+                <select ng-model="Source.selectItem.modeltypeid">
+                    <option ng-repeat="item in service.modeltypeData" value="{{item.idmodeltype}}">{{item.modelname}}</option>
+                </select>
+            </div>
+        </div>-->
+        <div class="profile-info-row">
+            <div class="profile-info-name">IP地址</div>
+            <div class="profile-info-value">
+                <input type="text" class="form-control" ng-model="Source.selectItem.ipaddress" ng-verify="min:1, max:25" placeholder="请输入设备IP地址" />
+            </div>
+        </div>
+        <div class="profile-info-row">
+            <div class="profile-info-name">账户</div>
+            <div class="profile-info-value">
+                <input type="text" class="form-control" ng-model="Source.selectItem.loginuser" />
+            </div>
+        </div>
+        <div class="profile-info-row">
+            <div class="profile-info-name">密码</div>
+            <div class="profile-info-value">
+                <input type="password" class="form-control" ng-model="Source.selectItem.loginpwd" />
+            </div>
+        </div>
+        <div class="profile-info-row">
+            <div class="profile-info-name">负责人</div>
+            <div class="profile-info-value">
+                <input type="text" class="form-control" ng-model="Source.selectItem.contactpeople" />
+            </div>
+        </div>
+        <div class="profile-info-row">
+            <div class="profile-info-name">备注</div>
+            <div class="profile-info-value">
+                <textarea class="form-control" ng-model="Source.selectItem.remark" />
+            </div>
+        </div>
+        <div class="profile-info-row">
+            <div class="profile-info-name">会话控制中心</div>
+            <div class="profile-info-value">
+                <select class="form-control"
+                        ng-model="Source.selectItem.refsessioncenterid"
+                        ng-show="service.sessioncenterData.length!=0">
+                    <option ng-repeat="item in service.sessioncenterData"
+                            value="{{item.idsessioncenterlist}}"
+                            ng-bind="item.name"></option>
+                </select>
+                <label ng-show="service.sessioncenterData.length==0">无</label>
+            </div>
+        </div>
+        <div class="profile-info-row">
+            <div class="profile-info-name">会话方式</div>
+            <div class="profile-info-value">
+                <div class="checkbox" ng-repeat="item in service.devicesessiontypeData"
+                     ng-model="Source.selectItem.devicesessiontypeids">
+                    <label>
+                        <input type="checkbox"
+                               name="{{item.typename}}"
+                               ng-true-value="item.iddevicesessiontype"
+                               ng-click="ngchange_devicesessiontype($event,item)" /> {{item.typename}}
+                    </label>
+                    <button type="button" class="btn btn-link btn-xs" ng-click="btn_configinfo(item);" >详细配置</button>
+                </div>
+            </div>
+        </div>
+        <div class="profile-info-row">
+            <div class="profile-info-name">手动输入密码</div>
+            <div class="profile-info-value">
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="optionsRadios" ng-model="Source.selectItem.isenterpwd" value="1" /> 是
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="optionsRadios" ng-model="Source.selectItem.isenterpwd" value="0" checked />否
+                    </label>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+
+
+    <!--<input type="text" class="form-control" ng-model="Source.selectItem.devicesessiontypeids" />-->
+
+</form>
+
+<div class="modal-footer" style="clear:both;">
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="btn_save();">保存</button>
+    <button class="btn btn-danger btn-sm" type="button" ng-click="btn_cancel();">取消</button>
+    <button class="btn btn-primary btn-sm" type="button" ng-click="save()" ng-show="Source.Action==2">删除</button>
+</div>
+

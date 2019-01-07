@@ -1,0 +1,14 @@
+<a href="" uib-dropdown-toggle class="dropdown-toggle">
+    <img class="nav-user-photo" ng-src="{$Think.const.IMG_URL}userimg/user.jpg" alt="Jason's Photo" />
+    <span class="user-info">
+        <small>欢迎你,</small> {$_SESSION['userinfo']['description']}
+    </span>
+    <i class="ace-icon fa fa-caret-down"></i>
+</a>
+<ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+    <li><a href=""><i class="ace-icon fa fa-pencil-square-o"></i>个人设置</a></li>
+    <li class="divider"></li>
+    <li><a href="__APP__/Home/Login/logout"><i class="ace-icon  fa fa-refresh "></i> 切换账户</a></li>
+    <li class="divider"></li>
+    <li><a href="__APP__/Home/Login/logout"><i class="ace-icon fa fa-power-off"></i> 安全退出</a></li>
+</ul>

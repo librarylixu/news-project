@@ -1,0 +1,46 @@
+<div class="modal-header ">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+<!--  设置这个div的大小，超出部分显示滚动条style="max-height:200px;overflow:auto;" -->
+<div class="modal-body" style="padding-top:0;" id="previewUser">
+    <div class="page-header">
+            <button type="button" ng-click="save(0)" class="btn btn-sm btn-success">全部保存</button>
+            <button type="button" ng-click="save(1)" class="btn btn-sm btn-success">保存已选项</button>
+    </div>
+<div class="mt-5">
+            <div class="table-header">
+                账号预览
+            </div>
+            <table class="table table-striped table-bordered table-hover table-condensed table-responsive">
+                <tr>
+                    <th>上传状态</th>
+                    <th>账号</th>
+                    <th>昵称</th>
+                    <th>邮箱</th>
+                    <th>电话</th>
+                    <th>手机</th>
+                    <th>紧急联系电话</th>
+                    <th>现居地址</th>
+                    <th>操作</th>
+                </tr>
+                <tr ng-repeat="item in userpreviewsData track by $index">
+                    <td>
+                        <i ng-if="item.idusers" class="fa fa-check green bigger-120"></i>
+                        <i ng-if="!item.idusers" class="fa fa-close red bigger-120"></i>
+                    </td>
+                    <td ng-bind="item.username"></td>
+                    <td ng-bind="item.description"></td>
+                    <td ng-bind="item.mail"></td>
+                    <td ng-bind="item.phone"></td>
+                    <td ng-bind="item.mobelphone"></td>
+                    <td ng-bind="item.emergencyphone"></td>
+                    <td ng-bind="item.homeaddress"></td>
+                    <td>
+                        <a href="javascript:;" class="green top-5" title="上传" ng-if="!item.idusers" ng-click="save(2,row)"><i class="fa fa-upload bigger-120"></i>&nbsp;上传</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+</div>

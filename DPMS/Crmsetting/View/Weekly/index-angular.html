@@ -1,0 +1,159 @@
+﻿<extend name="angular-base.html" />
+<block name="headcss">
+
+    <link  rel="stylesheet" href="{$Think.const.CSS_URL}timeline.css"/>
+</block>
+<block name="headjs">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/select.css">
+    <script src="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/select.js"></script>
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/select2.css">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}select2/3.4.5/selectize.default.css">
+   <script src="{$Think.const.BOOTSTRAP_URL}/angular-datepicker/tools/datePicker.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}/angular-datepicker/tools/datePickerUtils.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}/angular-datepicker/tools/dateRange.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}/angular-datepicker/tools/input.js"></script>
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}/angular-datepicker/angular-datepicker.css"/>
+</block>
+<block name="pageContent">
+    <!--页头-->
+    <div class="page-header clearfix">
+        <div style="float:left;width:240px;">
+            <p class="input-group">
+                <input  ng-click="open1()" type="text" class="form-control" current-text="今天" clear-text="清空" close-text="关闭" uib-datepicker-popup ng-model="start" ng-readonly="true" is-open="popup1.opened" datepicker-options="dateOptions1" ng-required="true" close-text="Close" />
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-warning" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
+            </p>
+        </div>
+        <span style="float:left;line-height:36px;margin:0 8px;">至</span>
+        <div style="float:left;width:240px;">
+            <p class="input-group">
+                <input ng-click="open2();" type="text" class="form-control" current-text="今天" clear-text="清空" close-text="关闭" uib-datepicker-popup ng-model="end" ng-readonly="true" is-open="popup2.opened" datepicker-options="dateOptions2" ng-required="true" close-text="Close" />
+                <span class="input-group-btn">
+                    <button type="button" class="btn  btn-warning" ng-click="open2()"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
+            </p>
+        </div>
+        <div style="float:left;width:240px;">
+            <ui-select ng-model="service.user" style="width:100%;" on-select="changePerson($item)">
+                <ui-select-match placeholder="请选择人员">
+                    <span ng-bind="$select.selected.value.description" style="margin-right: 5px;">
+                    </span>
+                </ui-select-match>
+                <ui-select-choices repeat="item.value.idusers  as (key,item) in service.privateDateObj.usersData | filter: { value: { description: $select.search }}" style="max-height: 150px;" >
+                    <div ng-bind-html="item.value.description | highlight: $select.search"></div>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <button class="btn  btn-info" style="float:left; margin-left:8px;" ng-click="selectData();">生成周报</button>
+        <button ng-click="display=false" class="btn btn-success" style="float:left; margin-left:8px;">
+            刷新
+        </button>        
+    </div>
+    <div class="col-xs-12 col-sm-10 col-sm-offset-1">
+        <!-- #section:pages/timeline -->
+        <div class="timeline-container" ng-if="display">
+            <div class="timeline-label">
+                <!-- #section:pages/timeline.label -->
+                <span class="label label-primary arrowed-in-right label-lg" ng-bind="service.privateDateObj.usersData[service.user].description">
+                  
+                </span>
+
+                <!-- /section:pages/timeline.label -->
+            </div>
+
+            <div class="timeline-items">
+                <div class="timeline-item clearfix">
+                    <div class="timeline-info">
+                        <img alt="User't Avatar" src="{$Think.const.IMG_URL}gallery/thumb-3.jpg" />
+                        <span class="label label-info label-sm">总结</span>
+                    </div>
+                    <div class="widget-box transparent">                      
+                        <div class="widget-body">
+                            <div class="widget-main">
+                                <div ><b style="color:#5bc0de;">新增客户数量:</b><span ng-bind="service.weeklyData.customerlog.length"></span>个记录</div>
+                                <div ><b style="color:#FFB752 ;">新增项目数量:</b><span ng-bind="service.weeklyData.closeprojectlog.length"></span>个记录</div>
+                                <div><b style="color:#ABBAC3;">已关闭项目数量:</b><span ng-bind="service.weeklyData.businesslog.length"></span>个记录</div>
+                                <div ><b style="color:#87B87F;">新增跟进记录数量:</b><span ng-bind="service.weeklyData.workorderlog.length"></span>个记录</div>
+                                <div ><b style="color:#FFB752;">新增出差数量:</b><span ng-bind="service.weeklyData.businesslog.length"></span>个记录</div>                                
+                                <div class="space-6"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item clearfix">
+                    <div class="timeline-info">
+                        <a title="客户管理" class="timeline-indicator ace-icon btn btn-info no-hover"href="#"><b>客</b></a>
+                    </div>
+                    <div class="widget-box transparent">
+                        <div class="widget-body">
+                            <div class="widget-main">
+                               <p ng-repeat="item in service.weeklyData.customerlog">于<span ng-bind="item.time_str"></span>新增客户<a href="javascript:;" ng-click="openCustomerdetail(item.customerid)" class="label label-info" ng-bind="service.privateDateObj.customerinfoData[item.customerid].name"></a></p>                          
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item clearfix">
+                    <div class="timeline-info">
+                        <a title="项目管理" class="timeline-indicator ace-icon btn btn-warning no-hover"><b>项</b></a>
+                    </div>
+                    <div class="widget-box transparent">
+                        <div class="widget-body">
+                            <div class="widget-main">
+                                <p ng-repeat="item in service.weeklyData.projectlog">于<span ng-bind="item.time_str"></span>新增项目管理<a href="javascript:;" ng-click="openProjectdetail(item.projectid)" class="label label-info" ng-bind="service.privateDateObj.projectData[item.projectid].name"></a>,项目状态：<span ng-bind="service.privateDateObj.projectstatusData[service.privateDateObj.projectData[item.projectid].statusid].name"></span></p> 
+                                <div class="space-6"></div>                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item clearfix">
+                    <div class="timeline-info">
+                        <a title="已关闭项目管理" class="timeline-indicator ace-icon btn btn-gray  no-hover"><b>关</b></a>
+                    </div>
+                    <div class="widget-box transparent">
+                        <div class="widget-body">
+                            <div class="widget-main">
+                                <p ng-repeat="item in service.weeklyData.closeprojectlog">于<span ng-bind="service.formatDate(item.endtime)"></span>关闭项目<a href="javascript:;" ng-click="opencloseProjectdetail(item)" class="label label-info" ng-bind="item.name"></a>,项目状态：<span ng-bind="service.privateDateObj.projectstatusData[item.statusid].name"></span></p>
+                                <div class="space-6"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item clearfix">
+                    <div class="timeline-info">
+                        <a title="工单管理" class="timeline-indicator ace-icon  btn btn-success no-hover">跟</a>
+                    </div>
+                    <div class="widget-box transparent">
+                        <div class="widget-body">
+                            <div class="widget-main">
+                                <p ng-repeat="item in service.weeklyData.workorderlog">于<span ng-bind="item.time_str"></span>新增跟进记录<a href="javascript:;" ng-click="openWorkorderdetail(item.recordid)" class="label label-info" ng-bind="service.privateDateObj.recordData[item.recordid].title"></a>,跟进客户：<span ng-bind="service.privateDateObj.customerinfoData[service.privateDateObj.recordData[item.recordid].refcustomerid].name"></span>{{service.privateDateObj.recordData['201']}}</p> 
+                                <div class="space-6"></div>                 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item clearfix">
+                    <div class="timeline-info">
+                        <a title="出差管理" class="timeline-indicator ace-icon btn btn-danger no-hover"><b>出</b></a>
+                    </div>
+                    <div class="widget-box transparent">
+                        <div class="widget-body">
+                            <p  ng-repeat="item in service.weeklyData.businesslog">于<span ng-bind="item.time_str"></span>新增出差记录<a href="javascript:;" ng-click="openBusinessdetail(item.businessid)" class="label label-info" ng-bind="service.privateDateObj.businessData[item.businessid].name"></a>,出差地点:<span ng-bind="service.privateDateObj.businessData[item.businessid].place"></span></p>
+                            <div class="space-6"></div> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="no-data" ng-if="!display">
+            <div class="line"></div>
+            <div class="text">暂无数据</div>
+        </div>
+    </div>
+</block>
+<block name="scriptTemplate">
+</block>
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmsetting/Weekly/index.js"></script>
+</block>
+

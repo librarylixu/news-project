@@ -1,0 +1,394 @@
+﻿<extend name="angular-base.html" />
+<block name="headcss">
+    <style>
+        .media-left a i {
+            display: block;
+            width: 72px;
+            height: 72px;
+            font-size: 62px;
+        }
+
+        .media-left a img {
+            width: 72px;
+            height: 72px;
+            font-size: 62px;
+        }
+
+        .search-actions img {
+            width: 30px;
+            height: 35px;
+            padding: 5px;
+            padding-left: 0;
+        }
+
+        em {
+            font-style: normal;
+        }
+    </style>
+</block>
+<block name="headjs">
+    <script>
+         var __authid = '{$authid}';
+        //var _authid = '1';
+    </script>
+    <script>
+        appModuleInit(['ui.bootstrap', 'ngVerify', 'datePicker', 'ui.select']);
+        /*
+        *页面数据
+            pagesData
+        *按钮数据
+            btnsData
+        *选中按钮的数据
+            selectedbtnData
+        *所选页面所有的按钮数据
+            pagebtnData
+        */
+        appModule.controller('crmPageauthController', ['$scope', 'dataService', 'alert', function ($scope, dataService, alert) {
+            $scope.service = dataService;//要显示到页面上的数据源
+            $scope.service.btnsData = parent.pageBtns;
+            //1.查找页面数据
+            $scope.findPagedata = function () {
+                if (parent==undefined) {
+                    parent = {};
+                    parent.pageData = {};
+                }
+                if (Object.keys(parent.pageData).length > 0) {
+                    //把已关联权限的页面，修改为选中状态
+                    $scope.findPageBtndata();
+                    return;
+                }
+                var param = new URLSearchParams();
+                param.append('$json', true);
+                $scope.service.postData(__URL + 'Crmuser/Appinfo/select_page_data', param).then(function (data) {
+                    parent.pageData = data;
+
+                    //组建页面与按钮的关系数据源
+                    $scope.findPageBtndata();
+                }, function (error) {
+                    console.log(error);
+                });
+            };
+            //2.查找所在页面按钮数据
+            $scope.findPageBtndata = function () {
+                var t_keys = Object.keys(parent.pageData);
+                if (parent.pageData[t_keys[0]]._btns != undefined) {
+                    //已经将关系处理好了,不需要再去查询数据库了
+                    //把组建好的数据给页面，让页面去循环显示
+                    $scope.service.pagesData = angular.copy(parent.pageData);
+                    //把已关联权限的页面，修改为选中状态
+                    $scope.buildPages();
+                    return;
+                }
+                var param = new URLSearchParams();
+                $scope.service.postData(__URL + 'Crmuser/RefmenuRefbtn/select_page_data', {}).then(function (data) {
+                    // parent.pageData [页面id].btns=[]
+                    angular.forEach(data, function (value, key) {
+                        if (parent.pageData[value.appid]._btns == undefined) {
+                            parent.pageData[value.appid]._btns = {};
+                        }
+                        /*{
+                            页面id:{
+                                _btns:{
+                                        1:false,2:false //false表示该按钮没勾选
+                                      }
+
+                            }
+                       */
+                        parent.pageData[value.appid]._btns[value.btnid] = false;
+                    });
+                    //把组建好的数据给页面，让页面去循环显示
+                    $scope.service.pagesData = angular.copy(parent.pageData);
+                    //把已关联权限的页面，修改为选中状态
+                    $scope.buildPages();
+                }, function (error) {
+                    console.log(error);
+                });
+
+            };
+            /*
+            3.把已关联权限的页面，修改为选中状态
+            */
+            $scope.buildPages = function () {
+                //权限id:{页面id:{关系表数据行}}
+                var this_authRefpage = parent.authRefPage[__authid];
+                //{页面id:{关系表数据行}，页面id:{关系表数据行}}
+                for (var ref in this_authRefpage) {
+                    $scope.service.pagesData[ref].checked = true;
+                    $scope.service.pagesData[ref].isdel = this_authRefpage[ref].isdel;
+                    $scope.service.pagesData[ref].isupdate = this_authRefpage[ref].isupdate;
+                    if (this_authRefpage[ref].btns == null) {
+                        continue;
+                    }
+
+                    var t_btns = this_authRefpage[ref].btns.split(',');
+                    for (var i = 0; i < t_btns.length; i++) {
+                        var _btnid = t_btns[i];
+                        /*{
+                           页面id:{
+                               _btns:{
+                                       1:false,2:false //false表示该按钮没勾选
+                                     }
+
+                           }
+                      */
+                        if ($scope.service.pagesData[ref]._btns!==undefined&&$scope.service.pagesData[ref]._btns[_btnid] != undefined) {
+                            $scope.service.pagesData[ref]._btns[_btnid] = true;
+                        }
+                    }
+
+                }
+            }
+
+
+            /*
+            建立权限和页面的关系
+            */
+            $scope.buildAuthRefPage = function () {
+                if (parent == undefined || Object.keys(parent.authRefPage).length < 1) {
+                    //说明页面有问题,要告警提示，并关闭此窗口或页面
+                    return;
+                }
+                $scope.findPagedata();
+            }
+
+            /*
+
+            pagesData[页面].btns={
+                按钮的id:{按钮  ,checked :true},
+                按钮的id:{按钮}
+            }
+
+            */
+
+
+            //操作按钮点击事件
+            $scope.btnHandle = function (page, type) {
+                //isdel isupdate 1具备 0不具备
+                
+                if (page.isupdate == 1&&type==0) {
+                    page.isupdate = 0;
+                } else if ((page.isupdate == 0 || page.isupdate ==undefined) && type == 0) {
+                    page.isupdate = 1;
+                }
+                if (page.isdel == 1 && type == 1) {
+                    page.isdel = 0;
+                } else if ((page.isdel == 0 || page.isdel == undefined) && type == 1) {
+                    page.isdel = 1;
+                }
+
+            };
+            //按钮点击事件
+            $scope.addHandle = function (page, _id, type) {
+                if (page._btns[_id]) {
+                    page._btns[_id] = false;
+                } else {
+                    page._btns[_id] = true;
+                }
+
+            };
+
+            //保存，选中的按钮和页面，到数据库中
+            $scope.saveBtns = function (page) {
+                var url = __URL + 'Crmuser/RefauthRefapp/update_page_data';
+                //组建参数
+                var param = new URLSearchParams();
+                if (page._btns !== undefined) {
+                   var btnids=[];
+                    for(var btn in page._btns){
+                        if(page._btns[btn]){
+                            btnids.push(btn);
+                        }
+                    }
+                    //$scope.btnids = Object.keys(page._btns).join(",");
+                }
+              //parent.authRefPage[__authid][page.idappinfo].idref_auth_menu
+                param.append("idref_auth_menu", parent.authRefPage[__authid][page.idappinfo].idref_auth_menu);
+                param.append('btns', btnids.join(","));
+                param.append('isdel', page.isdel);
+                param.append('isupdate', page.isupdate);
+                //param.append(' $fetchSql', true);
+
+                $scope.service.postData(url, param).then(function (data) {
+                    if (data > 0) {
+                        alert.show('操作按钮权限成功', '操作按钮权限');
+                        parent.authRefPage[__authid][page.idappinfo].btns = btnids.join(",");
+                        parent.authRefPage[__authid][page.idappinfo].isdel = page.isdel;
+                        parent.authRefPage[__authid][page.idappinfo].isupdate = page.isupdate;
+                        var authbtns = btnids;
+                        var pageBtns = Object.keys(parent.pageData[page.idappinfo]._btns);
+                        if (btnids.length > 0) {
+                            // parent.pageData[page.idappinfo]._btns = {};
+
+                            for (var key in parent.pageData[page.idappinfo]._btns) {
+                                for (var i; i < btnids.length; i++) {
+                                    if (key == btnids[i]) {
+                                        parent.pageData[page.idappinfo]._btns[key] = true;
+                                    }
+                                }
+                            }
+
+
+                        }
+                    } else {
+                        alert.show('操作按钮权限失败', '操作按钮权限');
+                    }
+                });
+                console.log(page);
+            };
+
+            //保存，选中页面的实时保存
+            $scope.saveRefPage = function (page) {
+                page.checked = !page.checked;
+                //组建参数
+                var param = new URLSearchParams();
+                var pageSaveURL='';
+                if (!page.checked) {
+                    pageSaveURL = __URL + 'Crmuser/RefauthRefapp/del_page_data';
+                    param.append("idref_auth_menu", parent.authRefPage[__authid][page.idappinfo].idref_auth_menu);
+
+                } else {
+                    pageSaveURL = __URL + 'Crmuser/RefauthRefapp/add_page_data';
+                    param.append("authid", __authid);
+                    param.append("appid", page.idappinfo);
+                    param.append("isdel", 0);
+                    param.append("isupdate", 0);
+                }
+
+                //param.append(' $fetchSql', true);
+                $scope.service.postData(pageSaveURL, param).then(function (data) {
+                    if (pageSaveURL == __URL + 'Crmuser/RefauthRefapp/add_page_data' && data > 0) {
+                        //勾选状态
+                        page.checked = true;
+                        page.idref_auth_menu = data;
+                        alert.show('添加页面权限成功', '添加页面权限');
+                        //parent.pageRefAuth[__authid] = $scope.service.pagesData;
+                        /*{
+                          页面id:{
+                              _btns:{
+                                      1:false,2:false //false表示该按钮没勾选
+                                    }
+
+                          }
+                     */
+                        if (parent.authRefPage[__authid] == undefined) {
+                            parent.authRefPage[__authid] = {};
+                        }
+                        parent.authRefPage[__authid][page.idappinfo] = {
+                            idref_auth_menu:data,
+                            authid: __authid,
+                            appid: page.idappinfo,
+                            isdel: '0',
+                            isupdate:'0'
+                        };
+                        if (Object.keys(page._btns).length > 0) {
+                            var btn_arr = [];
+                            for (var key in page._btns) {
+                                if (page._btns[key]) {
+                                    btn_arr.push(key);
+                                }
+                            }
+                            btn_arr.length == 0 ? parent.authRefPage[__authid][page.idappinfo].btns = null : parent.authRefPage[__authid][page.idappinfo].btns = btn_arr.join(",");
+
+                        }
+                        //parent.pageData[page.idappinfo]._btns = page._btns;
+                        //parent.pageData[page.idappinfo].isdel = "0";
+                        //parent.pageData[page.idappinfo].isupdate = "0";
+
+                    } else if (pageSaveURL == __URL + 'Crmuser/RefauthRefapp/del_page_data' && data > 0) {
+                        //勾选状态
+                        page.checked = false;
+                        alert.show('删除页面权限成功', '删除页面权限');
+                        delete parent.authRefPage[__authid][page.idappinfo];
+                    } else {
+                        alert.show("操作失败", '操作页面权限');
+                    }
+
+                });
+
+            };
+
+            $scope.buildAuthRefPage();
+
+
+        }]);
+        //var index = parent.layer.getFrameIndex(window.name);
+        //parent.Win10._settop(index+1);
+    </script>
+</block>
+<block name="pageContent">
+    <div id="timeline-1">
+        <div class="row">
+            <div class="col-xs-12 col-sm-10 col-sm-offset-1">
+
+                <div class="timeline-container">
+
+                    <div class="timeline-label">
+                        <span class="label label-primary">
+                            <b>页面权限管理</b>
+                        </span>
+
+                    </div>
+
+                    <div class="timeline-items">
+
+                        <div class="timeline-item clearfix" ng-repeat="(_id,page) in service.pagesData">
+                            <div class="timeline-info">
+                                <!--<img alt="Susan't Avatar" src="../assets/avatars/avatar1.png" />-->
+                                <span class="label label-info label-sm">
+                                    <input type="checkbox" ng-checked="page.checked" ng-click="saveRefPage(page)" />
+                                    {{page.name}}
+                                </span>
+                            </div>
+                            <div class="widget-box transparent" ng-show="page.checked">
+                                <div class="widget-header widget-header-small">
+                                    <h5 class="widget-title smaller">
+                                        <a href="#" class="blue">{{page.description}}</a>
+                                        <span class="grey">按钮权限</span>
+                                    </h5>
+                                    <span class="widget-toolbar">
+                                        <a href="#" title="允许编辑">
+                                            <label class="checkbox-inline" style="line-height: 21px;padding-right:10px;">
+                                                <input type="checkbox" ng-checked="page.isupdate==1" ng-click="btnHandle(page,0)"><em>允许页面显示编辑按钮</em>
+                                            </label>
+
+                                        </a>
+                                        <a href="#" title="允许删除">
+                                            <label class="checkbox-inline" style="line-height: 21px;padding-right:10px;">
+                                                <input type="checkbox" ng-checked="page.isdel==1" ng-click="btnHandle(page,1)"><em>允许页面显示删除按钮</em>
+                                            </label>
+
+                                        </a>
+                                        <a href="#" title="保存" ng-click="saveBtns(page)">
+                                            <i class="ace-icon fa fa-save"></i>
+                                        </a>
+                                    </span>
+                                </div>
+
+                                <div class="widget-body">
+                                    <div class="widget-main">
+                                        <label class="checkbox-inline" ng-repeat="(_id,btn) in page._btns">
+                                            <input type="checkbox" ng-checked="btn" ng-click="addHandle(page,_id)" />
+                                            <em ng-bind="service.btnsData[_id].bname"></em>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</block>
+<block name="scriptTemplate">
+
+</block>
+<block name="footjs">
+    <script>
+
+    </script>
+
+
+</block>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>{:C('INDEXTXT')}</title>
+    <!-- basic styles -->
+    <link href="{$Think.const.BOOTSTRAP_URL}ace/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/font-awesome4.7.0.css" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/ace-fonts.css" />
+
+    <!--[if IE 7]> 
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/font-awesome-ie7.min.css" />
+    <![endif]-->
+    <!-- ace styles -->
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/ace.css" class="ace-main-stylesheet" id="main-ace-style" />
+
+    <!--[if lte IE 9]>
+        <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/ace-part2.css" class="ace-main-stylesheet" />
+    <![endif]-->
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/ace-skins.min.css" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/ace-rtl.min.css" />
+    <!--[if lte IE 9]>
+      <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/ace-ie.css" />
+    <![endif]-->
+    <!-- inline styles related to this page -->
+    <!-- ace settings handler -->
+    <script src="{$Think.const.BOOTSTRAP_URL}ace/js/ace-extra.min.js"></script>
+    <!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
+    <!--[if lte IE 8]>
+    <script src="{$Think.const.BOOTSTRAP_URL}ace/js/html5shiv.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}ace/js/respond.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="{$Think.const.BOOTSTRAP_URL}layim3.0/build/css/layui.css">
+    <!--引导页-->
+    <link href="{$Think.const.APP_PUBLIC}pagewalkthrough/css/jquery.pagewalkthrough.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="{$Think.const.BOOTSTRAP_URL}Lobibox/css/Lobibox.min.css" />
+    <link rel="stylesheet" type="text/css" href="{$Think.const.PAGE_URL}css/Home/Homepage/index.css">
+    <script type="text/javascript">
+        var _URL = "__MODULE__";
+        var _APP = "__APP__";
+        var __IMGPATH = '{$Think.const.IMG_URL}';
+        var userid = '{$_SESSION["Userid"]}';
+        var username='{$_SESSION["Username"]}';
+        var _onlineStatus = '{$_SESSION["OnlineChat"]["Value"]}';
+        var _Lastlogintime = "{$Lastlogintime}";//最近一次登录时间，如果没有，则表示第一次登录，普通用户提示是否修改密码
+        var _waring_info = "{$pwd_warning_msg}";
+        //var _onlineStatus = '1';
+    </script>
+    <style>
+         i.smaller-50:hover{             
+             background:#0094ff;
+             font-weight :100;
+        }
+         i.smaller-50{             
+            
+             font-weight :100;
+        }
+    </style>
+</head>
+<body class="<php>if(empty($_COOKIE['ace_skin'])){ echo 'no-skin';}else{ echo $_COOKIE['ace_skin']; }</php>" onload="initPage()" style="overflow:scroll;">
+    <!-- #section:basics/navbar.layout -->
+    <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+        <script type="text/javascript">
+				try{ace.settings.check('navbar' , 'fixed')}catch(e){}
+        </script>
+
+        <div class="navbar-container" id="navbar-container">
+            <button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
+                <span class="sr-only">Toggle sidebar</span>
+
+                <span class="icon-bar"></span>
+
+                <span class="icon-bar"></span>
+
+                <span class="icon-bar"></span>
+            </button>
+            <div class="navbar-header pull-left">
+                <!-- #section:basics/navbar.layout.brand -->
+                <a href="#" class="navbar-brand">
+                    <small>
+                        <img src="{$Think.const.IMG_URL}logo_index.png" style="width:auto;height:19px ;margin-right:10px;vertical-align:middle;" />
+                        <span>{:C('INDEXTXT')}</span>&nbsp;<small>{:C('VERSION')}</small>
+                    </small>
+                </a>
+            </div>
+            <div class="navbar-buttons navbar-header pull-right">
+                <ul class="nav ace-nav">
+                    <if condition="$_SESSION['OnlineChat']['Value'] neq '0'">
+                        <li class="purple" id="test">
+                            <a href="javascript:;">
+                                <i class="ace-icon fa fa-bell icon-animated-bell"></i>
+                                <span class="badge badge-important">8</span>
+                            </a>
+                        </li>
+                    </if>
+                    <li class="light-blue" id="userinfo">
+                        <a data-toggle="dropdown" href="#" class="dropdown-toggle">
+                            <img class="nav-user-photo" src="{$Think.const.BOOTSTRAP_URL}ace/avatars/{$_SESSION['UserIcon']}" alt="Jason's Photo" />
+                            <span class="user-info">
+                                <small>欢迎,</small>
+                                {$_SESSION['Userdecription']}-{$_SESSION['Username']}
+                            </span>
+
+                            <i class="ace-icon fa fa-caret-down"></i>
+                        </a>
+                        <ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+                            
+                            <li>
+                                <a id="a_update_pwd"  onclick="addTabs({ id: 'get_user_pwd_edit_page', url:'__MODULE__/HuiUser/get_user_pwd_edit_page',title: '个人设置', close: true });" ><i class="ace-icon fa fa-pencil-square-o"></i>个人设置</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li><a href="__MODULE__/Login/logout"><i class="ace-icon  fa fa-refresh "></i>切换账户</a></li>
+                            <li class="divider"></li>
+                            <li><a href="__MODULE__/Login/logout"><i class="ace-icon fa fa-power-off"></i>安全退出</a></li>
+                            <li class="divider"></li>
+                            <li><a href="javascript:openConnect();"><i class="ace-icon fa fa-user-o"></i>联系我们</a></li>                            
+                        </ul>
+                    </li>
+                    <li class="orange">
+                        <a href="javascript:btn_help();"><i class="fa fa-question-circle-o"></i></a>
+                    </li>
+                </ul>
+            </div>
+
+
+        </div><!-- /.navbar-container -->
+    </div>
+
+    <!-- /section:basics/navbar.layout -->
+    <div class="main-container" id="main-container">
+        <script type="text/javascript">
+				try{ace.settings.check('main-container' , 'fixed')}catch(e){}
+        </script>
+
+        <!-- #section:basics/sidebar -->
+        <div class="sidebar responsive  sidebar-fixed" id="sidebar">
+            <script type="text/javascript">
+					try{ace.settings.check('sidebar' , 'fixed')}catch(e){}
+            </script>
+
+            <ul class="nav nav-list" id="menu">
+                <foreach name="_SESSION['menu']" item="value">
+                    <li class="">
+                        <a href="#" class="dropdown-toggle">
+                            <i class="{$value['icons']}"></i>
+                            <span class="menu-text">{$value['name']}</span>
+                            <b class="arrow fa fa-angle-down"></b>
+                        </a>
+                        <b class="arrow"></b>
+                        <ul class="submenu">
+                            <foreach name="value['child']" key='child_key' item="child_value">
+                                <li class="eimmenu">
+                                    <a class="" href="javascript:;" data-id="<php>echo rand(); </php>_{$child_value['control']}" data-href="__MODULE__/{$child_value['control']}/{$child_value['function']}">
+                                        <i class="menu-icon fa fa-caret-right"></i>
+                                        <span>{$child_value['name']}</span>
+                                    </a>
+                                    <b class="arrow"></b>
+                                </li>
+                            </foreach>
+                        </ul>
+                    </li>
+                </foreach>
+            </ul>
+            <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+                <i class="ace-icon fa fa-angle-double-left" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+            </div>
+            <script type="text/javascript">
+					try{ace.settings.check('sidebar' , 'collapsed')}catch(e){}
+            </script>
+            <!-- /section:basics/sidebar.layout.minimize -->
+
+        </div>
+
+        <!-- /section:basics/sidebar -->
+        <div class="main-content">
+            <div class="page-content" style="padding:0;padding-top:4px;padding-left:4px;" >
+                <div class="ace-settings-container" id="ace-settings-container">
+                    <div class="btn btn-app btn-xs btn-warning ace-settings-btn" id="ace-settings-btn">
+                        <i class="ace-icon fa fa-cog bigger-130"></i>
+                    </div>
+
+                    <div class="ace-settings-box clearfix" id="ace-settings-box">
+                        <div class="pull-left width-50">
+                            <!-- #section:settings.skins -->
+                            <div class="ace-settings-item">
+                                <div class="pull-left">
+                                    <select id="skin-colorpicker" class="hide">
+                                        <option data-skin="no-skin" value="#438EB9">#438EB9</option>
+                                        <option data-skin="skin-1" value="#222A2D">#222A2D</option>
+                                        <option data-skin="skin-2" value="#C6487E">#C6487E</option>
+                                        <option data-skin="skin-3" value="#D0D0D0">#D0D0D0</option>
+                                    </select>
+                                </div>
+                                <span>&nbsp; 换肤</span>
+                            </div>
+
+                            <!-- /section:settings.skins -->
+                            <!-- #section:settings.navbar -->
+                            <div class="ace-settings-item hidden">
+                                <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-navbar" />
+                                <label class="lbl" for="ace-settings-navbar"> 固定导航栏</label>
+                            </div>
+
+                            <!-- /section:settings.navbar -->
+                            <!-- #section:settings.sidebar -->
+                            <div class="ace-settings-item hidden">
+                                <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-sidebar" />
+                                <label class="lbl" for="ace-settings-sidebar"> 固定侧边栏</label>
+                            </div>
+
+                            <!-- /section:settings.sidebar -->
+                            <!-- #section:settings.breadcrumbs -->
+                            <div class="ace-settings-item">
+                                <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-breadcrumbs" />
+                                <label class="lbl" for="ace-settings-breadcrumbs"> 固定分页导航栏</label>
+                            </div>
+
+                            <!-- /section:settings.breadcrumbs -->
+                            <!-- #section:settings.rtl -->
+                            <!--<div class="ace-settings-item">
+                                <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-rtl" />
+                                <label class="lbl" for="ace-settings-rtl">镜像显示</label>
+                            </div>-->
+
+                            <!-- /section:settings.rtl -->
+                            <!-- #section:settings.container -->
+                            <div class="ace-settings-item">
+                                <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-add-container" />
+                                <label class="lbl" for="ace-settings-add-container">
+                                    版心显示
+                                </label>
+                            </div>
+
+                            <!-- /section:settings.container -->
+                        </div><!-- /.pull-left -->
+
+                        <div class="pull-left width-50">
+                            <!-- #section:basics/sidebar.options -->
+                            <div class="ace-settings-item">
+                                <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-hover" />
+                                <label class="lbl" for="ace-settings-hover"> 子菜单悬浮显示</label>
+                            </div>
+
+                            <div class="ace-settings-item">
+                                <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-compact" />
+                                <label class="lbl" for="ace-settings-compact">紧凑型侧边栏</label>
+                            </div>
+
+                            <div class="ace-settings-item">
+                                <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-highlight" />
+                                <label class="lbl" for="ace-settings-highlight">菜单选中样式</label>
+                            </div>
+
+                            <!-- /section:basics/sidebar.options -->
+                        </div><!-- /.pull-left -->
+                    </div><!-- /.ace-settings-box -->
+                </div>
+
+                    <div class="" style="padding-left:5px;">
+                        <ul class="nav nav-tabs" role="tablist" id="min-title">
+                            <li class="active"><a href="#index" role="tab" data-toggle="tab"><span class="language-57">首页</span></a></li>
+                        </ul>
+                        <div class="tab-content" style="padding:0;">
+                            <div role="tabpanel" class="tab-pane active" id="index">
+                                <iframe src="/index.php/Home/Homepage/index"  width="100%"  frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="yes" allowtransparency="yes" id="iframe_index"></iframe>
+                            </div>
+                        </div>
+                    </div>
+
+            </div>
+        </div><!-- /.main-content -->      
+    </div><!-- /.main-container -->
+    <!--引导-->
+    <div id="walkthrough-content" class="hidden">
+        <div id="walkthrough-1">
+            <p class="f-24">欢迎使用昕辰EIM运维及审计管理平台</p>
+        </div>
+        <div id="walkthrough-2" class="" style="float:right;">
+            可快速修改您的密码、安全切换账号
+        </div>
+        <div id="walkthrough-3" class="" style="float:right;">
+            可选择您喜欢的皮肤、页面版式
+        </div>
+        <div id="walkthrough-4">
+            功能菜单栏,选择操作项
+        </div>
+        <div id="walkthrough-5">
+            打开的所有操作窗口都收纳在这里了,可点击切换
+        </div>
+        <div id="walkthrough-6">
+            开始使用吧
+        </div>
+    </div>
+    <!--<script type="text/javascript" src="{$Think.const.APP_PUBLIC}layui/layui.js"></script>-->
+    <script type="text/javascript" src="{$Think.const.APP_PUBLIC}jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}bootstrap/js/bootstrap3.3.7.min.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}ace/js/ace-elements.min.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}ace/js/ace.min.js"></script>
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/ace.onpage-help.css" />
+    <script src="{$Think.const.BOOTSTRAP_URL}ace/js/ace/elements.onpage-help.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}ace/js/ace/ace.onpage-help.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}layim3.0/build/layui.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}Lobibox/js/lobibox.js"></script>
+    <!--引导页-->
+    <script type="text/javascript" src="{$Think.const.APP_PUBLIC}pagewalkthrough/jquery.pagewalkthrough.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}EIMPublicTools.js"></script>
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Home/Homepage/index.js"></script>
+    
+</body>
+</html>

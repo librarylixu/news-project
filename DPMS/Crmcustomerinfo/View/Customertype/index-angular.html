@@ -1,0 +1,120 @@
+﻿<extend name="angular-base.html" />
+<block name="headcss">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angular-bootstrap-colorpicker/3.0.32/css/colorpicker.min.css">
+</block>
+<block name="headjs">
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-sanitize/{$Think.const.ANGULAR_VERSION}angular-sanitize.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular-bootstrap-colorpicker/3.0.32/js/bootstrap-colorpicker-module.js"></script>
+ 
+    <script>
+        //初始化modal并定义service
+        appModuleInit(['ui.bootstrap',  'ngVerify', 'datePicker', 'ui.select', 'colorpicker.module', 'ngSanitize']);
+        //主控制器
+        appModule.controller('crmCustomertypeController', ['$scope',  '$q','dataService',  'alert', function ($scope,$q,dataService, alert) {
+            _$scope = $scope;
+            _$q = $q;
+            $scope.service = dataService;//要显示到页面上的数据源
+           
+            /*
+                查询客户类型（本页面使用）数据
+            */
+            $scope.select = function () {
+                select_customer_type().then(function (res) {});            
+            }
+            //表格中的label标签模板
+            $scope.getLabelClass = function ( row, status) {
+                //获取class
+                if (status == 0) {
+                    return { "background-color": row.labelclass }
+                } else if (status == 1) {
+                    //获取值
+                    return row.typename;
+                }
+            }
+            //显示到页面上的数据源
+            $scope.customerinfoData = [];
+           
+            //刷新按钮
+            $scope.refresh = refresh;
+
+            //添加按钮
+            $scope.add = function () {
+                $scope.service.title = '新建客户类型';
+                $scope.modalHtml = __URL + 'Crmcustomerinfo/Customertype/openmodal';
+                $scope.modalController = 'modalcustomertypeController';
+                $scope.service.selectItem = '';
+                //给一个默认的颜色
+                $scope.service.selectItem = { labelclass: "#5661c9" };
+                publicControllerAdd($scope);
+            }
+            //修改按钮
+            $scope.updateInfo = function (row) {
+                $scope.service.title = "修改客户类型";
+                $scope.modalHtml = __URL + 'Crmcustomerinfo/Customertype/openmodal';
+                $scope.modalController = 'modalcustomertypeController';
+                $scope.service.selectItem = row;
+                publicControllerUpdate($scope);
+            }
+            //删除按钮
+            $scope.remove = function (row) {
+                $scope.service.title = '删除客户类型';
+                $scope.modalHtml = __URL + 'Crmcustomerinfo/Customertype/openmodal';
+                $scope.modalController = 'modalcustomertypeController';
+                $scope.service.selectItem = row;
+                publicControllerDel($scope);
+            }
+            //页面加载完成后，查询数据
+            $scope.select();
+        }]);     
+
+    </script>
+</block>
+<block name="pageContent">
+    <!--页头-->
+    <div class="page-header clearfix">
+        <h1 class="col-xs-3 text-left">
+            {$MenuName}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {$PageName}
+            </small>
+        </h1>
+        <div class="col-xs-4 text-center">
+            <page-btn></page-btn>            
+        </div>
+    </div>
+    <!--快速检索-->
+    <div class="table-header clearfix">
+        <div class="col-xs-6">{$MenuName}<small><i class="ace-icon fa fa-angle-double-right"></i>{$PageName}</small></div>
+    </div>
+    <div>
+        <table class="table">
+            <tr>
+                <th>图标</th>
+                <th>客户类型</th>
+                <th>标签样式</th>                
+                <th>操作</th>
+            </tr>
+            <tr ng-repeat="(key, row)  in service.customertypeData">
+                <td><i class="fa fa-tty bigger-120"></i></td>
+                <td ng-bind="row.typename"></td>
+                <td >
+                    <span class="label" ng-style="getLabelClass(row,0)" ng-bind="getLabelClass(row,1)"></span>
+                </td>               
+                <td>
+                    <a href="javascript:;" class="green top-5" ng-show="service.refedit" ng-click="updateInfo( row)"><i class="glyphicon glyphicon-pencil bigger-120"></i></a>&nbsp;&nbsp;
+                    <a href="javascript:;" class="red top-5" ng-show="service.refdel" ng-click="remove(row)"><i class="glyphicon glyphicon-trash bigger-120"></i></a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</block>
+
+<block name="scriptTemplate">
+    
+</block>
+
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customertype/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagebtn.js"></script>
+</block>

@@ -1,0 +1,13 @@
+<div class="profile-info-row" ng-controller="devicegroupRefuser">
+    <div class="profile-info-name">关联用户</div>
+    <div class="profile-info-value">
+        <ui-select multiple ng-model="Source.selectItem.refuserData" on-select="save($item, 0)" on-remove="save($item, 1)">
+            <ui-select-match>
+                <span ng-bind="$item.username"></span>
+            </ui-select-match>
+            <ui-select-choices repeat="item in Source.usersArrData track by $index">
+                <div ng-bind-html="item.username"></div>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+</div>

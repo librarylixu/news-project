@@ -1,0 +1,3 @@
+Crmcustomerinfo域
+Crm模块客户信息管理
+如：客户管理、数据库初始化

@@ -1,0 +1,47 @@
+<div> 
+    <div>
+        <h5>发表评论</h5>
+        <!-- 加载编辑器的容器 -->
+        <div class="top-10">
+            <script id="container" type="text/plain">
+            </script>
+        </div>
+        <div style="padding:10px;padding-bottom:20px;">
+            <button class="btn btn-success" ng-show="submitBtn" ng-click="addPageCommentlist();submitBtn=false">发布</button>
+        </div>
+    </div>     
+    <div class="col-xs-12"> 
+        <div class="comment-title-box">
+            <span class="comment-title">操作动态</span>
+            <div class="comment-title-line"></div>
+        </div>        
+        <div class="comment-box" ng-repeat="msg in service.pageCommentList |orderBy:'-time'">
+            <div class="first-level">
+                <div class="img-box"><img class="avater" src="{$Think.const.IMG_URL}userimg/avatar2.png" /></div>
+                <div class="content">
+                    <i class="ace-icon orange fa fa-clock-o bigger-110"></i>
+                    <span class="createtime" ng-bind="msg.time"></span>
+                    <a href="javascript:;" class="username" ng-bind="msg.username">admin</a>
+                    <span>评论了"<b crm-bind-html="msg.content"></b>"</span>
+                    <a href="javascript:;" ng-if="msg.mark=='comment'" class="reply-button" ng-click="EditorCreateEditor(msg)"><i class="fa fa-comment green"></i>&nbsp;回复</a>                   
+                </div> 
+            </div>           
+            <div class="second-level" ng-if="msg.mark=='comment'" ng-show="msg.child.length>0||msg.childcommandshow">
+                <div>
+                    <!--回复编辑框-->
+                    <script id="{{msg._id}}"></script>
+                    <button class="btn btn-sm btn-success" ng-show="msg.childcommandshow" ng-click="EditorCreateSaveEditor(msg)">保存</button>
+                    <button class="btn btn-sm btn-warning" ng-show="msg.childcommandshow" ng-click="EditorCreateCloseEditor(msg)">取消</button>
+                </div>
+                <div ng-repeat="childmsg in msg.child |orderBy:'-time'"> 
+                    <i class="ace-icon orange fa fa-clock-o bigger-110"></i>
+                    <span class="createtime" ng-bind="service.formatDate(childmsg.time)"></span>
+                    <a href="javascript:; " ng-bind="childmsg.username">zhangsai</a>
+                    <span>评论了</span>
+                    <a href="javascript:;"><span  ng-bind="msg.username"></span>："<b crm-bind-html="childmsg.content"></b>"</a>
+                    <a href="javascript:;" class="reply-button" ng-click="EditorCreateEditor(msg)"><i class="fa fa-comment green"></i>&nbsp;回复</a>
+                </div>                
+            </div> 
+        </div>                
+    </div> 
+</div>

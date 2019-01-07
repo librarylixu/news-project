@@ -1,0 +1,588 @@
+﻿<extend name="angular-base.html" />
+<block name="headcss">
+    <style>
+        li{
+            list-style:initial;
+            color:#666;
+            font-size:14px;
+            line-height:20px;
+        }
+        img{
+            width:100%;
+            margin-top:10px;
+            margin-bottom:10px;
+        }
+    </style>
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}layim3.0/3.7.6/css/layui.css" media="all">
+</block>
+<block name="headjs">
+
+</block>
+<block name="pageContent">
+    <!--页头-->
+    <div class="page-header clearfix">
+        <h1 class="col-xs-3 text-left">
+            {$MenuName}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {$PageName}
+            </small>
+        </h1>       
+    </div>
+    <div class="col-xs-12">
+        <br />
+        <br />
+        <ul class="layui-timeline">
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-anim layui-anim-rotate layui-anim-loop layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title" style="color:red;">V{$Think.const.CRM_VERSION}</h3>
+                    <small>2018/12/29</small>
+                    <ul>
+                        <li>修复功能：返修清单中增加可根据序列号检索到出货清单数据</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-anim layui-anim-rotate layui-anim-loop layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title" style="color:red;">V{$Think.const.CRM_VERSION}</h3>
+                    <small>2018/12/20</small>
+                    <ul>
+                        <li>增加功能：增加受保护项目中能够检索产品功能</li>
+                        <li>修复问题：修复工单中出现的问题描述、时间等保存失败等问题</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-anim layui-anim-rotate layui-anim-loop layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title" style="color:red;">V{$Think.const.CRM_VERSION}</h3>
+                    <small>2018/12/07</small>
+                    <ul>
+                        <li>更新返修管理页面</li>
+                        <li>取消主页面客户按钮点击样式</li>
+                        <li>更改序列号text框样式大小</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.3.2</h3>
+                    <small>2018/11/30</small>
+                    <ul>
+                        <li>更新出货管理页面</li>
+                        <li>出货管理中增加序列号检索</li>
+                        <li>更新商机线索中商机状态</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.3.1</h3>
+                    <small>2018/11/23</small>
+                    <ul>
+                        <li>项目管理中查看销售漏斗按钮增加权限</li>
+                        <li>增加新功能：出货清单</li>
+                        <li>出货清单增加单独的权限功能</li>
+                        <li>修复商机管理中点击认领商机后只有刷新才能出现关闭此商机按钮的BUG</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.2.9</h3>
+                    <small>2018/11/16</small>
+                    <ul>
+                        <li>商机管理主页面增加商机来源</li>
+                        <li>来源中增加：招标网</li>
+                        <li>更新销售漏斗打开缓慢的问题（引入了网络链接地址的问题）</li>
+                        <li>更新项目管理提醒功能，提醒已经逾期的项目</li>
+                        <li>增加项目管理中销售漏斗展现方式</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.2.8</h3>
+                    <small>2018/11/09</small>
+                    <ul>
+                        <li>修复商机管理中因为抄送人字段，导致的页面报错问题</li>
+                        <li>增加已关闭商机中条件检索功能</li>
+                        <li>修复后台用户角色管理页面等</li>
+                        <li>新增功能：销售漏斗</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.2.7</h3>
+                    <small>2018/11/02</small>
+                    <ul>
+                        <li>商机管理中增加抄送人功能</li>
+                        <li>商机管理中增加已关闭商机功能</li>
+                        <li>修复商机管理中，项目关联商机后商机未结束</li>
+                        <li>修复页面包括：权限管理、用户角色管理</li>
+                        <li>上周未更新的待结单提醒功能</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.2.6</h3>
+                    <small>2018/10/26</small>
+                    <ul>
+                        <li>修复编辑器中自带的本地保存功能</li>
+                        <li>增加工作记录详细页中交互的功能</li>
+                        <li>更改工作记录展示方式、及详细页面的展示方式（采用弹出新页面的方式）</li>
+                        <li>关闭商机选项改为：已跟进、无效商机、成立客户/项目，并将商机中的信息补全</li>
+                        <li>商机线索中主页面咨询产品不显示的问题</li>
+                        <li>更新优化页面：用户管理</li>
+                        <li>更新优化页面：用户组管理</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.2.5</h3>
+                    <small>2018/10/19</small>
+                    <ul>
+                        <li>修复了出差中开始时间有限制的问题</li>
+                        <li>增加新功能：待处理事项功能</li>
+                        <li>优化后台控制器方法</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.2.4</h3>
+                    <small>2018/10/17</small>
+                    <ul>
+                        <li>更新工单中查看评分不显示的问题</li>
+                        <li>修改出差报告为仅能进行一次更改</li>
+                        <li>增加新功能：商机管理</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.2.3</h3>
+                    <small>2018/10/12</small>
+                    <ul>
+                        <li>修改出差管理审批人默认值</li>
+                        <li>更新工单结果描述为必填项</li>
+                        <li>新增功能：文件共享中伸缩菜单栏功能</li>
+                        <li>新增功能：文件共享新窗口打开，解决了上一步的问题</li>
+                        <li>修复点击出差结束后刷新页面数据还在的问题</li>
+                        <li>周报中增加已关闭项目的记录</li>
+                        <li>工作记录增加一个发生时间</li>
+                        <li>新增功能：在流线图中增加了一键生成报表功能</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.2.2</h3>
+                    <small>2018/09/30</small>
+                    <ul>
+                        <li>新增一键生成周报功能</li>
+                        <li>新增功能：统计图查看总数据页面</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.2.1</h3>
+                    <small>2018/09/28</small>
+                    <ul>
+                        <li>完善出差管理中的细节功能</li>
+                        <li>新增功能：统计图增加工作记录和出差的统计展示</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.1.8</h3>
+                    <small>2018/09/21</small>
+                    <ul>
+                        <li>新增功能：分析模块、柱状图分析等。将此功能放到了菜单栏中</li>
+                        <li>新增功能：增加查看已关闭出差的功能</li>
+                        <li>修复功能：修复了出差中的检索等功能细节</li>
+                        <li>修复功能：将项目管理中的产品使用地、决策地中的直辖市去掉了选择区一栏</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.1.7</h3>
+                    <small>2018/09/19</small>
+                    <ul>
+                        <li>新增功能：出差管理。可以在出差管理中申请出差、选择审批人、填写出差报告等功能。后续将会对出差管理进行开发已关闭出差、出差检索等功能</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.1.6</h3>
+                    <small>2018/09/12</small>
+                    <ul>
+                        <li>新增优化功能：客户跟进记录，可以直接在客户管理页面添加跟进记录，详细页展示了跟进记录的内容</li>
+                        <li>修复功能：修改项目后，产品总价格始终为0的情况</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.1.5</h3>
+                    <small>2018/09/12</small>
+                    <ul>
+                        <li>修复功能：更新项目管理中检索问题</li>
+                        <li>修复登录日志中会出现两次登录操作日志的情况</li>
+                        <li>新增功能：已关闭工单</li>
+                        <li>修复功能：项目管理中将签订合同的项目放到已关闭项目中</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.1.4</h3>
+                    <small>2018/09/07</small>
+                    <ul>
+                        <li>修复功能：将项目中的产品使用地和决策地更改为必填项</li>
+                        <li>更改已关闭项目中的状态，变更为：签订合同、项目取消、项目暂停、项目关闭（丢单）</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.1.3</h3>
+                    <small>2018/09/05</small>
+                    <ul>
+                        <li>修复功能：项目管理修改产品后导致主页面不显示的问题</li>
+                        <li>增加登录日志功能，可以从超级管理员账号看到所有的登录、登出信息</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.1.2</h3>
+                    <small>2018/08/31</small>
+                    <ul>
+                        <li>修复功能：客户详细页中增加跟进记录表展示</li>
+                        <li>修复功能：工单管理中结单评价更改展示方式</li>
+                        <li>修复项目管理中关联产品为必填项、产品使用地无法展示的问题</li>
+                        <li>增加后台功能：将可以对页面的图标、后置模式等配置进行更改</li>
+                        <li>新增对工作记录、文件共享的日志功能</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.1.1</h3>
+                    <small>2018/08/29</small>
+                    <ul>
+                        <li>增加新功能：对文件功能进行升级更新。</li>
+                        <li>修复BUG：客户中的客户地域属性显示成客户级别的问题</li>
+                        <li>客户、项目如果再添加时双击保存按钮会保存两个的问题</li>
+                        <li>工作记录展示问题修复</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.1.0</h3>
+                    <small>2018/08/24</small>
+                    <ul>
+                        <li>增加新功能：工单评价功能，可以对执行人进行星级评价，现版本可根据反馈性、及时性、附加性进行评价</li>
+                        <li>增加新功能:防止第一次打开页面时缓慢导致得页面错位等现象，增加了等待窗</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.0.7</h3>
+                    <small>2018/08/22</small>
+                    <ul>
+                        <li>增加新功能：工作记录，用于区分之前所填写在工单中的日常信息</li>
+                        <li>修复因工单中的文本框太小而导致输入局限的问题，现改为根据屏幕自适应</li>
+                        <li>增加新功能：当有未确认的工单，进入登录页面会作出提示</li>
+                        <li>修复工单发送邮件问题，如果当前工单是指派给自己时将不发送邮件</li>
+                        <li>修复了项目中附件上传失败的问题</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.0.6</h3>
+                    <small>2018/08/17</small>
+                    <ul>
+                        <li>修复项目添加丢失的情况（需要重载才可以显示）</li>
+                        <li>新增查看已关闭项目的功能，并规定唯一入口</li>
+                        <li>将文件共享中的文件进行整理</li>
+                        <li>修复了文件共享首页点击返回导致的白页面现象</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.0.5</h3>
+                    <small>2018/08/13</small>
+                    <ul>
+                        <li>客户、项目、工单中的序号问题</li>
+                        <li>受保护项目中检索功能点击后导致数据显示不出来的问题</li>
+                        <li>增加项目管理中可以根据产品使用地检索的功能</li>
+                        <li>将大家不常用的产品管理、CRM使用手册、更新日志、常见问题、系统设置等图标放到了页面左下方的开始菜单中。</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.0.4</h3>
+                    <small>2018/08/08</small>
+                    <ul>
+                        <li>增加工单类型分类功能</li>
+                        <li>修复产品管理中打开详细页无数据的问题</li>
+                        <li>修复客户详细页数据展示出现问题的情况</li>
+                        <li>修复在项目管理中关闭项目受保护项目中还存在的情况</li>
+                        <li>更改了受保护项目中产品等的展示方式及结构</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.0.3</h3>
+                    <small>2018/08/06</small>
+                    <ul>
+                        <li>增加工单发布时邮件提醒功能</li>
+                        <li>修复功能，客户、项目中增加默认选中项</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.0.2</h3>
+                    <small>2018/08/03</small>
+                    <ul>
+                        <li>新增项目关闭功能</li>
+                        <li>刘建提出：在项目管理中点击查看受保护项目，无反应的问题。已经解决了此问题</li>
+                        <li>刘建提出：在添加项目时如果项目标题太长超过了25个字符的时候将限制输入的问题。</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.0.1</h3>
+                    <small>2018/08/01</small>
+                    <ul>
+                        <li>增加右键安全退出功能</li>
+                        <li>增加日志自动生成功能</li>
+                        <li>公告板可以添加链接等插件元素</li>
+                        <li>修复漏洞：上级权限可以删除下级权限的数据</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V2.0.0.0</h3>
+                    <small>2018/07/31</small>
+                    <ul>
+                        <li>更新升级前端UI框架</li>
+                        <li>新增公告板功能</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V1.1.0.4</h3>
+                    <small>2018/07/31</small>
+                    <ul>
+                        <li>袁琦提出：当进入页面后先点击受保护项目再点击客户管理页面，客户管理页面显示了非权限的客户信息。已经修复了此问题</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V1.1.0.3</h3>
+                    <small>2018/07/23</small>
+                    <ul>
+                        <li>刘建提出：工单管理中，删除和修改工单刷新之后数据又变回原来的数据了。已经修复了此问题</li>
+                        <li>袁琦提出：工单管理中添加完成之后，点击刷新按钮，页面数据显示出现问题。已经修复了此问题</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V1.1.0.2</h3>
+                    <small>2018/07/18</small>
+                    <ul>
+                        <li>项目管理中点击添加附件时仍然出现白条现象。现已修复了此问题。</li>
+                        <li>受保护项目中检索客户、负责人出现问题导致能检索出所有的数据，检索之后受保护项目的数据也跟着出现了问题。现已修复了此问题。</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V1.1.0.1</h3>
+                    <small>2018/07/16</small>
+                    <ul>
+                        <li>改变了客户、项目、工单的添加方式，采用弹出层的展示方式以解决之前出现的白条的问题</li>
+                        <li>客户管理中修改了添加中的验证条件。更改了添加联系人的方式展示</li>
+                        <li>项目中增加了项目保护模块，增加添加项目时自动检测保护项目功能</li>
+                        <li>使用了数据缓存技术，访问速度将得到大幅度的提升</li>
+                        <li>解决了打开三大模块默认采用倒序排列的问题</li>
+                        <li>解决了客户和项目中无法根据权限看到联系人的全部信息的问题</li>
+                        <li>解决了BUG--客户添加成功后不刷新点击详情页出现非法操作的问题</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V1.0.3.1</h3>
+                    <small>2018/06/21</small>
+                    <ul>
+                        <li>项目管理页面改版，采用表格方式展现，能在主页面查看到更多有用并需要看到的信息</li>
+                        <li>项目增加功能：支持根据客户名称、项目状态、负责人、标题模糊检索。</li>
+                        <li>项目增加功能：改变了添加或修改时整体保存按钮，使页面操作性更便捷</li>
+                        <li>项目增加功能：改变了添加或修改中增加产品型号时的添加方式</li>
+                        <li>项目增加功能：支持排序功能，可以根据项目名称、负责人、当前阶段、把握度、集成项目等进行排序</li>
+                        <li>项目增加功能：增加详细页打印功能，可以打印您的项目的详细信息</li>
+                        <li>项目添加/编辑页面采用表格展示划分必填或选填项，使结构可以更清晰</li>
+                        <li>项目详细页美化界面</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V1.0.2.1</h3>
+                    <small>2018/06/15</small>
+                    <ul>
+                        <li>客户管理页面改版，采用表格方式展现，能在主页面查看到更多有用并需要看到的信息</li>
+                        <li>客户增加功能：支持根据客户属性、创建人、标题模糊检索。</li>
+                        <li>客户增加功能：改变了添加或修改时整体保存按钮，使页面操作性更便捷</li>
+                        <li>客户增加功能：支持根据客户名称、创建人、创建时间等进行排序</li>
+                        <li>客户增加功能：增加详细页打印功能，可以打印您的客户的详细信息</li>
+                        <li>客户添加/编辑页面采用表格展示划分必填或选填项，使结构可以更清晰</li>
+                        <li>客户详细页美化界面</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V1.0.1.1</h3>
+                    <small>2018/06/13</small>
+                    <ul>
+                        <li>工单管理页面改版，采用表格方式展现，能在主页面查看到更多有用并需要看到的信息</li>
+                        <li>工单增加功能：支持根据状态、创建人、执行人、标题模糊检索。</li>
+                        <li>工单增加功能：改变了添加或修改时整体保存按钮，使页面操作性更便捷</li>
+                        <li>工单增加功能：添加了指引功能，可以点击主页面上的隐藏/显示指引查看您所需要的流程</li>
+                        <li>工单增加功能：支持根据状态、标题、客户项目、创建人、执行人、时间进行排序</li>
+                        <li>工单增加功能：增加详细页打印功能，可以打印您的工单详细报告</li>
+                        <li>工单增加功能：增加评价功能，结单后可对执行人这次工作进行一次评价</li>
+                        <li>修复浏览器为IE内核时不能访问页面中指引不明确的问题</li>
+                        <li>工单详细页美化界面</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V1.0.0.4</h3>
+                    <small>2018/06/08</small>
+                    <ul>
+                        <li> 修复了项目中：当附件小于0.1MB时会显示0.0MB的问题。解决方案：当小于0.1MB时，统一显示0.1MB</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V1.0.0.3</h3>
+                    <small>2018/06/06</small>
+                    <ul>
+                        <li> 修复了建议箱中：必须点击刷新按钮才能显示出新增的数据，过于浪费流量的问题。</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V1.0.0.2</h3>
+                    <small>2018/05/28</small>
+                    <ul>
+                        <li>2018/05/28 更新了工单添加导致的空白框的问题</li>
+                        <li>2018/05/30 修复了IE内核浏览器访问不正常的问题</li>
+                        <li>修复了客户管理、项目管理中弹出层的问题。</li>
+                        <li>修复了客户管理中联系人信息编辑的必选项功能</li>
+                        <li>修复了项目备注保存不提示的问题</li>
+                        <li>修复了项目备注保存不提示的问题</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V1.0.0.1</h3>
+                    <small>2018/05/11</small>
+                    <ul>
+                        <li>增加了修改密码的功能</li>
+                        <li>新增意见箱功能</li>
+                        <li>新增说明文档</li>
+                    </ul>
+                </div>
+            </li>
+            <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                    <h3 class="layui-timeline-title">V1.0.0.0</h3>
+                    <small>2018/05/10</small>
+                    <ul>
+                        <li>正式发布CRM到公网</li>
+                    </ul>
+                </div>
+            </li>
+        </ul>  
+        <br />
+    </div>
+    </div>
+</block>
+<block name="scriptTemplate">
+</block>
+<block name="footjs">
+    <script src="{$Think.const.BOOTSTRAP_URL}layim3.0/3.7.6/layui.js" charset="utf-8"></script>
+</block>
+

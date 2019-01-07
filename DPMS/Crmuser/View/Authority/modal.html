@@ -1,0 +1,46 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+<div class="modal-body">
+    <div class="form-container">
+        <form name="Form" verify-scope class="myform">
+            <div class="form-group">
+                <label>权限名称</label>               
+                <input type="text" ng-model="Source.selectItem.authname" placeholder="请输入1~25个字符" ng-verify="min:1, max:25" ng-readonly="Source.Action==2||Source.Action==3||Source.Action==4" /> 
+            </div>
+            <div ng-show="Source.Action==3">
+                <div class="form-group">
+                    <label>分配权限</label>
+                    <div  class="mycheckbox">
+                        <div class="checkbox"  ng-repeat="usertype in Source.usertypeData" >
+                            <label style="text-align:left;">
+                                <input type="checkbox" ng-model="usertype.checked" ng-change="save(usertype)" />{{usertype.typename}}
+                            </label>
+                        </div>
+                        <a ng-click="addUsertypeClick()" title="新建用户角色"><i class="fa fa-plus green f-16"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div ng-show="Source.Action==4">
+                <div class="form-group">
+                    <label>关联页面</label>
+                    <div class="mycheckbox">
+                        <div class="checkbox" ng-repeat="app in service.privateDateObj.appinfoData">
+                            <label style="text-align:left;">
+                                <input type="checkbox" ng-model="app.checked" ng-change="save(app)" />{{app.name}}
+                            </label>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+         </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save(1)" ng-show="Source.Action==0">连续保存</button>
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save(0)" ng-show="Source.Action==0||Source.Action==1">保存</button>
+    <button class="btn btn-primary btn-sm" type="button" ng-click="save(2)" ng-show="Source.Action==2">删除</button>
+    <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+</div>

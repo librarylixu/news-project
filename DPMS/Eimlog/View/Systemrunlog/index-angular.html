@@ -1,0 +1,69 @@
+﻿  <!--页头-->
+<div class="page-header clearfix">
+    <div class="col-xs-12 text-center">
+        <a ng-click="select(1);dates.stoday='';dates.etoday=''" class="btn btn-success btn-sm">
+            <i class="glyphicon glyphicon-refresh"></i>刷新
+        </a>
+    </div>
+    <div class="col-xs-12 text-left" style="min-height:30px;">
+        <div class="text-left col-xs-12">
+            <a href="javascript:;" class="blue" title="点击隐藏/显示操作日志" ng-click="hideOther=!hideOther">
+                <i class="fa" ng-class="{'fa-chevron-circle-down':hideOther,'fa-chevron-circle-up':!hideOther}" aria-hidden="true"></i>
+                <span>{{hideOther?'展开':'隐藏'}}根据时间操作日志</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-xs-12 text-left" ng-if="!hideOther">
+        <div style="display:inline-block;">
+            <input date-time name="pickerMaxDate" ng-model="dates.stoday" view="date" min-view="date" timezone="Asia/Hong_Kong" format="YYYY-MM-DD" watch-direct-changes="true" placeholder="请输入开始时间">～
+            <div style="display:inline-block;">
+                <input date-time ng-model="dates.etoday" id="pickerMaxDate" view="date" min-view="date" timezone="Asia/Hong_Kong" format="YYYY-MM-DD" watch-direct-changes="true" placeholder="请输入结束时间">
+            </div>
+        </div>
+        <div style="margin-top:10px; margin-left:50px;">
+            <a ng-click="operationlog(0)" class="btn btn-primary btn-sm">
+                <i class="glyphicon glyphicon-refresh"></i>&nbsp; 查询日志
+            </a>
+            &nbsp;
+            <a ng-click="operationlog(1)" class="btn btn-warning btn-sm">
+                <i class="glyphicon glyphicon-refresh"></i>&nbsp; 清空日志
+            </a>
+        </div>
+    </div>
+</div>
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>图标</th>
+                <th>日志内容</th>
+                <th>日志类型</th>
+                <th>时间</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in service.systemrunlogData['data']">
+                <td><i class="fa fa-file fa-lg"></i></td>
+                <td ng-bind="item.text"></td>
+                <td ng-bind="item.level==0?'信息日志':'错误日志'"></td>
+                <td ng-bind="item.time"></td>
+            </tr>        
+        </tbody>
+    </table>
+    <div class="text-right">
+        当前<span class="blue" ng-bind="service.systemrunlogData['count']"></span>条日志
+        <ul class="pagination">
+            <li><a href="#" ng-click="setPage(1)">&laquo;</a></li>
+            <li><a href="#" ng-click="nextPage(-1)">&larr;</a></li>
+            <li ng-repeat="item in _thisPageArray" class="{{item==service._thisPageCount?'active':''}}">
+                <a href="#" ng-click="setPage(item)" ng-bind="item"></a>
+            </li>
+            <li><a href="#" ng-click="nextPage(1)">&rarr;</a></li>
+            <li><a href="#" ng-click="setPage(service.systemrunlogData['count']/_pageCount)">&raquo;</a></li>
+        </ul>
+        共<span class="blue" ng-bind="ceilint(service.systemrunlogData['count']/_pageCount)"></span>页
+    </div>
+   
+    <!-- paging datalist属性值(dataList)为要分页的原始数据-->
+    <!--<rj_date datalist="dataList">123</rj_date>-->   
+</div>

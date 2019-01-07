@@ -1,0 +1,460 @@
+  <div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+
+<form name="Form" verify-scope class="modal-body" style="max-height:100%;overflow:visible;max-height:none;">
+    <div class="form-group" ng-if="Source.Action == 0||Source.Action == 2">
+        <label>项目名称</label>
+        <input type="text" id="projectname" ng-readonly="Source.Action>1" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.name" ng-keyup="saveAddProject($event)" placeholder="请输入1~25个字符" />
+    </div>
+    <div class="profile-user-info profile-user-info-striped" style="min-height:44px;" ng-if="Source.selectItem.idproject">
+        <div class="profile-info-row">
+            <div class="profile-info-name">
+                项目名称
+            </div>
+            <div class="profile-info-value">
+                <div class="col-sm-6 ">
+                    <span class="blue left-15" style="cursor:pointer;border-bottom:1px dashed #478FCA"
+                          ng-click="Source.Action=1;"
+                          title="点击进入编辑模式"
+                          popover-placement='right'
+                          uib-popover-template="dynamicPopover.templateUrl"
+                          popover-title="{{dynamicPopover.title_name}}"
+                          popover-is-open="Source.editNameIsOpen"
+                          ng-bind="service.selectItem.name?service.selectItem.name:'点击添加项目名称'"></span>
+                </div>
+                <div class="col-sm-6" ng-show="Source.selectItem.idproject">
+                    <label class="col-sm-3 text-right">创建时间</label>
+                    <div class="col-sm-9">
+                        <i class="ace-icon orange fa fa-clock-o bigger-110"></i>
+                        <span ng-bind="formatDate(Source.selectItem.createtime)"></span>
+                    </div>
+                </div>
+            </div>
+            
+
+        </div>
+
+    <!--判断：1.如果是添加页面，添加完成后把新加项目的id，然后重新查数据赋值给service.selectItem并显示出来
+             2.如果是编辑页面，则有相关数据取到，service.selectItem.idproject不为空-->
+    <!--<div class="profile-info-row" ng-show="Source.selectItem.idproject">
+        <div class="profile-info-name">
+            开始/结束时间
+        </div>
+        <div class="profile-info-value">
+            <div class="f-l col-sm-6">
+                <label class="f-l">开始时间</label>
+                <div class="f-l col-sm-9">
+                    <i class="ace-icon orange fa fa-clock-o bigger-110"></i>
+                    <span class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA"
+                          ng-bind="P_getMyTime(dates._stime*1000)"></span>
+                    <div style="display:inline-block;">
+                        <button type="button" class="btn  btn-xs btn-warning" date-time id="pickerMaxDate" ng-model="dates.stoday" view="date" min-view="date" timezone="Asia/Hong_Kong" format="yy-mm-dd" watch-direct-changes="true"><i class="glyphicon glyphicon-calendar"></i></button>
+                        <a href="javascript:;" ng-show="dates._stime!=service.selectItem.starttime" class="btn btn-xs btn-success" ng-click="save('starttime',1,1);"><i class="fa fa-save"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="f-l  col-sm-6">
+                <label class="f-l">结束时间</label>
+                <div class="f-l col-sm-9">
+                    <i class="ace-icon orange fa fa-clock-o bigger-110"></i>
+                    <span class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA"
+                          ng-bind="P_getMyTime(dates._etime*1000)"></span>
+                    <div style="display:inline-block;">
+                        <button type="button" class="btn  btn-xs btn-warning" date-time id="pickerEnd" ng-model="dates.etoday" view="date" min-view="date" timezone="Asia/Hong_Kong" format="yy-mm-dd" watch-direct-changes="true"><i class="glyphicon glyphicon-calendar"></i></button>
+                        <a href="javascript:;" ng-show="dates._etime!=service.selectItem.endtime" class="btn btn-xs btn-success" ng-click="save('endtime',1,1);"><i class="fa fa-save"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>-->
+
+    <div class="profile-info-row" ng-show="Source.selectItem.idproject">
+        <div class="profile-info-name">
+            项目阶段
+        </div>
+        <div class="profile-info-value">
+            <div class="col-sm-6">
+                <div class="col-sm-9">
+                    <div>
+                        <ui-select ng-model="service.selectItem.refstatusData" on-select="save_status($item, 0)" style="display:inline-block">
+                            <ui-select-match>
+                                <span ng-bind="$select.selected.name">
+                                </span>
+                            </ui-select-match>
+
+                            <ui-select-choices repeat="item in service.statusArrData">
+                                <div ng-bind="item.name"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <label class="col-sm-3 text-right">合同签订日期</label>
+                <div class="col-sm-9">
+                    <i class="ace-icon orange fa fa-clock-o bigger-110"></i>
+                    <span  ng-bind="P_getMyTime(dates._contracttime*1000)"></span>
+                    <div style="display:inline-block;">
+                        <button type="button" class="btn  btn-xs btn-warning" date-time ng-model="dates.contracttoday" view="date" min-view="date" timezone="Asia/Hong_Kong" format="yy-mm-dd" watch-direct-changes="true"><i class="glyphicon glyphicon-calendar"></i></button>
+                        <a href="javascript:;" ng-show="dates._contracttime!=service.selectItem.contracttime" class="btn btn-xs btn-success" ng-click="save('contracttime',1,1);"><i class="fa fa-save"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--<div class="profile-info-row" ng-show="Source.selectItem.idproject">
+        <div class="profile-info-name">
+            预计日期
+        </div>
+        <div class="profile-info-value">
+            <div class="f-l col-sm-6">
+                <label class="f-l">预计招标日期</label>
+                <div class="f-l col-sm-9">
+                    <i class="ace-icon orange fa fa-clock-o bigger-110"></i>
+                    <span class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA"
+                          ng-bind="P_getMyTime(dates._tendertime*1000)"></span>
+                    <div style="display:inline-block;">
+                        <button type="button" class="btn  btn-xs btn-warning" date-time ng-model="dates.tendertoday" view="date" min-view="date" timezone="Asia/Hong_Kong" format="yy-mm-dd" watch-direct-changes="true"><i class="glyphicon glyphicon-calendar"></i></button>
+                        <a href="javascript:;" ng-show="dates._tendertime!=service.selectItem.tendertime" class="btn btn-xs btn-success" ng-click="save('tendertime',1,1);"><i class="fa fa-save"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="f-l col-sm-6">
+                <label class="f-l">预计交货日期</label>
+                <div class="f-l col-sm-9">
+                    <i class="ace-icon orange fa fa-clock-o bigger-110"></i>
+                    <span class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA"
+                          ng-bind="P_getMyTime(dates._delivertime*1000)"></span>
+                    <div style="display:inline-block;">
+                        <button type="button" class="btn  btn-xs btn-warning" date-time id="pickerEnd" ng-model="dates.delivertoday" view="date" min-view="date" timezone="Asia/Hong_Kong" format="yy-mm-dd" watch-direct-changes="true"><i class="glyphicon glyphicon-calendar"></i></button>
+                        <a href="javascript:;" ng-show="dates._delivertime!=service.selectItem.delivertime" class="btn btn-xs btn-success" ng-click="save('delivertime',1,1);"><i class="fa fa-save"></i></a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>-->
+
+    <div class="profile-info-row" ng-show="Source.selectItem.idproject">
+        <div class="profile-info-name">
+            项目把握度
+        </div>
+
+        <div class="profile-info-value">
+            <div class="col-sm-6">
+                <div class="percentage col-sm-6">
+                    <ui-select ng-model="service.selectItem.grasp" on-select="save_grasp($item, 0)" style="display:inline-block">
+                        <ui-select-match>
+                            <span ng-bind="$select.selected">
+                            </span>
+                        </ui-select-match>
+
+                        <ui-select-choices repeat="item in service.graspArrData">
+                            <div ng-bind="item"></div>
+                        </ui-select-choices>
+                    </ui-select>%
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <label class="col-sm-3 text-right">是否集成项目 </label>
+                <div class="col-sm-6">
+                    <input type="radio" name="service.selectItem.integrate" ng-click="save('integrate',1,1,1);" ng-checked="service.selectItem.integrate==1?true:false" />是
+                    <input type="radio" name="service.selectItem.integrate" ng-click="save('integrate',1,1,0);" ng-checked="service.selectItem.integrate==0?true:false" />否
+                </div>
+            </div>
+        </div>
+        <br />
+    </div>
+
+
+    <div class="profile-info-row" ng-show="(Source.selectItem.idproject)">
+        <div class="profile-info-name">
+            客户
+        </div>
+        <div class="profile-info-value">
+            <div class="col-sm-6">
+                <div class="col-sm-9">
+                    <ui-select multiple ng-model="service.selectItem.refcustomerData" on-select="save_customer($item,0)" ng-change="customer " on-remove="save_customer($item,1)">
+                        <ui-select-match>
+                            <span ng-bind="$item.name">
+                            </span>
+                        </ui-select-match>
+                        <ui-select-choices repeat="item in (service.customerinfoArrData | filter:$select.search) track by $index">
+                            <div ng-bind-html="item.name| highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="profile-info-row" ng-show="(Source.selectItem.idproject)">
+        <div class="profile-info-name">
+            线人
+        </div>
+        <div class="profile-info-value">
+            <div class="clearfix" ng-show="service.selectItem.refcontactData.length>0">
+                <div class="col-sm-6">
+
+                    <div class="col-sm-9">
+                        <ui-select multiple ng-model="service.selectItem.refinformantData" on-select="save_contact($item, 0, 1)" on-remove="save_contact($item, 1,1)">
+                            <ui-select-match>
+                                <span ng-bind="$item.name">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item in (service.selectItem.refcontactData| filter:$select.search) track by $index">
+                                <div ng-bind-html="item.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label class="col-sm-3 text-right top-5">决策者</label>
+                    <div class="col-sm-9">
+                        <ui-select multiple ng-model="service.selectItem.refdecisionData" on-select="save_contact($item, 0,2)" on-remove="save_contact($item, 1,2)">
+                            <ui-select-match>
+                                <span ng-bind="$item.name">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item in (service.selectItem.refcontactData| filter:$select.search) track by $index">
+                                <div ng-bind-html="item.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <div class="profile-info-row" ng-show="Source.selectItem.idproject&&service.selectItem.refcontactData.length>0">
+        <div class="profile-info-name">
+            技术把关者
+        </div>
+        <div class="profile-info-value" >
+            <div class="col-sm-6">
+                <div class="col-sm-9">
+                    <ui-select multiple ng-model="service.selectItem.reftechnicalData" on-select="save_contact($item, 0,3)" on-remove="save_contact($item, 1,3)">
+                        <ui-select-match>
+                            <span ng-bind="$item.name">
+                            </span>
+                        </ui-select-match>
+                        <ui-select-choices repeat="item in (service.selectItem.refcontactData| filter:$select.search) track by $index">
+                            <div ng-bind-html="item.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+            <div class="col-sm-6" >
+                <label class="col-sm-3 text-right top-5">使用者</label>
+                <div class="col-sm-9">
+                    <ui-select multiple ng-model="service.selectItem.refusingData" on-select="save_contact($item, 0,4)" on-remove="save_contact($item, 1,4)">
+                        <ui-select-match>
+                            <span ng-bind="$item.name">
+                            </span>
+                        </ui-select-match>
+                        <ui-select-choices repeat="item in (service.selectItem.refcontactData| filter:$select.search) track by $index">
+                            <div ng-bind-html="item.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+        </div>
+    </div>
+            <div class="profile-info-row" ng-show="Source.selectItem.idproject">
+                <div class="profile-info-name">
+                    产品使用地
+                </div>
+
+                <div class="profile-info-value">
+                    <div class="col-sm-6">
+                        <div class="col-sm-6">
+                            <ui-select ng-model="service.selectItem.province" on-select="getcityData($item, 'province', 'citylevelData')" style="display:inline-block">
+                                <ui-select-match>
+                                    <span ng-bind="$select.selected.province_name">
+                                    </span>
+                                </ui-select-match>
+
+                                <ui-select-choices repeat="item in Source.getCityedArrData">
+                                    <div ng-bind="item.province_name"></div>
+                                </ui-select-choices>
+                            </ui-select>
+
+                            <span ng-show="service.selectItem.province.province_name != '暂无省份'">
+                                <ui-select ng-model="service.selectItem.citylevelData" on-select="save_province($item, 'province', 'citylevelData')" style="display:inline-block">
+                                    <ui-select-match>
+                                        <span ng-bind="$select.selected.city">
+                                        </span>
+                                    </ui-select-match>
+
+                                    <ui-select-choices repeat="item in service.getcityArrData">
+                                        <div ng-bind="item.city"></div>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="col-sm-3 text-right top-5">决策地</label>
+                        <div class="col-sm-9">
+                            <ui-select ng-model="service.selectItem.decisionprovince" on-select="getcityData($item, 'decisionprovince', 'decisioncitycitylevelData')" style="display:inline-block">
+                                <ui-select-match>
+                                    <span ng-bind="$select.selected.province_name">
+                                    </span>
+                                </ui-select-match>
+
+                                <ui-select-choices repeat="item in Source.getCityedArrData">
+                                    <div ng-bind="item.province_name"></div>
+                                </ui-select-choices>
+                            </ui-select>
+
+                            <span ng-show="service.selectItem.decisionprovince.province_name != '暂无省份'">
+                                <ui-select ng-model="service.selectItem.decisioncitycitylevelData" on-select="save_province($item, 'decisioncity', 'decisioncitycitylevelData')" style="display:inline-block">
+                                    <ui-select-match>
+                                        <span ng-bind="$select.selected.city">
+                                        </span>
+                                    </ui-select-match>
+
+                                    <ui-select-choices repeat="item in service.getcityArrData">
+                                        <div ng-bind="item.city"></div>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <br />
+            </div>
+            <div class="profile-info-row" ng-if="Source.selectItem.idproject">
+                <div class="profile-info-name">
+                    备注
+                </div>
+                <div class="profile-info-value">
+                    <div class="col-sm-6 ">
+                        <textarea ng-model="Source.selectItem.mark" class="col-sm-12 left-15" ></textarea>
+                        <button type="button" class="btn btn-xs btn-success" ng-show="service.selectItem.mark!=Source.selectItem.mark" ng-click="save('mark',1,1);">保存</button>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="profile-info-row">
+                <div class="profile-info-name">
+                    抄送
+                </div>
+                <div class="profile-info-value">
+                    <div class="col-sm-6 left-15">
+                        <ui-select multiple ng-model="service.selectItem.refuserData" on-select="save($item, $model,4,0)" on-remove="save($item, $model,4,1)">
+                            <ui-select-match>
+                                <span ng-bind="$item.username"></span><span ng-if="$item.description">：</span><b ng-if="$item.description" ng-bind="$item.description"></b>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item in (service.userArrData| filter:$select.search) track by item.idusers">
+                                <div><span ng-bind-html="item.username | highlight: $select.search"></span>:<span ng-bind="item.description"></span></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+            </div>
+            <!--<div class="profile-info-row" style="display:none;" ng-show="hideauth">
+                <div class="profile-info-name">
+                    用户角色
+                </div>
+                <div class="profile-info-value" >
+                    <div style="width:500px;">
+                        <ui-select multiple ng-model="service.selectItem.refusertypeData" on-select="save($item, $model,5,0)" on-remove="save($item, $model,5,1)">
+                            <ui-select-match>
+                                <span ng-bind="$item.typename">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item in service.usertypeArrData">
+                                <div ng-bind-html="item.typename"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-info-row" style="display:none;" ng-show="hideauth">
+                <div class="profile-info-name">
+                    用户组
+                </div>
+                <div class="profile-info-value">
+
+                    <div style="width:500px;">
+                        <ui-select multiple ng-model="service.selectItem.refusergroupData" on-select="save($item, $model,6,0)" on-remove="save($item, $model,6,1)">
+                            <ui-select-match>
+                                <span ng-bind="$item.groupname">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item in service.usergroupArrData">
+                                <div ng-bind-html="item.groupname"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+            </div>-->
+
+            <div class="profile-info-row">
+                <div class="profile-info-name">
+                    附件
+                </div>
+                <div class="profile-info-value">
+                    <ul class="ace-thumbnails clearfix">
+                        <li ng-repeat="item in productAnnx track by $index" ng-show="close{{item.idannex}}==undefined">
+                            <div>
+                                <img width="150" height="60" alt="150x60" ng-src="{{publicFilterAnnexName(item.name)}}" />
+                                <div class="tags">
+                                    <span ng-bind="item.name.length>5?item.name.slice(0,5)+'...':item.name"></span>
+                                    <span ng-bind="(item.filesize/1024/1024).toFixed(1)"></span>MB
+                                </div>
+                                <div class="text" ng-attr-title="{{item.name}}">
+                                    <div class="inner">
+                                        <span ng-bind="item.name.length>9?item.name.slice(0,9)+'...':item.name"></span>
+                                        <br />
+
+                                        <a href="#" ng-click="downLoad(item.idannex)">
+                                            <i class="ace-icon fa fa-download"></i>
+                                        </a>
+
+                                        <!--<a href="#">
+                                            <i class="ace-icon fa fa-pencil"></i>
+                                        </a>-->
+
+                                        <a href="#" ng-click="service.refAnnex(item.idannex,1);">
+                                            <i class="ace-icon fa fa-times red"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li style="border:none;">
+                            <div style="width:150px;height:60px;border:2px dashed #ccc;line-height:60px;color:#ccc;font-size:18px;font-weight:400;text-align:center">
+                                <i class="fa fa-plus"></i> 点击上传附件
+                                <div class="text" style="cursor:pointer;" ng-click="upLoad()">
+
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+
+                </div>
+                <br />
+            </div>
+
+            <div class="profile-info-row" style="min-height:30px;min-width:100px;">
+                <div class="profile-info-name">
+                    产品
+                </div>
+
+                <div class="profile-info-value">
+                    <div ng-include="'__MODULE__/Project/productlist'"></div>
+                </div>
+            </div>
+
+        </div>
+</form>
+
+<div class="modal-footer" style="clear:both;">
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="saveAdd();" ng-show="Source.Action==0">保存</button>
+    <button class="btn btn-primary btn-sm" type="button" ng-click="save()" ng-show="Source.Action==2">删除</button>
+</div>
+

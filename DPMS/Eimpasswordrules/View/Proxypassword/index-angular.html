@@ -1,0 +1,107 @@
+﻿  <!--页头-->
+<div class="page-header clearfix">
+    <div class="col-xs-12">
+        <a ng-click="add()" class="btn btn-info btn-sm">
+            <i class="glyphicon glyphicon-plus"></i>添加
+        </a>
+        <a ng-click="select(1);dates.stoday='';dates.etoday=''" class="btn btn-info btn-sm">
+            <i class="glyphicon glyphicon-refresh"></i>刷新
+        </a>      
+        <div class="f-r">
+            <span class="input-icon">
+                <input type="text" ng-model="filename" placeholder="Search ..." class="nav-search-input">
+                <i class="ace-icon fa fa-search nav-search-icon"></i>
+            </span>
+        </div>   
+    </div>
+</div>
+<div>
+    <div class="table-header">密码管理
+        <a href="javascript:;" class="f-r" style="padding-right:20px;text-decoration:underline;color:#fff">
+            <i class="fa fa-download"></i>导出
+        </a>
+        <a href="javascript:;" class="f-r" style="padding-right:20px;text-decoration:underline;color:#fff">
+            <i class="glyphicon glyphicon-open"></i>导入
+        </a>                                            
+    </div>
+    <table class="table table table-striped table-bordered table-hover table-condensed table-responsive">
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>账号</th>
+                <th>创建人</th>              
+                <th>创建时间</th>
+                <th>修改时间</th>
+                <th>状态</th>
+                <th>备注</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in service.privateDateObj.proxypasswordData">
+                <td ng-bind="item.idproxypassword"></td>
+                <td ng-bind="item.login"></td>
+                <td><span class="label label-success" ng-bind="service.privateDateObj.usersData[item.createuserid].description"></span></td>               
+                <td ng-bind="formatDate(item.createtime)"></td>
+                <td ng-bind="item.updatetime !=0?formatDate(item.updatetime,'yyyy-mm-dd'):'无修改时间'"></td>
+                <td>
+                    <span ng-click="changeStatus(item)" ng-if="item.status==0" class="label label-info " style="cursor:pointer;">启用</span>
+                    <span  ng-click="changeStatus(item)" ng-if="item.status==1" class="label label-warning"  style="cursor:pointer;">禁用</span>                    
+                </td>
+                <td ng-bind="item.remark"></td>
+                <td>
+                    <a href="javascript:;" title="编辑" class="green top-5" ng-click="updateInfo(item)">
+                        <i class="glyphicon glyphicon-pencil fa-lg"></i>
+                    </a>
+                    <a href="javascript:;" title="删除" class="red top-5" ng-click="remove(item)">
+                        <i class="glyphicon glyphicon-trash fa-lg"></i>
+                    </a>
+                    <!--<a href="javascript:;" title="创建密码规则" class="orange top-5" ng-click="addPasswordrule(item)">
+                        <i class="fa fa-plus fa-lg"></i>
+                    </a>-->
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<!--模态框-->
+<script type="text/ng-template" id="Eimpasswordrules/Proxypassword/openmodal">
+    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <form name="Form" verify-scope>
+                <div class="form-group">
+                    <label for="login">账号</label>
+                    <input type="text" class="form-control" id="login" ng-model="Source.selectItem.login" ng-verify="min:1, max:25" placeholder="输入1~25位账号名称" />
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input name="pwd" type="password" class="form-control"   ng-verify="{required:{{Source.Action==1?false:true}},min:1,max:25}" ng-model="Source.selectItem.pwd" placeholder="{{Source.Action==1 ? '为空则表示不修改密码' : '密码为1-25位,必填'}}">
+                </div>
+                <div class="form-group" ng-if="Source.selectItem.pwd">
+                    <label for="password">确认密码</label>
+                    <input  type="password" class="form-control"  ng-verify="{required:true,recheck:'pwd'}" placeholder="{{Source.Action==1 ? '为空则表示不修改密码' : '密码为1-25位,必填'}}">
+                </div>
+                <div class="form-group">
+                    <label for="status">状态</label>
+                    <input type="radio" name="status" ng-model="Source.selectItem.status" value="0"  />启用
+                    <input type="radio" name="status" ng-model="Source.selectItem.status" value="1" />禁用
+                               
+                </div>
+                <div class="form-group">
+                    <label>备注</label>
+                    <textarea class="form-control" rows="3" ng-model="Source.selectItem.remark" placeholder="请输入中文（非必填）"></textarea>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save()" >保存</button>
+        <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+    </div>
+
+
+</script>

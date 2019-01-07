@@ -1,0 +1,68 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="btn_cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+
+<form name="Form" verify-scope style="max-height:80%;margin-top:8px;">
+    <div class="top-5">
+        <!--基本-->
+        <div class="panel panel-default" ng-show="tab_page=='tab_Basic'||tab_page==undefind">
+            <div class="panel-body">
+                <div class="profile-user-info profile-user-info-striped">
+                    <div class="modal-body">
+                        <div ng-if="service.ismultiplepwdrules.length > 0">
+                            <div class="col-xs-6 text-right">选择密码</div>
+                            <div class="col-xs-6" ng-repeat="item in service.ismultiplepwdrules">
+                     设备名称：[<span ng-bind="item.devicename"></span>]
+                                <select ng-model="Source.refpasswordData" ng-options="item.idproxypassword as item.login for item in service.myproxypasswordData"></select>
+                            </div>
+                        </div>
+                        <div ng-if="service.ismanualinputpwd.length > 0">
+                            <div ng-repeat="item in service.ismanualinputpwd">
+                     设备名称：[<span ng-bind="item.devicename"></span>]
+                                <div class="clearfix" style="padding:10px;padding-top:0;">
+                                    <div class="col-xs-4 text-right">账号</div>
+                                    <div class="col-xs-6">
+                                        <input type="text" ng-model="Source.manualinputpwd[item.idassetslist].loginuser" />
+                                    </div>
+                                </div>
+                                <div class="clearfix" style="padding:10px;padding-top:0;">
+                                    <div class="col-xs-4 text-right">密码</div>
+                                    <div class="col-xs-6">
+                                        <input type="password" ng-model="Source.manualinputpwd[item.idassetslist].loginpwd" />
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div ng-if="service.isopensession.length > 0">
+                            <div ng-repeat="item in service.isopensession">
+                      设备名称：[<span ng-bind="item.devicename"></span>]
+                                <div class="col-xs-6 text-right">会话打开方式</div>
+                                <div class="col-xs-6">
+                                    <select ng-model="Source.refsessionData">
+                                        <option value="1" ng-selected="true">抢占</option>
+                                        <option value="2">加入</option>
+                                        <option value="3">监控</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--<input type="text" class="form-control" ng-model="Source.selectItem.devicesessiontypeids" />-->
+
+</form>
+
+<div class="modal-footer" style="clear:both;">
+    <button class="btn btn-info btn-sm" ng-verify="control:'Form'" type="button" ng-click="btn_save();">确定</button>
+    <button class="btn btn-danger btn-sm" type="button" ng-click="btn_cancel();">取消</button>
+
+</div>
+
+

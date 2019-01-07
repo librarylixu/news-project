@@ -1,0 +1,50 @@
+﻿<div ng-controller="saveContactController">
+    <a href="javascript:;" class="btn btn-sm btn-info f-r" ng-click="addContact()"><i class="fa fa-plus"></i>&nbsp;添加联系人</a>
+
+    <table class="table">
+        <tr>
+            <th style="width:5%;">序号</th>
+            <th style="width:10%;">名称<span style="color: red; font-size: 150%; position: absolute; margin-left:1px;" title="必填">*</span></th>
+            <th style="width:20%;">职位<span style="color: red; font-size: 150%; position: absolute; margin-left:1px;" title="必填">*</span></th>
+            <th style="width:15%;">手机<span style="color: red; font-size: 150%; position: absolute; margin-left:1px;" title="必填">*</span></th>
+            <th style="width:15%;">电话</th>
+            <!--<th style="width:10%;">QQ</th>-->
+            <th style="width:15%;">邮箱</th>
+            <th style="width:10%;">操作</th>
+        </tr>
+
+        <tr ng-repeat="item in service.contactData">
+            <td ng-bind="$index+1">1</td>
+            <td>
+                <span ng-if="!item._edit" ng-bind="item.name"></span>
+                <input ng-if="item._edit" ng-verify="min:1, max:25" type="text" ng-model="item.name" />
+            </td>
+            <td>
+                <span ng-if="!item._edit" ng-bind="item.position"></span>
+                <input ng-if="item._edit" ng-verify="min:1, max:25" type="text" ng-model="item.position" />
+            </td>
+            <td>
+                <span ng-if="!item._edit" ng-bind="item.mobilephone"></span>
+                <input ng-if="item._edit" ng-verify="" type="phone" ng-model="item.mobilephone" />
+            </td>
+            <td>
+                <span ng-if="!item._edit" ng-bind="item.phone"></span>
+                <input ng-if="item._edit" ng-verify="{pattern:/^0\d{2,3}-\d{7,8}(-\d{1,6})?$/,errmsg:'电话号码格式不正确',required:false}" type="text" ng-model="item.phone" />
+            </td>
+            <!--<td>
+                <span ng-if="!item._edit" ng-bind="item.qqchat"></span>
+                <input ng-if="item._edit" ng-verify="{pattern:/^[1-9]\d{4,8}$/,errmsg:'QQ格式不正确',required:false}" type="text" ng-model="item.qqchat" />
+            </td>-->
+            <td>
+                <span ng-if="!item._edit" ng-bind="item.email"></span>
+                <input ng-if="item._edit" ng-verify="{pattern:/^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/,errmsg:'邮箱格式不正确',required:false}" type="text" ng-model="item.email" />
+            </td>
+            <td>
+                <button class="btn  btn-xs btn-info" type="button" ng-if="!item._edit" ng-click="oldcopy={time:0};item._edit=!item._edit;"><i class="fa fa-edit"></i></button>
+                <button class="btn  btn-xs btn-info" type="button" ng-if="item._edit" ng-click="saveContact(item,1);item._edit=!item._edit"><i class="fa fa-save"></i></button>
+                <button class="btn  btn-xs btn-warning" type="button" ng-if="!item._edit" ng-click="saveContact(item,2)"><i class="fa fa-trash"></i></button>
+            </td>
+        </tr>
+    </table>
+
+</div>

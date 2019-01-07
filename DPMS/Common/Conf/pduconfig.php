@@ -1,0 +1,53 @@
+<?php
+$pduoid=array( 
+    'DPU7016D-8'=>array(
+                        'portnum'=>8,//端口数
+                        'walkoid'=>'1.3.6.1.4.1.23273.3.1',//批量获取数据的节点
+                        'getportstatusoid'=>'1.3.6.1.4.1.23273.3.1.1.6.%d.0',//get端口的开关状态Oid模板
+                        'setportstatusoid'=>'1.3.6.1.4.1.23273.3.1.1.6.%d.0',//set端口的开关状态Oid模板
+                        //set端口的开关状态Oid模板
+                        'setportstatusvalue'=>array(
+                                'type'=>'s',//set的数据类型 s 表示字符串  i 表示int数据
+                                'on'=>'ON',  //开启端口的值
+                                'off'=>'OFF',//关闭端口的值
+                         ),
+                         //get端口的电流值Oid模板
+                        'getportcusoid'=>array(
+                            'oid'=>'1.3.6.1.4.1.23273.3.1.1.7.%d.0',
+                            'calculation'=>100,
+                        ),
+                        //get端口的电能值Oid模板
+                        'getportenergyoid'=>array(
+                            'oid'=>'1.3.6.1.4.1.23273.3.1.1.10.%d.0',
+                            'calculation'=>10,
+                        ),
+                        //'getportpoweroid'=>'1.3.6.1.4.1.23273.3.1.1.6.%d.0',//get端口的功率值Oid模板
+                        //getPDU的电流值Oid
+                        'getpducusoid'=>array(
+                            'oid'=>'1.3.6.1.4.1.23273.3.1.1.2.9.0',
+                            'calculation'=>100,
+                        ),
+                        //getPDU的电压值Oid
+                        'getportvoloid'=>array(
+                            'oid'=>'1.3.6.1.4.1.23273.3.1.1.2.1.0',
+                            'calculation'=>1,
+                        ),
+                        //总功率
+                        'getpower'=>array(
+                            'oid'=>'.1.3.6.1.4.1.23273.3.1.1.2.3.0',
+                            'calculation'=>1,
+                        ),
+                        //总电能
+                        'getenergyoid'=>array(
+                            'oid'=>'.1.3.6.1.4.1.23273.3.1.1.2.5.0',
+                            'calculation'=>10,
+                        ),
+                        //功率因素
+                        'getpowerfactor'=>array(
+                            'oid'=>'.1.3.6.1.4.1.23273.3.1.1.2.4.0',
+                            'calculation'=>1,
+                        ),
+                        //PDU序列号oid
+                        'snoid'=>'1.3.6.1.4.1.23273.3.5.1.1.4.0',
+                    ),
+);

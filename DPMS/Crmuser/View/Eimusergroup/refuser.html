@@ -1,0 +1,15 @@
+﻿<div class="form-group" ng-controller="usergroupRefuserController">
+    <label class="col-xs-3 text-right">关联用户</label>
+    <div class="col-xs-8">     
+        <ui-select multiple ng-model="Source.selectItem.usersids"  style="width:100%;">
+            <ui-select-match placeholder="请选择要关联的用户">
+                <span ng-bind="$item.value.description" style="margin-right: 5px;">
+                </span>
+            </ui-select-match>
+            <ui-select-choices repeat="item.value.idusers  as (key,item) in Source.privateDateObj.usersData | filter: { value: { description: $select.search }}" style="max-height: 150px;"  on-select="save_refuser($item, 1)">
+                <div ng-bind-html="item.value.description | highlight: $select.search"></div>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+    
+</div>

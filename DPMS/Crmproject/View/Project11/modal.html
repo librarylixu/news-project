@@ -1,0 +1,149 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+
+<div class="modal-body">
+    <div class="form-container">
+        <form name="Form" verify-scope class="myform">
+            <div class="form-group" ng-if="Source.Action == 0||Source.Action == 2">
+                <label>项目名称</label>
+                <input type="text" ng-readonly="Source.Action>1" ng-verify="min:1, max:25" class="form-control" ng-model="Source.selectItem.name" ng-keyup="saveAddCustomer($event)" placeholder="请输入1~25个字符" />
+            </div> 
+            <div ng-show="Source.Action==1" style="min-height:30px;">
+                <div class="text-right col-xs-12">
+                    <a href="javascript:;" title="点击隐藏/显示其余属性" ng-click="hideOther=!hideOther">
+                        <i class="fa" ng-class="{'fa-chevron-circle-down':hideOther,'fa-chevron-circle-up':!hideOther}" aria-hidden="true"></i>
+                        <span>{{hideOther?'展开其他':'隐藏'}}属性</span>
+                    </a>
+                </div>
+            </div>
+            <!--其他属性-->
+            <div ng-show="!hideOther&&(Source.Action==1)">
+                <div class="form-group">
+                    <label>开始时间</label>
+                    <!--<input type="text" ng-verify="{required:false}" class="form-control" ng-model="Source.selectItem.starttime" placeholder="请选择一个开始时间" />-->
+                    <p class="input-group" style="margin-left:31%;margin-top:-30px;">
+                        <input type="text" ng-verify="{required:false}" class="form-control"  ng-model="Source.selectItem.starttime" style="width:81%" uib-datepicker-popup  is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" placeholder="请选择一个开始时间" />
+                        <span class="input-group-btn" >
+                            <button type="button" class="btn btn-default" style="margin-left:-29px;padding:4px 7px;" ng-click="open2()"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </p>
+                </div>                           
+                <div class="form-group">
+                    <label>结束时间</label>
+                    <!--<input ng-verify="{required:false}" type="text" ng-model="Source.selectItem.endtime" class="form-control" placeholder="请选择一个结束时间" />-->
+                    <p class="input-group" style="margin-left:31%;margin-top:-30px;">
+                        <input type="text" ng-verify="{required:false}" class="form-control" ng-model="Source.selectItem.endtime" style="width:81%" uib-datepicker-popup  is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" placeholder="请选择一个结束时间" />
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" style="margin-left:-29px;padding:4px 7px;" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </p>
+                </div>
+                <div class="form-group" ng-show="false">
+                    <label>最终用户</label>
+                    <input ng-verify="{required:false}" type="text" ng-model="Source.selectItem.clientname" class="form-control" placeholder="请输入最终用户（非必填）" />
+                </div>                              
+                <div class="form-group">
+                    <label>备注</label>
+                    <!-- 自定义正则,并自定义错误消息 -->
+                    <textarea ng-verify="pattern:/[\u4e00-\u9fa5]/, required:false, errmsg:'需要输入中文' " type="text" class="form-control" ng-model="Source.selectItem.fax" placeholder="请输入中文（非必填）"></textarea>
+                </div>                               
+            </div>          
+            <div ng-show="Source.Action==3">
+                <div class="form-group">
+                    <label>修改项目状态</label>
+                    <div class="mycheckbox">
+                        <div class="checkbox" ng-repeat="status in Source.projectstatusData track by $index">
+                            <label style="text-align:left;width:100%">
+                                <input type="checkbox" ng-model="status.checked" ng-change="save(status)" />{{status.status}}
+                            </label>
+                        </div>
+                        <a ng-click="addProjectstatusClick()" title="新建项目状态"><i class="fa fa-plus green f-16"></i></a>
+                    </div>
+                   
+                </div>
+            </div>                    
+            <div ng-show="Source.Action==4">
+               
+                <div class="form-group">
+                    <label>关联用户</label>
+                    <div class="mycheckbox">
+                        <div class="checkbox" ng-repeat="user in Source.usersData track by $index">
+                            <label style="text-align:left;;width:100%">
+                                <input type="checkbox" ng-model="user.checked" ng-change="save(user)" />{{user.username}}
+                            </label>
+                        </div>
+                        <a ng-click="addUserClick()" title="新建用户"><i class="fa fa-plus green f-16"></i></a>
+                    </div>                   
+                </div>
+            </div>
+            <div ng-show="Source.Action==5">
+                <div class="form-group">
+                    <label>关联用户角色</label>
+                    <div class="mycheckbox">
+                        <div class="checkbox" ng-repeat="usertype in Source.usertypeData track by $index">
+                            <label style="text-align:left;;width:100%">
+                                <input type="checkbox" ng-model="usertype.checked" ng-change="save(usertype)" />{{usertype.typename}}
+                            </label>
+                        </div>
+                        <a ng-click="addUserTypeClick()" title="新建用户角色"><i class="fa fa-plus green f-16"></i></a>
+                    </div>
+                    
+                </div>
+            </div>
+            <div ng-show="Source.Action==6">
+                <div class="form-group">
+                    <label>关联用户组</label>
+                    <div class="mycheckbox">
+                        <div>
+                            <treecontrol class="tree-light" tree-model="service.treedata" on-selection="save(node)">
+                                <span ng-mouseenter="mouseenter=true" ng-mouseleave="mouseenter=false">
+                                    <span ng-class="node.isParent == true?'fa fa-user-circle-o bigger-120 ng-scope':'fa fa-user bigger-120 ng-scope'" ng-class="node.type"></span>
+                                    <input type="checkbox" ng-checked="node.checked">
+                                    <span ng-bind="node.groupname"></span>
+                                    <i class="fa fa-plus green" uib-popover="为【{{node.groupname}}】添加一个子集分组" popover-trigger="'mouseenter'" popover-placement="top-left" popover-append-to-body="true" style="white-space:nowrap;" ng-show="mouseenter" ng-click="addUsergroupClick(node)"></i>
+                                </span>
+                            </treecontrol>
+                        </div>
+                        <a ng-click="addUsergroupClick()" title="新建用户组"><i class="fa fa-plus green f-16"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div ng-show="Source.Action==7">
+                <div class="form-group">
+                    <label>关联联系人</label>
+
+                    <div class="mycheckbox">
+                        <div class="checkbox" ng-repeat="contact in Source.contactData track by $index">
+                            <label style="text-align:left;;width:100%">
+                                <input type="checkbox" ng-model="contact.checked" ng-change="save(contact)" />{{contact.name}}
+                            </label>
+                        </div>
+                        <a ng-click="addContactClick()" title="新建联系人"><i class="fa fa-plus green f-16"></i></a>
+                    </div>
+
+                </div>
+            </div>
+            <div ng-show="Source.Action==8">
+                <div class="form-group">
+                    <label>关联客户</label>
+                    <div class="mycheckbox">
+                        <div class="checkbox" ng-repeat="customer in Source.customerinfoData track by $index">
+                            <label style="text-align:left;width:100%">
+                                <input type="checkbox" ng-model="customer.checked" ng-change="save(customer)" />{{customer.name}}
+                            </label>
+                        </div>
+                        <a ng-click="addCustomerinfoClick()" title="新建客户"><i class="fa fa-plus green f-16"></i></a>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save(0)" ng-show="Source.Action==0">保存</button>
+    <button class="btn btn-primary btn-sm" type="button" ng-click="save(2)" ng-show="Source.Action==2">删除</button>
+    <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+</div>

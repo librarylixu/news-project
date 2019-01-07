@@ -1,0 +1,90 @@
+﻿    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+    <div class="modal-body">
+        <div class="form-container">
+            <form name="Form" verify-scope class="myform">
+                <div class="form-group">
+                    <label>经营品牌</label>
+                    <input type="text" ng-readonly="Source.Action==2" ng-verify="min:1, max:25" class="form-control" ng-model="service.selectItem.customerpanyPageData.brand" placeholder="请输入1~25个字符" />
+                </div>            
+                <div class="form-group">
+                    <label>经营范围</label>
+                    <input type="text" ng-readonly="Source.Action==2" ng-verify="min:1, max:25" class="form-control" ng-model="service.selectItem.customerpanyPageData.range" placeholder="请输入1~25个字符" />
+                </div>
+                <div class="form-group">
+                    <label>主营客户群</label>
+                    <input type="text" ng-readonly="Source.Action==2" ng-verify="min:1, max:25" class="form-control" ng-model="service.selectItem.customerpanyPageData.cusbase" placeholder="请输入1~25个字符" />
+                </div>
+                <div class="form-group">
+                    <label>主营业务</label>
+                    <input type="text" ng-readonly="Source.Action==2" ng-verify="min:1, max:25" class="form-control" ng-model="service.selectItem.customerpanyPageData.business" placeholder="请输入1~25个字符" />
+                </div>    
+                <div ng-show="Source.Action==0||Source.Action==1" style="min-height:30px;">
+                    <div class="text-right col-xs-12">
+                        <a href="javascript:;" title="点击隐藏/显示其余属性" ng-click="hideOther=!hideOther">
+                            <i class="fa" ng-class="{'fa-chevron-circle-down':hideOther,'fa-chevron-circle-up':!hideOther}" aria-hidden="true"></i>
+                            <span>{{hideOther?'展开其他':'隐藏'}}属性</span>
+                        </a>
+                    </div>
+                </div>
+                <!--其他属性-->
+                <div ng-show="!hideOther&&(Source.Action==0 || Source.Action==1)">
+                    <div class="form-group">
+                        <label>注册资金<i style="color:#ccc;font-size:10px;font-family:'Times New Roman', Times, serif">(万)</i></label>
+                        <input type="text" ng-readonly="Source.Action==2" ng-verify="{pattern:/^[0-9]*$/,required:false}" class="form-control" ng-model="service.selectItem.customerpanyPageData.capital" placeholder="请输入金额（非必填）" />
+                    </div> 
+                    <div class="form-group">
+                        <label>营业额<i style="color:#ccc;font-size:10px;font-family:'Times New Roman', Times, serif;">(万)</i></label>
+                        <input type="text" ng-readonly="Source.Action==2" ng-verify="{pattern:/^[0-9]*$/,required:false}" class="form-control" ng-model="service.selectItem.customerpanyPageData.turnover" placeholder="请输入金额（非必填）" />
+                    </div> 
+                    <div class="form-group">
+                        <label>开户银行</label>
+                        <input type="text" ng-readonly="Source.Action==2" ng-verify="pattern:/[\u4e00-\u9fa5]/, required:false, errmsg:'需要输入中文' " class="form-control" ng-model="service.selectItem.customerpanyPageData.bank" placeholder="请输入中文（非必填）" />
+                    </div> 
+                    <div class="form-group">
+                        <label>银行账号</label>
+                        <input type="text" ng-readonly="Source.Action==2" ng-verify="{pattern:/^[0-9]*$/,required:false}" class="form-control" ng-model="service.selectItem.customerpanyPageData.Bankaccount" placeholder="请输入数字（非必填）" />
+                    </div> 
+                    <div class="form-group">
+                        <label>营业执照</label>
+                        <input type="file" ng-model="service.selectItem.Bankaccount" title="上传"/>
+                    </div> 
+                    <div class="form-group">
+                        <label>地税登记号</label>
+                        <input type="text" ng-readonly="Source.Action==2" ng-verify="{pattern:/^[0-9]*$/,required:false}" class="form-control" ng-model="service.selectItem.customerpanyPageData.landtax" placeholder="请输入数字（非必填）" />
+                    </div> 
+                    <div class="form-group">
+                        <label>国税登记号</label>
+                        <input type="text" ng-readonly="Source.Action==2" class="form-control" ng-model="service.selectItem.customerpanyPageData.tax" placeholder="请输入数字（非必填）" />
+                    </div> 
+                    <div class="form-group">
+                        <label>法人姓名</label>
+                        <input type="text" ng-readonly="Source.Action==2" ng-verify="pattern:/[\u4e00-\u9fa5]/, required:false, errmsg:'需要输入中文' " class="form-control" ng-model="service.selectItem.customerpanyPageData.legalname" placeholder="请输入中文（非必填）" />
+                    </div> 
+                    <div class="form-group">
+                        <label>法人电话</label>
+                        <input type="text" ng-readonly="Source.Action==2" ng-verify="{pattern:/^(\(\d{3,4}\)|\d{3,4}-|\s)?\d{7,14}$/,errmsg:'电话格式不正确',required:false}" class="form-control" ng-model="service.selectItem.customerpanyPageData.legalphone" placeholder="输入电话号码（非必填）" />
+                    </div> 
+                    <div class="form-group">
+                        <label>法人手机</label>
+                        <input ng-verify="required:false" type="phone" ng-readonly="Source.Action==2" class="form-control" ng-model="service.selectItem.customerpanyPageData.legalmphone" placeholder="请输入手机号码（非必填）" />
+                    </div>
+                    <div class="form-group">
+                        <label>描述信息</label>
+                        <input type="text" ng-readonly="Source.Action==2" ng-verify="pattern:/[\u4e00-\u9fa5]/, required:false, errmsg:'需要输入中文' " class="form-control" ng-model="service.selectItem.customerpanyPageData.description" placeholder="请输入中文（非必填）" />
+                    </div>
+                </div>
+                
+                
+            </form>
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save(0)" ng-show="Source.Action==0||Source.Action==1">保存</button>
+        <button class="btn btn-primary btn-sm" type="button" ng-click="save(2)" ng-show="Source.Action==2">删除</button>
+        <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+    </div>
+

@@ -1,0 +1,27 @@
+﻿/*index_new 首页面专用*/ 
+.stand {
+            display: block !important;
+        }
+
+        .stay {
+            background-color: rgb(241, 245, 249) !important;
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
+       
+
+        .submenu li a:hover {
+            cursor: pointer;
+        }
+
+        .layim-list-gray {
+            -webkit-filter: grayscale(100%);
+            -ms-filter: grayscale(100%);
+            filter: grayscale(100%);
+        }
+       

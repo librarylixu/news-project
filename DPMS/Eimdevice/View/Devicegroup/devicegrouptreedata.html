@@ -1,0 +1,7 @@
+<div ng-controller="eimDevicegroupController">
+    <treecontrol class="tree-light" tree-model="service.treedevicegroupdata" on-selection="showSelected(node)">
+        <span class="fa bigger-120" ng-class="node.isParent == true?'fa-user-circle-o':'fa-user'"></span>
+        <input ng-if="node.idusergroup != Source.selectItem.idusergroup" type="radio" name="group" ng-checked="node.checked">
+        <span ng-bind="node.groupname"></span>
+    </treecontrol>
+</div>

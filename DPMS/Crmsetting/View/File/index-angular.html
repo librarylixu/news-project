@@ -1,0 +1,234 @@
+<extend name="angular-base.html" />
+<block name="headcss">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angular-bootstrap-colorpicker/3.0.32/css/colorpicker.min.css">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angularTree/css/tree-control.css" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angularTree/css/tree-control-attribute.css" />
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}my-tree-style.css" />
+    <link rel="stylesheet" href="{$Think.const.PAGE_URL}css/crmProject/my-project-info.css" />
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}my-gallery.css" />
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}upload.css" />
+</block>
+<block name="headjs">
+    <script src="{$Think.const.BOOTSTRAP_URL}angularTree/js/angular-tree-control.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-sanitize/{$Think.const.ANGULAR_VERSION}angular-sanitize.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular-bootstrap-colorpicker/3.0.32/js/bootstrap-colorpicker-module.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular/{$Think.const.ANGULAR_VERSION}angular-touch.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-file-upload/angular-file-upload.min.js"></script>
+    <script>
+        parent.layer.load(1, {
+            shade: [0.6, '#fff']
+        });
+    </script>
+    <script>
+        //初始化modal并定义service
+        //'ngTouch', 'ui.grid.expandable', 'ui.grid.selection', 'ui.grid.pinning'
+        appModuleInit(['ui.bootstrap', 'ngVerify', 'ui.select', 'colorpicker.module', 'treeControl', 'angularFileUpload']);
+        //主控制器
+        appModule.controller('crmFileController', ['$scope', '$q', 'dataService', 'alert', function ($scope, $q, dataService, alert) {
+            $scope.service = dataService;//要显示到页面上的数据源
+            $scope.service.username = "{$username}";
+            //给菜单栏隐藏显示一个默认值
+            $scope.showwin = false;
+            //初始化文本编辑器
+            //进入到主页直接去初始化百度编辑器
+            var ue = UE.getEditor('filecontainer', {
+                toolbars: [['redo', 'indent', 'snapscreen', 'italic', 'underline', 'strikethrough', 'source', 'blockquote', 'pasteplain','inserttable', 'mergecells', 'deletetable', 'cleardoc', 'insertparagraphbeforetable', 'fontsize', 'paragraph', 'edittable', 'edittd', 'link', 'justifyright', 'justifycenter', 'justifyjustify', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'fullscreen', 'attachment']],
+                autoHeightEnabled: true,
+                autoFloatEnabled: true,
+                elementPathEnabled: false,
+                wordCount: false
+            });
+            //刷新按钮
+            $scope.refresh = refresh;
+            //查询文件tree数据
+            $scope.selecttreedata = function () {
+                //产品数据
+                $scope.service.postData(__URL + 'Crmsetting/File/select_treefile_data', {}).then(function (data) {
+                    $scope.service.treefileData = data;
+                    $scope.service.treefileArrData = P_objecttoarray($scope.service.treefileData);
+                    //关闭加载层
+                    parent.layer.closeAll('loading');
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+            //页面加载完成后，查询数据
+            $scope.selecttreedata();
+            //默认不显示页面
+            $scope.showappinfo = false;
+            //点击tree事件
+            $scope.clickselectfile = function (data) {
+                //第二步,权限划分,显示编辑按钮
+                if (data.userid.indexOf($scope.service.username) > -1) {
+                    $scope.showedit = true;
+                } else {
+                    $scope.showedit = false;
+                    $scope.savebutton = false;
+                }
+                //点击后单页面显示的模块
+                $scope.data = data;
+                $scope.showappinfo = true;
+                //当前是否有文件,没有的话显示文字
+                $scope.service.nullfile = true;
+                if(document.getElementById('content_' + data.id)){
+                    $scope.service.nullfile = false;
+                }
+            }
+            //点击了编辑事件
+            $scope.editue = function (data) {
+                if (document.getElementById('content_' + data.id)) {
+                    //给编辑器赋值
+                    ue.setContent(document.getElementById('content_' + data.id).innerHTML);
+                } else {
+                    ue.setContent('');
+                }
+                //ue.setContent(document.getElementById('content_' + data.id));
+                //保存/取消按钮
+                $scope.savebutton = !$scope.savebutton;
+            }
+            //点击了保存
+            $scope.save = function (data) {
+                if (ue.getContent() == '') {
+                    parent.layer.msg('请在编辑框中输入再保存!');
+                    return;
+                }
+                var defer = $q.defer();//延迟处理
+                var params = new URLSearchParams();
+                var url = __URL + "Crmsetting/File/update_page_data";
+                params.append('where', JSON.stringify({ 'fileid': data.id }));
+                params.append('fileid', data.id);
+                $arrcontent = ue.getContent().split("href");
+                var content = '';
+                //循环，除了第一个不加，剩下都加
+                for (var i = 0; i < $arrcontent.length;i++){
+                    if (i == 0) {
+                        //退出
+                        content += $arrcontent[i];
+                        continue;
+                    }
+                    var lengthtar = $arrcontent[i].lastIndexOf('target="_blank"');
+                    if (lengthtar >= 0) {
+                        content += " href" + $arrcontent[i];
+                        continue;
+                    }
+                    if ($arrcontent.length == i) {
+                        content += " href" + $arrcontent[i];
+                        continue;
+                    }
+                    //else if (parseInt($arrcontent[i].length - lengthtar) <= 15) {
+                    //    content += " href" + $arrcontent[i];
+                    //    continue;
+                    //}
+                    content += " target=\"_blank\"  href" + $arrcontent[i];
+                }
+                params.append('file', content);
+                $scope.service.postData(url, params).then(function (result) {
+                    //更新数据源
+                    if (document.getElementById('content_' + data.id)) {
+                        document.getElementById('content_' + data.id).innerHTML = content;
+                    } else {
+                        //<span ng-show=\"data.id == " + data.id + "\"><span id='content_'" + data.id + "><span>" + ue.getContent() + "</span></span></span>
+                        //document.createElement("div");
+                        location.reload();
+                    }
+                    parent.layer.msg('保存成功！');
+                    $scope.savebutton = !$scope.savebutton;
+                    //处理正常结果
+                    defer.resolve(result);
+                }, function (error) {
+                    console.log(error);
+                });
+                return defer.promise;
+            }
+            //点击了取消
+            $scope.saveclose = function () {
+                //这里加一个提示
+                $scope.savebutton = !$scope.savebutton;
+            }
+            $scope.newfile = function (text) {
+                console.log(text);
+            }
+        }]);
+    </script>
+</block>
+<block name="pageContent">
+    <!--页头-->
+    <div class="page-header clearfix">
+
+        <h1 class="col-xs-3 text-left">
+            {$MenuName}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {$PageName}
+            </small>
+        </h1>
+
+        <div class="col-xs-4 text-center">
+            <page-btn></page-btn>
+            <!--<button type="button" class="btn btn-sm" ng-click="selectdetailed()">详细信息</button>-->
+        </div>
+    </div>
+
+    <!--快速检索-->
+    <div class="table-header clearfix">
+        <div class="col-xs-6">{$MenuName}<small><i class="ace-icon fa fa-angle-double-right"></i>{$PageName}</small></div>
+    </div>
+    <div class="top-10">
+        <button type="button" class="blue btn btn-sm" style="cursor: pointer;" ng-click="showwin = !showwin">{{showwin?"展开":"收起"}}菜单栏</button>
+        <br />
+        <div class="col-xs-3" ng-if="!showwin">
+            <treecontrol class="tree-light" tree-model="service.treefileArrData">
+                <span>
+                    <span ng-bind="node.name" ng-click="clickselectfile(node)"></span><a href="javascript:;" ng-show="node.children">(<span ng-bind="node.children.length"></span>)</a>
+                </span>
+            </treecontrol>
+        </div>
+        <div ng-class="{true:'col-xs-12',false:'col-xs-9'}[showwin]" class="pull-right" ng-show="showappinfo">
+            <h4 class="text-info clearfix" ng-bind="data.name"></h4>
+            <div class="text-right" ng-show="showedit"><a href="#" ng-if="!savebutton" ng-click="editue(data)">编辑文件</a><a href="#" ng-if="savebutton" ng-click="editue(data)">中止编辑</a></div>
+            <div style="border-left:3px;border-top:3px;border-color:black;">
+                <!-- 加载编辑器的容器 -->
+                <div ng-show="savebutton">
+                    <script class="col-xs-10" style="width:100%;padding: 0px;" id="filecontainer" name="content" type="text/plain">
+                    </script>
+                </div>
+                <div id="docementcontent" class="col-xs-12 top-10" ng-show="!savebutton">
+                    <foreach name="filedata" item="value">
+                        <span ng-show="data.id == '{$value.fileid}'">
+                            <span id="content_{$value.fileid}">
+                                <span><php>echo ($value['file']) == ''?'<p class="text-info" ng-if="data.id ">当前分类中暂无文件</p>':($value['file'])</php></span>
+                            </span>
+                        </span>
+                    </foreach>
+                    <!--<p class="text-info" ng-if="data.id ">当前分类中暂无文件</p>-->
+                </div>
+                <div class="col-xs-12 text-right top-10" ng-show="savebutton">
+                    <button class="btn btn-primary btn-sm" title="请整理好文件再保存" type="button" ng-click="save(data);">
+                        保存
+                    </button>
+
+                    <br />
+                    <br />
+                    <!--<button class="btn btn-warning btn-sm" type="button" ng-click="saveclose();">取消</button>-->
+                </div>
+            </div>
+        </div>
+        <div ng-show="!showappinfo">
+            <p class="text-warning">请选择分类查看文件</p>
+        </div>
+    </div>
+</block>
+
+<block name="scriptTemplate">
+
+</block>
+
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Product/Product/uploadBtn.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagebtn.js"></script>
+    <!-- 配置文件 -->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}ueditor/1.4.3.3/ueditor.config.js"></script>
+    <!-- 编辑器源码文件 -->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}ueditor/1.4.3.3/ueditor.all.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagecomment.js"></script>
+</block>

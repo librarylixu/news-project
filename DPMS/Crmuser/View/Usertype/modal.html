@@ -1,0 +1,65 @@
+﻿    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+    <div class="modal-body">
+    <div class="form-container">
+        <form name="Form" verify-scope class="myform">
+            <div class="form-group">
+                <label>角色名称</label>
+                <input type="text" ng-model="Source.selectItem.typename" ng-verify="min:1, max:25" placeholder="输入1~25位角色名称" ng-readonly="Source.Action==2||Source.Action==3||Source.Action==4||Source.Action==5" />
+            </div>
+            <div ng-show="Source.Action==3">                               
+                <div class="form-group">
+                    <label>关联用户</label>
+                    <div class="mycheckbox" >
+                        <div class="checkbox" ng-repeat="user in Source.usersData track by $index">
+                            <label style="text-align:left;">
+                                <input type="checkbox" ng-model="user.checked" ng-change="save(user)" />{{user.username}}
+                            </label>
+                        </div>
+                        <a ng-click="addUserClick()" title="新建用户"><i class="fa fa-plus green f-16"></i></a>
+                    </div>
+
+                </div>
+            </div>
+            <div ng-show="Source.Action==4">
+                <div class="form-group">
+                    <label>关联用户组：</label>
+                    <div class="mycheckbox">
+                        <div>
+                            <treecontrol class="tree-light" tree-model="service.treedata" on-selection="showSelected(node)">
+                                <span ng-mouseenter="mouseenter=true" ng-mouseleave="mouseenter=false">
+                                    <span ng-class="node.isParent == true?'fa fa-user-circle-o bigger-120 ng-scope':'fa fa-user bigger-120 ng-scope'" ng-class="node.type"></span>
+                                    <input type="checkbox" ng-checked="node.checked">
+                                    <span ng-bind="node.groupname"></span>
+                                    <i class="fa fa-plus green" uib-popover="为【{{node.groupname}}】添加一个子集分组" popover-trigger="'mouseenter'" popover-placement="top-left" popover-append-to-body="true" style="white-space:nowrap;" ng-show="mouseenter" ng-click="addUsergroupClick(node)"></i>
+                                </span>
+                            </treecontrol>
+                        </div>
+                        <a ng-click="addUsergroupClick()" title="新建用户组"><i class="fa fa-plus green f-16"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div ng-show="Source.Action==5">
+                <div class="form-group">
+                    <label>关联权限</label>
+                    <div class="mycheckbox">
+                        <div class="checkbox" ng-repeat="auth in Source.authorityData track by $index">
+                            <label style="text-align:left;">
+                                <input type="checkbox" ng-model="auth.checked" ng-change="save(auth)" />{{auth.authname}}
+                            </label>
+                        </div>
+                        <a ng-click="addUserauthClick()" title="新建用户权限"><i class="fa fa-plus green f-16"></i></a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+ <div class="modal-footer">
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save(1)" ng-show="Source.Action==0">连续保存</button>
+    <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save(0)" ng-show="Source.Action==0||Source.Action==1">保存</button>
+    <button class="btn btn-primary btn-sm" type="button" ng-click="save(2)" ng-show="Source.Action==2">删除</button>
+    <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+</div>

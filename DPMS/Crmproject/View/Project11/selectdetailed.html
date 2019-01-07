@@ -1,0 +1,698 @@
+﻿ <extend name="angular-base.html" />
+<block name="headcss">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angular-bootstrap-colorpicker/3.0.32/css/colorpicker.min.css">
+    <!--评论组件-->
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}my-comments.css" />
+    <!--展示附件-->
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}my-gallery.css" />
+    <style>
+        table.dataTable {
+            border-collapse: collapse;
+            width: 100%;
+            table-layout: fixed;
+            box-sizing: border-box;
+        }
+
+        table.dataTable tr td {
+            /*border: 1px solid #efefef;
+                background-color: #f9f9f9;*/
+            border: 1px solid #ccc;
+            background-color: #fff;
+            padding-left: 12px;
+            padding-right: 12px;
+            padding-top: 6px;
+            padding-bottom: 6px;
+            /*text-align: center;*/
+            box-sizing: border-box;
+            /* height: 100%; */
+            word-break: break-all;
+            line-height: 20px;
+            color: #666;
+        }
+    </style>
+</block>
+<block name="headjs">
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular-bootstrap-colorpicker/3.0.32/js/bootstrap-colorpicker-module.js"></script>
+    <script>
+        var _id = '{$id}';
+
+        //初始化modal并定义service
+        appModuleInit(['ui.bootstrap', 'ngVerify', 'datePicker', 'ui.select', 'colorpicker.module', 'ngSanitize']);
+        //主控制器
+        appModule.controller('detailProjectController', ['$scope', '$q',  'dataService',  'alert', function ($scope, $q, dataService, alert) {
+            _$scope = $scope;
+            _$q = $q;
+            $scope.Source = angular.copy(dataService);
+            $scope.service = dataService;
+            //总价
+            $scope.price = {number:0, plist: 0, peu: 0, psi: 0,money:0 };
+            $scope.params = new URLSearchParams();
+            //时间戳转换为时间
+            $scope.formatDate = function (time) {
+                if (time == undefined || time == 0) {
+                    return '暂无';
+                } else {
+                    return formatDate(time);
+                }
+            }
+            /*
+                根据当前客户id，去查询客户的信息，如果没有值，CustomerinfoData为null，否则为对象
+            */
+            $scope.selectRefProject = function () {
+                var params = new URLSearchParams();
+                params.append('idproject', _id );
+                params.append('$find', true);
+                $scope.Source.postData(__URL + 'Crmproject/Project/select_page_data', params).then(function (data) {
+                    console.log(data);
+                    if (data != null) {
+                        $scope.ProjectData = data;
+                    } else {
+                        $scope.ProjectData = {};
+                    }
+                    //查询项目状态数据
+                    $scope.projectstatus();
+                    //获取产品使用地数据
+                    $scope.projectcity();
+                });
+            }
+            /*
+            项目状态
+             */
+            $scope.projectstatus = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                /*
+                    查询状态数据将数据已refstatus的属性push到项目数据源中
+                */
+                select_project_status(params).then(function (res) {
+                    //查询客户数据
+                    $scope.selectcustomer();
+                    $scope.refstatusData = [];
+                    if ($scope.ProjectData.statusid != null && $scope.ProjectData.statusid == $scope.service[res][$scope.ProjectData.statusid].idprojectstatus) {
+                        $scope.refstatusData.push($scope.service[res][$scope.ProjectData.statusid]);
+                    } else {
+                        $scope.refstatusData = [{ name: '暂无阶段', labelclass: '#ccc' }];
+                    }
+                });
+            }
+            //获取产品使用地数据
+            $scope.projectcity = function () {
+                $scope.cityData = '';
+                $scope.decisioncityData = '';
+                $scope.ProjectData.province = $scope.ProjectData.city.slice(0, 2);
+                $scope.ProjectData.citylevel = $scope.ProjectData.city.slice(2, 4);
+                $scope.ProjectData.decisionprovince = $scope.ProjectData.decisioncity.slice(0, 2);
+                $scope.ProjectData.decisioncitylevel = $scope.ProjectData.decisioncity.slice(2, 4);
+                $scope.Source.postData(__URL + 'Crmproject/Project/getCityData', {}).then(function (data) {
+                    $scope.cityArrData = JSON.parse(data);
+                    $scope.cityData = $scope.cityArrData[$scope.ProjectData.province].province_name + '--' + $scope.cityArrData[$scope.ProjectData.province].city[$scope.ProjectData.citylevel].city;
+                    $scope.decisioncityData = $scope.cityArrData[$scope.ProjectData.decisionprovince].province_name + '--' + $scope.cityArrData[$scope.ProjectData.decisionprovince].city[$scope.ProjectData.decisioncitylevel].city;
+                });
+            }
+            /*
+            查询客户数据
+            */
+            $scope.selectcustomer = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                /*
+                    查询客户数据将数据已refcustomerData的属性push到项目数据源中
+                */
+                select_customerinfo(params).then(function (res) {
+                    //查询产品数据
+                    $scope.selectcontact();
+                    //将数据添加进去
+                    if ($scope.refcustomerData == undefined) {
+                        $scope.refcustomerData = [];
+                    }
+                    if ($scope.ProjectData.refcustomers != null) {
+                        var customerarr = $scope.ProjectData.refcustomers.split(',');
+                        for (i = 0; i < customerarr.length; i++) {
+                            if (customerarr[i] != null && $scope.service[res][customerarr[i]] != undefined && customerarr[i] == $scope.service[res][customerarr[i]].idcustomerinfo) {
+                                $scope.refcustomerData.push($scope.service[res][customerarr[i]]);
+                            }
+                        }
+                    }
+                });
+            }
+            /*
+           查询联系人数据
+            */
+            $scope.selectcontact = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                /*
+                    查询联系人数据将数据已refcontact的属性push到项目数据源中
+                */
+                select_customer_contact(params).then(function (res) {
+                    //查询产品数据
+                    $scope.refselectproduct();                    
+                });
+            }
+            /*
+            查询产品数据
+            */
+            $scope.refselectproduct = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                /*
+                    先查询等级数据，等待回调之后在查询关系数据
+                */
+                select_productmodel(params).then(function (res) {
+                    var params = new URLSearchParams();
+                    params.append('$in', true);
+                    params.append('$json', true);
+                    params.append('projectid', _id.toString());
+                    dataService.postData(__URL + 'Crmproject/Projectdevicelist/select_page_data', params).then(function (data) {
+                        //查询用户数据
+                        $scope.refselectuser();
+                        $scope.refproductmodelData = data;                      
+                        angular.forEach($scope.refproductmodelData, function (value) {                            
+                            //累计计算订单总价
+                            $scope.price.number += parseInt(value.number);                         
+                            $scope.price.money += parseInt(value.money);
+                        });
+                    }, function (error) {
+                        console.log(error);
+                    });
+                });
+            }
+
+
+            /*
+            查询与用户关系数据
+            */
+            $scope.refselectuser = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                /*
+                    先查询等级数据，等待回调之后在查询关系数据
+                */
+                select_user(params).then(function (res) {
+                    //查询用户角色
+                    $scope.refselectusertype();
+                    if ($scope.refuserData == undefined) {
+                        $scope.refuserData = [];
+                    }
+                    if ($scope.ProjectData.refusers != null) {
+                        var userarr = $scope.ProjectData.refusers.split(',');
+                        for (i = 0; i < userarr.length; i++) {
+                            if (userarr[i] != null && userarr[i] == $scope.service[res][userarr[i]].idusers) {
+                                $scope.refuserData.push($scope.service[res][userarr[i]]);
+                            }
+                        }
+                    }
+                });
+            }
+
+            /*
+            查询与用户角色关系数据
+            */
+            $scope.refselectusertype = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                /*
+                        先查询等级数据，等待回调之后在查询关系数据
+                */
+                select_usertype(params).then(function (res) {
+                    //查询用户组
+                    $scope.refselectusergroup();
+                    //此处将数据添加进去
+                    if ($scope.refusertypeData == undefined) {
+                        $scope.refusertypeData = [];
+                    }
+                    if ($scope.ProjectData.refutypes != null) {
+                        var usertypearr = $scope.ProjectData.refutypes.split(',');
+                        for (i = 0; i < usertypearr.length; i++) {
+                            if (usertypearr[i] != null && usertypearr[i] == $scope.service[res][usertypearr[i]].idusertype) {
+                                $scope.refusertypeData.push($scope.service[res][usertypearr[i]]);
+                            }
+                        }
+                    }
+                });
+            }
+            /*
+            查询与用户组关系数据
+            */
+            $scope.refselectusergroup = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                /*
+                        先查询等级数据，等待回调之后在查询关系数据
+                */
+                select_usergroup(params).then(function (res) {
+                    //查询用户组
+                    $scope.refselectannex();
+                    //此处将数据添加进去
+                    if ($scope.refusergroupData == undefined) {
+                        $scope.refusergroupData = [];
+                    }
+                    if ($scope.ProjectData.refugroups != null) {
+                        var usergrouparr = $scope.ProjectData.refugroups.split(',');
+                        for (i = 0; i < usergrouparr.length; i++) {
+                            if (usergrouparr[i] != null && usergrouparr[i] == $scope.service[res][usergrouparr[i]].idusergroup) {
+                                $scope.refusergroupData.push($scope.service[res][usergrouparr[i]]);
+                            }
+                        }
+                    }
+                });
+            }
+            /*
+            查询与客户附件关系数据
+            */
+            $scope.refselectannex = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                /*
+                    先查询客户附件数据，等待回调之后在查询关系数据
+                */
+                select_annex(params).then(function (res) {
+                    var annexarr = [];
+                    //查询工单
+                    $scope.refselectworkorder();
+                    //此处将数据添加进去
+                    if ($scope.refannexData == undefined) {
+                        $scope.refannexData = [];
+                    }
+                    if ($scope.ProjectData.refannexs && $scope.ProjectData.refannexs!='') {
+                         annexarr = $scope.ProjectData.refannexs.split(',');
+                        for (i = 0; i < annexarr.length; i++) {
+                            if (annexarr[i] != null && annexarr[i] == $scope.service[res][annexarr[i]].idannex) {
+                                $scope.refannexData.push($scope.service[res][annexarr[i]]);
+                            }
+                        }
+                    } 
+                });
+            }
+
+            //附件下载
+            $scope.downLoad = function (annex) {
+                window.open(__URL + 'Crmsetting/Annex/downLoad?idannex=' + annex);
+            }
+            //附件图片路径
+            $scope.publicFilterAnnexName = function (itemName) {
+                return publicFilterAnnexName(itemName);
+            }
+            /*
+            查询与工单关系数据
+            ******* 可根据
+            */
+            $scope.refselectworkorder = function () {
+                var params = new URLSearchParams();
+                params.append('$findinset', true);
+                //params.append('$fetchSql', true);
+                params.append('$findall', true);
+                params.append('refprojectid', _id);
+                params.append('$fieldkey', 'idworkorder,guid,title,userid,createtime,status');
+                //先查询工单数据，等待回调之后在查询关系数据
+                select_workorder(params).then(function (res) {
+                    $scope.refworkorder = $scope.service[res];
+                    //console.log("111");
+                    //console.log($scope.refworkorder);
+                     //工单状态
+                    angular.forEach($scope.service[res],function (value,key) {
+                        if (value.status == "0") {
+                            value.refname = '<span class="label label-warning">' + '未确认' + '</span>';
+                        } else if (value.status == "1") {
+                            value.refname = '<span class="label label-default">' + '进行中' + '</span>';
+                        } else if (value.status == "2") {
+                            value.refname = '<span class="label label-info">' + '已解决(<font color="red">待关闭</font>)' + '</span>';
+                        } else if (value.status == "3") {
+                            value.refname = '<span class="label label-success">' + '已完成' + '</span>';
+                        } else if (value.status == "4") {
+                            value.refname = '<span class="label label-danger">' + '已终止' + '</span>';
+                        } else {
+                            value.refname = '<span class="label label-warning">' + '未确认' + '</span>';
+                        }
+                        //工单创建人
+                        var params = new URLSearchParams();
+                        params.append("idusers", value.userid);
+                        select_user(params).then(function (data) {
+                            value.username = $scope.service[data]['0'].username + ': ' + $scope.service[data]['0'].description;
+                        });
+                        //工单创建时间
+                        value.time = formatDate(value.createtime);
+                    });
+                });
+            }
+            //此处打开工单模态框
+            $scope.openwork = function (row) {
+                //遗留问题：项目可以关联多个工单，如果当前用户没有某个工单的权限，则不能查看这个工单的明细
+                window.Win10_child.openUrl(__URL + 'Crmschedule/Workorder/selectdetailed?id=' + row.idworkorder + '&guid=' + row.guid, row.title);
+            }
+
+            //刷新按钮
+            $scope.refresh = refresh;
+
+            //页面加载完成后，查询数据
+            $scope.selectRefProject();
+        }]);
+
+    </script>
+</block>
+<block name="pageContent">
+    <!--页头-->
+    <div class="page-header clearfix">
+        <h1 class="col-xs-3 text-left">
+            {$MenuName}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {$PageName}
+            </small>
+        </h1>
+        <div class="col-xs-4 text-center">
+            <a ng-click="refresh()" class="btn btn-success btn-sm">
+                <!-- 此处可暂时保留原方法（防止带有编辑/添加/删除等按钮） -->
+                <i class="glyphicon glyphicon-refresh"></i>刷新
+            </a>
+        </div>
+    </div>
+    <!--快速检索-->
+    <div class="table-header clearfix">
+        <div class="col-xs-6">{$MenuName}<small><i class="ace-icon fa fa-angle-double-right"></i>{$PageName}</small></div>
+    </div>
+    <div class="col-xs-12">
+        <div style="margin:10px auto;width:800px;">
+            <h2>项目基本信息</h2>
+            <table class="display dataTable no-footer">
+                <tr>
+                    <td class="col-xs-4 text-center">
+                        <label>项目名称</label>
+                    </td>
+                    <td class="col-xs-8" colspan="3">
+                        <div class="text-left" ng-bind="ProjectData.name"></div>
+                    </td>
+                    <td style="display:none"></td>
+                    <td style="display:none"></td>
+                </tr>
+                <tr>
+                    <td class="col-xs-4 text-center">
+                        <label>项目创建人</label>
+                    </td>
+                    <td class="col-xs-8" colspan="3">
+                        <span class="label c-info" ng-bind="service.usersData[ProjectData.userid].description?service.usersData[ProjectData.userid].description:service.usersData[ProjectData.userid].username"></span>
+                    </td>
+                    <td style="display:none"></td>
+                    <td style="display:none"></td>
+                </tr>
+                <tr ng-show="refstatusData !=null">
+                    <td class="col-xs-4 text-center">
+                        <label>项目阶段</label>
+                    </td>
+                    <td class="col-xs-8 text-left"  colspan="3">
+                        <span ng-repeat="rStatus in refstatusData">
+                            <span class="label" ng-bind="rStatus.name == null?'暂无阶段':rStatus.name" ng-style="{'background-color':(rStatus.labelclass != '')?rStatus.labelclass:'#ccc'}"></span>
+                        </span>
+                    </td>
+                    <td style="display:none"></td>
+                    <td style="display:none"></td>
+                </tr>
+                <tr>
+                    <td class="col-xs-4 text-center">
+                        <label>创建时间</label>
+                    </td>
+                    <td class="col-xs-8"  colspan="3">
+                        <div class="text-left" ng-bind="formatDate(ProjectData.createtime)"></div>
+                    </td>
+                    <td style="display:none"></td>
+                    <td style="display:none"></td>
+                </tr>
+                <!--<tr ng-show="ProjectData.starttime != null">
+                    <td class="col-xs-4 text-center">
+                        <label>项目开始时间</label>
+                    </td>
+                    <td class="col-xs-8">
+                        <div class="text-left" ng-bind="formatDate(ProjectData.starttime)"></div>
+                    </td>
+                </tr>
+                <tr ng-show="ProjectData.endtime !=null">
+                    <td class="col-xs-4 text-center">
+                        <label>项目结束时间</label>
+                    </td>
+                    <td class="col-xs-8">
+                        <div class="text-left" ng-bind="formatDate(ProjectData.endtime)"></div>
+                    </td>
+                </tr>-->
+                <tr ng-show="ProjectData.contracttime !=0">
+                    <td class="col-xs-4 text-center">
+                        <label>预计正式合同签订日期</label>
+                    </td>
+                    <td class="col-xs-8"  colspan="3">
+                        <div class="text-left" ng-bind="formatDate(ProjectData.contracttime)"></div>
+                    </td>
+                    <td style="display:none"></td>
+                    <td style="display:none"></td>
+                </tr>
+                <!--<tr ng-show="ProjectData.tendertime !=0">
+                    <td class="col-xs-4 text-center">
+                        <label>预计招标时间</label>
+                    </td>
+                    <td class="col-xs-8">
+                        <div class="text-left" ng-bind="formatDate(ProjectData.tendertime)"></div>
+                    </td>
+                </tr>
+                <tr ng-show="ProjectData.delivertime !=0">
+                    <td class="col-xs-4 text-center">
+                        <label>预计要货/交付日期</label>
+                    </td>
+                    <td class="col-xs-8">
+                        <div class="text-left" ng-bind="formatDate(ProjectData.delivertime)"></div>
+                    </td>
+                </tr>-->
+                <tr ng-show="ProjectData.grasp!=0">
+                    <td class="col-xs-4 text-center">
+                        <label>项目把握度</label>
+                    </td>
+                    <td class="col-xs-8"  colspan="3">
+                        <span class="text-left" ng-bind="ProjectData.grasp"></span>%
+                    </td>
+                    <td style="display:none"></td>
+                    <td style="display:none"></td>
+                </tr>
+                <tr >
+                    <td class="col-xs-2 text-center" ng-show="cityData!=''">
+                        <label>产品使用地</label>
+                    </td>
+                    <td class="col-xs-4" ng-show="cityData!=''">
+                        <div class="text-left" ng-bind="cityData"></div>
+                    </td>
+                    <td class="col-xs-2 text-center" ng-show="decisioncityData!=''">
+                        <label>决策地</label>
+                    </td>
+                    <td class="col-xs-4" ng-show="decisioncityData!=''">
+                        <div class="text-left" ng-bind="decisioncityData"></div>
+                    </td>
+                </tr>               
+                <tr ng-show="ProjectData.integrate != null">
+                    <td class="col-xs-4 text-center">
+                        <label>是否集成项目</label>
+                    </td>
+                    <td class="col-xs-8" colspan="3">
+                        <div class="text-left" ng-bind="ProjectData.integrate==1?'是':'否'"></div>
+                    </td>
+                    <td style="display:none"></td>
+                    <td style="display:none"></td>
+                </tr>
+                <tr ng-show="false">
+                    <td class="col-xs-4 text-center">
+                        <label>最终用户</label>
+                    </td>
+                    <td class="col-xs-8" colspan="3">
+                        <div class="text-left" ng-bind="ProjectData.clientname"></div>
+                    </td>
+                    <td style="display:none"></td>
+                    <td style="display:none"></td>
+                </tr>
+                <tr ng-show="ProjectData.mark != null">
+                    <td class="col-xs-4 text-center">
+                        <label>项目内容</label>
+                    </td>
+                    <td class="col-xs-8" colspan="3">
+                        <div class="text-left" ng-bind="ProjectData.mark"></div>
+                    </td>
+                    <td style="display:none"></td>
+                    <td style="display:none"></td>
+                </tr>
+            </table>
+
+            <h2 ng-show="refcustomerData.length != 0 || refcontactData.length != 0 || refproductmodelData.length != 0 ">项目关联信息</h2>
+            <table class="display dataTable no-footer">
+                <tr ng-show="refcustomerData.refinformant">
+                    <td class="col-xs-3 text-center">
+                        <label>客户</label>
+                    </td>
+                    <td class="col-xs-9 text-left" colspan="3">
+                        <span class="label badge-info left-5" ng-repeat="item in refcustomerData">{{item.name}}</span>
+                    </td>
+                    <td style="display:none"></td>
+                    <td style="display:none"></td>
+                </tr>               
+                <tr ng-show="ProjectData.refinformant">
+                    <td class="col-xs-2 text-center">
+                        <label>线人</label>
+                    </td>
+                    <td class="col-xs-4">
+                        <div class="text-left">
+                            <span ng-repeat="item in ProjectData.refinformant.split(',')" ng-bind="service.contactData[item].position?service.contactData[item].name+'('+service.contactData[item].position+')':service.contactData[item].name" class="label c-info left-5"></span>
+                        </div>
+                    </td>
+                    <td class="col-xs-2 text-center" ng-show="ProjectData.refdecision">
+                        <label>决策者</label>
+                    </td>
+                    <td class="col-xs-4" ng-show="ProjectData.refdecision">
+                        <div class="text-left">
+                            <span ng-repeat="item in ProjectData.refdecision.split(',')" ng-bind="service.contactData[item].position?service.contactData[item].name+'('+service.contactData[item].position+')':service.contactData[item].name" class="label c-info left-5"></span>
+                        </div>
+                    </td>
+                   
+                </tr>                           
+                <tr >
+                    <td class="col-xs-2 text-center" ng-show="ProjectData.reftechnical">
+                        <label>技术把关者</label>
+                    </td>
+                    <td class="col-xs-4" ng-show="ProjectData.reftechnical">
+                        <div class="text-left">
+                            <span ng-repeat="item in ProjectData.reftechnical.split(',')" ng-bind="service.contactData[item].position?service.contactData[item].name+'('+service.contactData[item].position+')':service.contactData[item].name" class="label c-info left-5"></span>
+                        </div>
+                    </td>
+                    <td class="col-xs-2 text-center"ng-show="ProjectData.refusing">
+                        <label>使用者</label>
+                    </td>
+                    <td class="col-xs-4"ng-show="ProjectData.refusing">
+                        <div class="text-left">
+                            <span ng-repeat="item in ProjectData.refusing.split(',')" ng-bind="service.contactData[item].position?service.contactData[item].name+'('+service.contactData[item].position+')':service.contactData[item].name" class="label c-info left-5"></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr ng-show="refproductmodelData.length != 0">
+                    <td class="col-xs-3 text-center">
+                        <label>产品型号</label>
+                    </td>
+                    <td class="col-xs-9" colspan="3">
+                        <table class="table">
+                            <tr>
+                                <td>型号名称</td>
+                                <td>数量</td>
+                                <!--<td>SI价格(总计)</td>
+                                <td>SI价格(总计)</td>
+                                <td>EU价格(总计)</td>-->
+                                <td>EU自定义价格(总计)</td>
+                            </tr>
+                            <tr ng-repeat="item in refproductmodelData track by $index">
+                                <td ng-bind="service.productmodelData[item.productmodelid].name"></td>
+                                <td ng-bind="item.number"></td>
+                                <!--<td ng-bind="item.plistAll|currency:'￥':'0'"></td>
+                                <td ng-bind="item.psiAll|currency:'￥':'0'"></td>
+                                <td ng-bind="item.peuAll|currency:'￥':'0'"></td>-->
+                                <td ng-bind="item.money|currency:'￥':'0'"></td>
+                            </tr>
+                            <tr>
+                                <td> 总计</td>
+                                <td ng-bind="price.number"></td>
+                                <!--<td ng-bind="price.plist |currency:'￥':'0'"></td>
+                                <td ng-bind="price.psi|currency:'￥':'0'"></td>
+                                <td ng-bind="price.peu|currency:'￥':'0'"></td>-->
+                                <td ng-bind="price.money|currency:'￥':'0'"></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="display:none"></td>
+                    <td style="display:none"></td>
+                </tr>             
+                
+            </table>
+            <h2 style="display:none;" ng-show="refuserData != null || refusertypeData != null || refusergroupData != null">权限信息</h2>
+            <table style="display:none;" class="display dataTable no-footer">
+                <tr ng-show="refuserData != null">
+                    <td class="col-xs-3 text-center">
+                        <label>用户</label>
+                    </td>
+                    <td class="col-xs-9">
+                        <div class="text-left" ng-repeat="item in refuserData">{{item.username}}</div>
+                    </td>
+                </tr>
+                <tr ng-show="refusertypeData != null">
+                    <td class="col-xs-3 text-center">
+                        <label>用户角色</label>
+                    </td>
+                    <td class="col-xs-9">
+                        <div class="text-left" ng-repeat="item in refusertypeData">{{item.typename}}</div>
+                    </td>
+                </tr>
+                <tr ng-show="refusergroupData != null">
+                    <td class="col-xs-3 text-center">
+                        <label>用户组</label>
+                    </td>
+                    <td class="col-xs-9">
+                        <div class="text-left" ng-repeat="item in refusergroupData">{{item.groupname}}</div>
+                    </td>
+                </tr>
+            </table>
+            <h2 ng-show="refworkorder.length != 0 || refannexData.length != 0">附加信息</h2>
+            <table class="display dataTable no-footer" ng-show="refworkorder.length != 0 || refannexData.length != 0" >
+                <tr ng-show="refworkorder.length != 0">
+                    <td class="col-xs-3 text-center">
+                        <label>工单</label>
+                    </td>
+                    <td class="col-xs-9">
+                        <div class="text-left" style="line-height:24px;" ng-repeat="item in refworkorder">
+                                <span class="blue" style="cursor:pointer;border-bottom:1px dashed #478FCA" ng-click="openwork(item)" ng-bind="item.title"></span>&nbsp;&nbsp;
+                                <span ng-bind-html="item.refname"></span>&nbsp;&nbsp;
+                                (创建人： <span ng-bind="item.username"></span>&nbsp;&nbsp;创建时间：<span ng-bind="item.time"></span>)
+                        </div>
+                    </td>
+                </tr>
+                <tr ng-show="refannexData.length != 0">
+                    <td class="col-xs-3 text-center">
+                        <label>附件</label>
+                    </td>
+                    <td class="col-xs-9">
+                        <div class="text-left" ng-repeat="item in refannexData">{{item.name}}</div>
+                    </td>
+                </tr>
+            </table>
+
+            <table class="display dataTable no-footer"  ng-show="refannexData.length != 0">
+                <tr>
+                    <td>
+                        <ul class="ace-thumbnails clearfix">
+                            <li ng-repeat="item in refannexData track by $index" ng-show="close{{item.idannex}}==undefined">
+                                <div>
+                                    <img width="150" height="60" alt="150x60" ng-src="{{publicFilterAnnexName(item.name)}}" />
+                                    <div class="tags">
+                                        <span ng-bind="item.name.length>5?item.name.slice(0,5)+'...':item.name"></span>
+                                        <span ng-bind="(item.filesize/1024/1024).toFixed(1)<0.1?0.1:(item.filesize/1024/1024).toFixed(1)"></span>MB
+                                    </div>
+                                    <div class="text"  ng-attr-title="{{item.name}}">
+                                        <div class="inner">
+                                            <span ng-bind="item.name.length>9?item.name.slice(0,9)+'...':item.name"></span>
+                                            
+                                            <br />
+
+                                            <a href="#" ng-click="downLoad(item.idannex)">
+                                                <i class="ace-icon fa fa-download"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <!--评论组件-->
+    <div page-comment />
+</block>
+<block name="scriptTemplate">
+</block>
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmcustomerinfo/Customercredit/modal.js"></script>
+    <!-- 配置文件 -->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}ueditor/1.4.3.3/ueditor.config.js"></script>
+    <!-- 编辑器源码文件 -->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}ueditor/1.4.3.3/ueditor.all.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagecomment.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagebtn.js"></script>
+</block>

@@ -1,0 +1,278 @@
+﻿<div class="modal-header clearfix">
+    <h4 class="modal-title f-l">{{Source.title}}</h4>
+    <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+<div class="modal-body" style="padding-top:8px;">
+    <form name="Form" class="container-fluid" verify-scope="">
+        <table class="table" style="margin-bottom:8px;">
+            <tr class="info">
+                <td colspan="8">基本信息</td>
+            </tr>
+            <tr>
+                <td class="text-right"><b class="c-red">*</b>项目名称</td>
+                <td colspan="3" class="project-name">
+                    <input type="text" ng-verify="min:1, max:25" style="width:100%"  ng-model="Source.selectItem.name" placeholder="输入1~25位字符名称" /><span ng-if="isprotected">该项目已被创建，请联系创建人</span>
+                    <ul  ng-show="Source.Action=='0'&&Source.selectItem.name">
+                        <li ng-if="service.privateDateObj.isprojectData.length>0"><b>以下项目已被创建</b></li>
+                        <li ng-repeat="value in service.privateDateObj.isprojectData |filter:Source.selectItem.name" ng-bind="value.name"></li>
+                        <!--+'--'+Source.privateDateObj.usersData[value.userid].description-->
+                    </ul>
+                </td>
+                <td class="text-right" >集成项目</td>
+                <td colspan="3">
+                    <input type="checkbox"  ng-model="Source.selectItem.integrate" />是
+                </td>
+            </tr>
+            <tr>
+                <td class="text-right"><b class="c-red">*</b>当前阶段</td>
+                <td colspan="3">                    
+                    <ui-select style="width:100%" ng-model="Source.selectItem.statusid">
+                        <ui-select-match placeholder="请选择项目把握度">
+                            <span ng-bind="$select.selected.value.name" style="margin-right: 5px;">
+                            </span>
+                        </ui-select-match>
+                        <ui-select-choices repeat="item.key  as (key,item) in Source.privateDateObj.projectstatusData | filter: { value: { name: $select.search }}" style="max-height: 150px;">
+                            <div ng-bind-html="item.value.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </td>
+                <td class="text-right"><b class="c-red">*</b>项目把握度</td>
+                <td colspan="3">                   
+                    <ui-select style="width:100%" ng-model="Source.selectItem.grasp" >
+                        <ui-select-match placeholder="请选择项目把握度">
+                            <span ng-bind="$select.selected.value.name" style="margin-right: 5px;">
+                            </span>
+                        </ui-select-match>
+                        <ui-select-choices repeat="item.key  as (key,item) in service.graspData | filter: { value: { name: $select.search }}" style="max-height: 150px;">
+                            <div ng-bind-html="item.value.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </td>
+            </tr>
+            <tr>
+                <td class="text-right"><b class="c-red">*</b>预计合同时间</td>
+                <td colspan="7">
+                    <div class="width:100%">
+                        <p class="input-group">
+                            <input style="border-radius:0;" ng-click="open()" type="text" uib-datepicker-popup ng-model="Source.dt" class="form-control" ng-readonly="true" is-open="popup.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" ng-verify="{min:1,max:10}" />
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" ng-click="open()"><i class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+                        </p>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="text-right"><b class="c-red">*</b>客户</td>
+                <td colspan="7">                   
+                    <ui-select style="width:100%" ng-model="Source.selectItem.refcustomers" on-select="selectContact()" ng-verify="option:0">
+                        <ui-select-match placeholder="请选择客户">
+                            <span ng-bind="$select.selected.value.name" style="margin-right: 5px;">
+                            </span>
+                        </ui-select-match>
+                        <ui-select-choices repeat="item.key  as (key,item) in service.privateDateObj.customerinfoData | filter: { value: { name: $select.search }}" style="max-height: 150px;">
+                            <div ng-bind-html="item.value.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </td>
+            </tr>
+            <tr>
+                <td class="text-right">重要联系人</td>
+                <td colspan="3">                    
+                    <ui-select style="width:100%" ng-model="Source.selectItem.refinformant">
+                        <ui-select-match placeholder="请选择重要联系人">
+                            <span ng-bind="$select.selected.value.name" style="margin-right: 5px;">
+                            </span>
+                        </ui-select-match>
+                        <ui-select-choices repeat="item.key  as (key,item) in service.contactData | filter: { value: { name: $select.search }} " style="max-height: 150px;">
+                            <div ng-bind-html="item.value.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </td>
+                <td class="text-right">使用者</td>
+                <td colspan="3">                  
+                    <ui-select style="width:100%" ng-model="Source.selectItem.refusing">
+                        <ui-select-match placeholder="请选择使用者">
+                            <span ng-bind="$select.selected.value.name" style="margin-right: 5px;">
+                            </span>
+                        </ui-select-match>
+                        <ui-select-choices repeat="item.key  as (key,item) in service.contactData | filter: { value: { name: $select.search }}" style="max-height: 150px;">
+                            <div ng-bind-html="item.value.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </td>
+            </tr>
+            <tr>
+                <td class="text-right">技术把关者</td>
+                <td colspan="3">                  
+                    <ui-select style="width:100%" ng-model="Source.selectItem.reftechnical">
+                        <ui-select-match placeholder="请选择技术把关者">
+                            <span ng-bind="$select.selected.value.name" style="margin-right: 5px;">
+                            </span>
+                        </ui-select-match>
+                        <ui-select-choices repeat="item.key as (key,item) in service.contactData | filter: { value: { name: $select.search }}" style="max-height: 150px;">
+                            <div ng-bind-html="item.value.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </td>
+                <td class="text-right">决策者</td>
+                <td colspan="3">                  
+                    <ui-select style="width:100%" ng-model="Source.selectItem.refdecision">
+                        <ui-select-match placeholder="请选择决策者">
+                            <span ng-bind="$select.selected.value.name" style="margin-right: 5px;">
+                            </span>
+                        </ui-select-match>
+                        <ui-select-choices repeat="item.key  as (key,item) in service.contactData | filter: { value: { name: $select.search }} " style="max-height: 150px;">
+                            <div ng-bind-html="item.value.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </td>
+            </tr>
+            <tr>
+                <td class="text-right">产品决策地</td>
+                <td colspan="3">
+                    <div style="width:45%;display:inline-block;">
+                        <ui-select ng-if="service.privateDateObj.citykeyData" ng-model="Source.selectItem.decisionprovince" on-select="getcityData($item,1)" style="width:100%;">
+                            <ui-select-match>
+                                <span ng-bind="$select.selected.value.province_name">
+                                </span>
+                            </ui-select-match>
+
+                            <ui-select-choices repeat="item.value.id as (key,item) in service.privateDateObj.citykeyData | filter: { value: { province_name: $select.search }}">
+                                <div ng-bind="item.value.province_name"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <div style="width:45%;display:inline-block;margin-left:10px;" ng-if="service.decisioncityData">
+                        <ui-select ng-model="Source.selectItem.decision" style="width:100%;" on-select="buildcityCode(1)">
+                            <ui-select-match>
+                                <span ng-bind="$select.selected.value.city">
+                                </span>
+                            </ui-select-match>
+
+                            <ui-select-choices repeat="item.value.id as (key,item) in service.decisioncityData| filter: { value: { city: $select.search }}">
+                                <div ng-bind="item.value.city"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </td>
+                <td class="text-right">产品使用地</td>
+                <td colspan="3">
+                    <div style="width:45%;display:inline-block;" ng-if="service.privateDateObj.citykeyData">
+                        <ui-select ng-model="Source.selectItem.province" on-select="getcityData($item,2)" style="width:100%;">
+                            <ui-select-match>
+                                <span ng-bind="$select.selected.value.province_name">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.value.id as (key,item) in service.privateDateObj.citykeyData | filter: { value: { province_name: $select.search }}">
+                                <div ng-bind="item.value.province_name"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <div style="width:45%;display:inline-block;margin-left:10px;" ng-if="service.cityData"  >
+                        <ui-select ng-model="Source.selectItem.citylevel" style="width:100%;" on-select="buildcityCode(2)" >
+                            <ui-select-match>
+                                <span ng-bind="$select.selected.value.city">
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="item.value.id as (key,item) in service.cityData| filter: { value: { city: $select.search }}">
+                                <div ng-bind="item.value.city"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>                   
+                </td>               
+            </tr>          
+            <tr class="info" ng-init="total=0">
+                <td colspan="8"><span>关联产品</span><button type="button" ng-click="addProductlist()" class="btn btn-xs btn-success f-r">新增产品</button><span class="f-r" style="padding-right:10px;">当前总价<b ng-bind="(allmoney?allmoney:0)|currency:'￥':'0'"></b></span></td>
+            </tr>
+            <tr>               
+                <td colspan="2">产品名称</td>
+                <td  colspan="2">产品型号</td>
+                <td>数量</td>
+                <td>列表价（元）</td>
+                <td>总价（元）</td>
+                <td>操作</td>
+            </tr>
+            <tbody class="project-tr" ng-repeat="item in projectdevicelistData">
+                <tr>
+                    <td >
+                        <span ng-bind="$index+1"></span>
+                    </td>
+                    <td><span ng-bind="service.productData[Source.privateDateObj.productmodelData[item.productmodelid].productid].name"></span></td>
+                    <td colspan="2" style="width:35%">
+                        <ui-select style="width:100%;" ng-model="item.productmodelid" ng-verify on-select="item.money = item.number * Source.privateDateObj.productmodelData[item.productmodelid].plist; item.number = (item.number ? item.number : 1); getonlymoney()">
+                            <ui-select-match>
+                                <span ng-bind="$select.selected.value.name">
+                                </span>
+                            </ui-select-match> 
+                            <ui-select-choices group-by="'productid'" repeat="val.value.idproductmodel as (key,val) in Source.privateDateObj.productmodelData | filter: { value: { name: $select.search }}">
+                                <div ng-bind-html="val.value.name| highlight: $select.search"></div>
+                                <small>
+                                    <span style="color:#666" ng-bind-html="'&nbsp;&nbsp;'+service.productData[val.value.productid].name | highlight: $select.search"></span>
+                                </small>
+                            </ui-select-choices>
+                        </ui-select>
+                    </td>
+
+                    <td style="">
+                        <input type="text" ng-model="item.number" ng-verify style="width:50px;" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" ng-keyup="item.money=item.number*Source.privateDateObj.productmodelData[item.productmodelid].plist;getonlymoney()" />
+                    </td>
+                    <td style="">
+                        <span ng-bind="Source.privateDateObj.productmodelData[item.productmodelid].plist|currency:'￥':'0'"></span>
+                    </td>
+                    <td style="">
+                        <input type="text" ng-verify ng-model="item.money"  onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"   ng-keyup="getonlymoney()" />
+                    </td>                   
+                    <td style="">
+                        <button class="btn  btn-xs btn-warning" type="button" ng-click="delProductlist(item);getonlymoney()"><i class="fa fa-trash"></i></button>
+                    </td>
+                </tr>
+                <tr><td colspan="8"><span ng-bind="Source.privateDateObj.productmodelData[item.productmodelid].description"></span></td></tr>
+            </tbody>
+            <tr class="info">
+                <td colspan="8">其他信息</td>
+            </tr>
+            <tr>
+                <td class="text-right">项目备注</td>
+                <td colspan="7">
+                   <textarea style="width:100%;" ng-model="Source.selectItem.mark"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td class="text-right">抄送人</td>
+                <td colspan="7">
+                    <ui-select multiple ng-model="Source.selectItem.refusers" theme="select2" style="width:100%;">
+                        <ui-select-match placeholder="请选择抄送">
+                            <span ng-bind="$item.value.description" style="margin-right: 5px;">
+                            </span>
+                        </ui-select-match>
+                        <ui-select-choices repeat="item.value.idusers  as (key,item) in Source.privateDateObj.usersData | filter: { value: { description: $select.search }}" style="max-height: 150px;">
+                            <div ng-bind-html="item.value.description | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </td>
+            </tr>
+            <tr>
+                <td class="text-right">附件</td>
+                <td colspan="7">
+                    <span class="blue" ng-repeat="item in service.annexData track by $index">
+                        <a href="javascript:;" title="点击下载" ng-click="downLoad(item.idannex)">
+                            <b style="font-weight:normal" ng-bind="item.name"></b>
+                            <b style="font-weight:normal" ng-if="service.annexData.length>0&&($index+1)<service.annexData.length">；</b>
+                        </a>
+                    </span>
+                   <a href="javascript:;" style="border-bottom:1px #87B87F dotted;margin-left:10px;color:#87B87F" ng-click="upLoad()">点此上传附件</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" ng-if="Source.Action==0" ng-verify="control:'Form'" type="button" ng-click="save();">
+        保存
+    </button>
+    <button class="btn btn-primary btn-sm" ng-if="Source.Action==1" ng-verify="control:'Form'" type="button" ng-click="bulidProductlist();save();">
+        保存
+    </button>
+    <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+</div>

@@ -1,0 +1,220 @@
+﻿<!DOCTYPE html>
+<html lang="en" ng-app="AceApp">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8" />
+    <title ng-bind-template="{{pageTitle || 'Welcome'}} - XinChenEim System Manager">EIM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}bootstrap/css/bootstrap3.3.7.min.css" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angular-ace/css/ace.css" id="main-ace-style" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}/font-awesome/css/font-awesome.css" />
+    <!--<link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angular-ace/css/ace-fonts.css" />-->
+
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angular-loading-bar/build/loading-bar.css" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angular-ace/css/ace-skins.css">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angular-aside/1.4.0/css/angular-aside.min.css">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angular-bootstrap-colorpicker/3.0.32/css/colorpicker.min.css">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ngVerify/css/ngVerify.css">
+    <!--即时通讯的样式,可能会与bootstrap冲突-->
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}layim3.0/src/css/layui.css">
+
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}EIMPublicTools.css" />
+
+    <!--<link rel="stylesheet" href="{$Think.const.PAGE_URL}css/crmProject/my_widget.css" />-->
+    <!--<link rel="stylesheet" href="{$Think.const.PAGE_URL}css/crmProject/my-project-info.css" />-->
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}my-comments.css" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angular-datepicker/angular-datepicker.css" />
+    <link rel="stylesheet" href="{$Think.const.CSS_URL}upload.css" />
+    <style>
+        /*#layui-layim-close{
+            display:none;
+        }*/
+    </style>
+    <script>
+        var __URL = '__APP__/';
+        var __APPID = "{$appid}";
+        // var __authid = "{$authid}";
+        //当前登录用户的权限　ids  '1,2,3,4'
+        var __ThisUserAuths = "{$_SESSION['user_ref_authids']}";
+        //当前登录的用户的ID
+        var _USERID = "{$_SESSION['userinfo']['idusers']}";
+        //当前登录的用户组的ID
+        var _USERGROUPID = "{$_SESSION['user_ref_groupids']}";
+        //页面JS路径
+        var _PAGE_URL = '{$Think.const.PAGE_URL}';
+        //页面菜单
+        var _MenuSource = {$_MenuSource};
+        //打开默认的页面
+        var _DefauPage = '{$_DefauPage}';
+        //在线聊天控件显示状态
+        var _onlineStatus = '{$_SESSION["OnlineChat"]["Value"]}';
+
+    </script>
+</head>
+
+<body ng-controller="MainController" ng-class="bodySkin()">                  
+    <!--顶部-->
+    <div class="navbar navbar-default navbar-fixed-top" ng-class="{'navbar-fixed-top': ace.settings.navbar}" ng-include="'__APP__/Home/Ace/page_m_navbar'"></div>
+    <!--主要显示-->
+    <div class="main-container" ng-class="{'container': ace.settings.container}">
+        <!--左侧菜单-->
+        <div id="sidebar" class="sidebar responsive sidebar-fixed" ng-controller="SidebarCtrl" ace-sidebar props="ace.sidebar" scroll="true" hover="true" ng-class="{'menu-min': ace.sidebar.minimized, 'sidebar-fixed': ace.settings.sidebar, 'compact': ace.settings.compact}" ng-include="'__APP__/Home/Ace/page_m_sidebar'"></div>
+        <!--页面展示-->
+        <div class="main-content">
+            <div class="main-content-inner">
+                <!--页面顶头的查询-->
+                <div class="breadcrumbs breadcrumbs-fixed" ng-class="{'breadcrumbs-fixed': ace.settings.breadcrumbs}" ng-include="'__APP__/Home/Ace/page_m_breadcrumbs'"></div>
+                <div class="page-content">
+                    <!--右侧悬浮设置-->
+                    <div class="ace-settings-container" ng-controller="SettingsCtrl" ng-include="'__APP__/Home/Ace/page_m_settings'"></div>
+                    <!--加载页面-->
+                    <ui-view ng-show="!viewContentLoading"></ui-view>
+                </div>
+            </div>
+        </div>
+        <!--底部-->
+        <div class="footer" ng-include="'__APP__/Home/Ace/page_m_footer'"></div>
+        <!--返回顶层插件-->
+        <a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
+            <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
+        </a>
+    </div>
+    <!--加载动画-->
+    <div ng-show="viewContentLoading" class="ajax-loading-overlay ajax-overlay-body">
+        <i style="margin-left:50%;margin-top:20%;" class="ajax-loading-icon fa fa-spin fa-spinner fa-2x orange"></i>
+    </div>
+
+    <script src="{$Think.const.BOOTSTRAP_URL}jquery/2.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        //if ('ontouchstart' in document.documentElement) document.write("<script src='../components/_mod/jquery.mobile.custom/jquery.mobile.custom.js'>" + "<" + "/script>");
+    </script>
+    <script src="{$Think.const.BOOTSTRAP_URL}layer/3.0/layer.js"></script>
+    <!--<script src="{$Think.const.BOOTSTRAP_URL}layim3.0/src/layui.js"></script>-->
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-datepicker/moment/moment.min.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-datepicker/moment/moment-timezone.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular/{$Think.const.ANGULAR_VERSION}angular.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular-animate/{$Think.const.ANGULAR_VERSION}angular-animate.min.js"></script>
+    <!--ng-bind-html-->
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-sanitize/{$Think.const.ANGULAR_VERSION}angular-sanitize.min.js"></script>
+    <!--上传文件-->
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-file-upload/angular-file-upload.min.js"></script>    
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-loading-bar/build/loading-bar.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-touch/{$Think.const.ANGULAR_VERSION}angular-touch.min.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-resource/{$Think.const.ANGULAR_VERSION}angular-resource.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}ocLazyLoad/1.0.10/ocLazyLoad.min.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-ui-router/2.0.8/angular-ui-router.min.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}ui-bootstrap/2.5.0/ui-bootstrap-tpls.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}ngstorage/ngStorage.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}bootstrap/js/transition.js"></script><!-- for sidebar transition events -->
+    <!--表单验证-->
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ngVerify/lib/select.css">
+    <script src="{$Think.const.BOOTSTRAP_URL}ngVerify/js/ngVerify.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}ngVerify/lib/select.js"></script>
+    <!--色块标签-->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular-bootstrap-colorpicker/3.0.32/js/bootstrap-colorpicker-module.js"></script>
+    <!--数据交互-->
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular-aside/1.4.0/js/angular-aside.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}vue/axios.min0.17.0.js"></script>
+    <!--公共-->
+    <script type="text/javascript" src="{$Think.const.JS_URL}parent.js"></script>
+    <!--<script type="text/javascript" src="{$Think.const.JS_URL}angular-module-public.js"></script>-->
+    <script type="text/javascript" src="{$Think.const.JS_URL}angular-service-public.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}angular-controller-public.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}select_alldata.js"></script>      
+    <script type="text/javascript" src="{$Think.const.JS_URL}EIMPublicTools.js"></script>
+    <!--<script type="text/javascript" src="{$Think.const.PAGE_URL}js/Eimdevice/Modeltype/modal.js"></script>-->
+    <!-- ACE -->
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-ace/js/ace-small.js"></script><!-- slimmer version of ace.js -->
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-ace/js/ace-elements.js"></script>
+    <!--此处为moment js文件-->
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-datepicker/moment/moment.min.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-datepicker/moment/moment-timezone.js"></script>
+    <!-- datepicker -->
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-datepicker/tools/datePicker.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-datepicker/tools/datePickerUtils.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-datepicker/tools/dateRange.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-datepicker/tools/input.js"></script>
+    <script>
+        var app = angular.module('AceApp', [
+           // 'appModule',
+            'ngAnimate',
+            'ngResource',
+            'ui.select',
+            'ngSanitize',
+            'ngTouch',
+	        'angular-loading-bar',
+	        'oc.lazyLoad',
+	        'ui.bootstrap',
+	        'ui.router',
+	        'ace.directives',
+	        'ngStorage',
+            'ngAside',
+            'ngVerify',//表单验证
+            //'datePicker',
+            'colorpicker.module',//色块标签
+            'datePicker',
+            'angularFileUpload',//上传文件
+        ]);
+
+        app.filter('filterByAttr', function () {
+            return function (obj, name, count) {
+                var objdata;
+                if (obj == undefined) {
+                    return;
+                }
+                if (count == undefined) {
+                    count = { count: 0 };
+                }
+                if (Object.prototype.toString.call(obj) == '[object Object]') {
+                    count.count = 0;
+                    objdata = {};
+                } else if (Object.prototype.toString.call(obj) == '[object Array]') {
+                    count.count = 0;
+                    objdata = [];
+                }
+                if (name == undefined || name == "") {
+                    if (Object.prototype.toString.call(obj) == '[object Object]') {
+                        count.count = obj != undefined ? Object.keys(obj).length : 0;
+                    } else {
+                        count.count = obj != undefined ? obj.length : 0;
+                    }
+                    return obj;
+                }
+                angular.forEach(obj, function (value, key) {
+                    for (var k in value) {
+                        if (value[k] == undefined || value[k] == null) {
+                            continue;
+                        }
+                        if (value[k].toString().indexOf(name) > -1) {
+                            if (Object.prototype.toString.call(objdata) == '[object Array]') {
+                                objdata.push(value);
+                            } else {
+                                objdata[key] = value;
+                            }
+
+                            //console.log(value[k]);
+                            count.count += 1;
+                            break;
+                        }
+                    }
+                });
+                return objdata;
+            }
+        });     
+    </script>
+    <!-- ACE ANGULAR -->
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-ace/app.js"></script>
+    <!-- INSERT TEMPLATE CACHE -->
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-ace/directives/ace.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-ace/directives/vendor.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-ace/controllers/main.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-ace/controllers/controllers.js"></script>
+    <!--自定义指令-->
+    <script src="{$Think.const.JS_URL}directive.devicesessiontype.js"></script>
+    <script src="{$Think.const.JS_URL}directive.tree.js"></script>
+    <script src="{$Think.const.JS_URL}directive.sessionbuttons.js"></script>
+
+    <!-- 即时通讯 -->
+    <!--<script src="{$Think.const.BOOTSTRAP_URL}angular-ace/eimim.js"></script>-->
+</body>
+</html>

@@ -1,0 +1,13 @@
+﻿<div >
+    当前<span class="blue" ng-bind="service.setpaging['count']?service.setpaging['count']:0"></span>条数据
+    <ul class="pagination" style="margin-bottom:0px;">
+        <li ng-class="service.setpaging['count']!='0'?'':'disabled'"><a href="#" ng-click="setPage(1)">&laquo;</a></li>
+        <li ng-class="service.setpaging['count']!='0'?'':'disabled'"><a href="#" ng-click="nextPage(-1)">&larr;</a></li>
+        <li ng-repeat="item in _thisPageArray" class="{{item==service._thisPageCount?'active':''}}">
+            <a href="#" ng-click="setPage(item)" ng-bind="item"></a>
+        </li>
+        <li ng-class="service.setpaging['count']!='0'?'':'disabled'"><a href="#" ng-click="nextPage(1)">&rarr;</a></li>
+        <li ng-class="service.setpaging['count']!='0'?'':'disabled'"><a href="#" ng-click="setPage(service.setpaging['count']/_pageCount)">&raquo;</a></li>
+    </ul>
+    共<span class="blue" ng-bind="ceilint(service.setpaging['count']/_pageCount)?ceilint(service.setpaging['count']/_pageCount):0"></span>页
+</div>

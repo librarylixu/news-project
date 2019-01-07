@@ -1,0 +1,156 @@
+﻿            
+<div  >
+    <!--加客户-->
+    <form name="Form" verify-scope >
+        <div ng-if="Source.Action==0">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <input type="text" ng-verify="min:1, max:25" ng-model="Source.selectItem.name" />
+                </div>
+                <button class="btn btn-xs btn-success" ng-verify="control:'Form'" ng-click="save();hiddenmodal();">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="hiddenmodal();Source.selectItem.name=service.selectItem.name;">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+        </div>
+        <!--改名字-->
+        <div ng-if="Source.editType==1">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <input type="text" ng-verify="min:1, max:25" ng-model="Source.selectItem.name" />
+                </div>
+                <button ng-verify="control:'Form'" class="btn btn-xs btn-success" ng-click="save();hiddenmodal();">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="hiddenmodal();Source.selectItem.name=service.selectItem.name;">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+        </div>
+        <!--改简称-->
+        <div ng-if="Source.editType==3">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <input type="text" ng-verify="min:1, max:25" ng-model="Source.selectItem.abbreviation" />
+                </div>
+                <button class="btn btn-xs btn-success" ng-verify="control:'Form'" ng-click="save();hiddenmodal();">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="hiddenmodal();Source.selectItem.abbreviation=service.selectItem.abbreviation;">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+            </div>
+        <!--改办公电话-->
+        <div ng-if="Source.editType==4">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <input type="text"ng-verify="{pattern:/^\d{2,4}-\d{7,8}(-\d{1,6})?$/,errmsg:'电话格式不正确',required:false}" ng-model="Source.selectItem.officephone" class="form-control" placeholder="输入电话号码（非必填）" />
+                </div>
+                <button class="btn btn-xs btn-success" ng-verify="control:'Form'" ng-click="save();hiddenmodal();">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="hiddenmodal();Source.selectItem.officephone=service.selectItem.officephone;">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+            </div>
+        <!--改传真-->
+        <div ng-if="Source.editType==5">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <input type="text" ng-verify="{pattern:/^\d{2,4}-\d{7,8}(-\d{1,6})?$/,errmsg:'传真格式不正确',required:false}" ng-model="Source.selectItem.fax" class="form-control" placeholder="请输入传真号码（非必填）" />
+                </div>
+                <button class="btn btn-xs btn-success" ng-verify="control:'Form'" ng-click="save();hiddenmodal();">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="hiddenmodal();Source.selectItem.fax=service.selectItem.fax;">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+
+        </div>
+        <!--改地址-->
+        <div ng-if="Source.editType==6">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <textarea ng-verify="pattern:/[\u4e00-\u9fa5]/, required:false, errmsg:'需要输入中文' " type="text" class="form-control" ng-model="Source.selectItem.address" placeholder="请输入中文（非必填）"></textarea>
+                </div>
+                <button class="btn btn-xs btn-success" ng-verify="control:'Form'" ng-click="save();hiddenmodal();">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="hiddenmodal();Source.selectItem.address=service.selectItem.address;">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+        </div>
+        <!--改网址-->
+        <div ng-if="Source.editType==7">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <input ng-verify="{min:0,max:70 ,pattern:/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/,errmsg:'网址格式不正确',required:false}" type="text" ng-model="Source.selectItem.url" class="form-control" placeholder="请输入网址" />
+                </div>
+
+                <button class="btn btn-xs btn-success" ng-verify="control:'Form'" ng-click="save();hiddenmodal();">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="hiddenmodal();Source.selectItem.url=service.selectItem.url;">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+        </div>
+        <!--改主要联系人-->
+        <div ng-if="Source.editType==8">
+            <div class="input-content">
+                <div style="width:180px;">
+                    <input type="text" ng-verify="pattern:/[\u4e00-\u9fa5]/,required:false, errmsg:'需要输入中文' " class="form-control" ng-model="Source.selectItem.maincontact" placeholder="请输入中文（非必填）" />
+                </div>
+                <button ng-verify="control:'Form'" class="btn btn-xs btn-success" ng-click="save();hiddenmodal();">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="javascript:;" class="btn btn-xs btn-warning" ng-click="hiddenmodal();service.selectItem.maincontact='';">
+                    <i class="fa fa-reply"></i>
+                </a>
+
+            </div>
+        </div>
+        <!--改状态-->
+        <div ng-if="Source.editType==9" style="width:100px;height:40px;" >
+          
+                <ui-select ng-model="cusstatusSelected" on-select="Refstatus ($item,$model, 0,'status')" style="display:inline-block">
+                    <ui-select-match>
+                        <span ng-bind="$select.selected.status">
+                        </span>
+                    </ui-select-match>
+
+                    <ui-select-choices repeat="item in (service.customerstatusData | filter:$select.search) track by item.idcustomerstatus">
+                        <div ng-bind-html="item.status | highlight: $select.search"></div>
+
+                    </ui-select-choices>
+                </ui-select>
+           
+            
+            <a ng-click="addProjectstatusClick()" title="新建项目状态"><i class="fa fa-plus green f-16"></i></a>
+
+        </div>
+        <!--改信用等级-->
+        <div ng-if="Source.editType==10" style="width:100px;height:40px;">
+           
+                <ui-select   ng-model="cuscreditSelected" on-select="Refcredit($item,$model, 0,'credit')"  style="display:inline-block">
+                    <ui-select-match>
+                        <span ng-bind="$select.selected.name">
+                        </span>
+                    </ui-select-match>
+
+                    <ui-select-choices repeat="item in (service.customercreditData | filter:$select.search) track by item.idcustomercredit">
+                        <div ng-bind-html="item.name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            
+            <a ng-click="addCuscreditClick()" class="f-r" title="新建信用等级"><i class="fa fa-plus green f-16"></i></a>
+
+        </div>
+</form>
+</div>

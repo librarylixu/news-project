@@ -1,0 +1,85 @@
+    <!--页头-->
+<div class="page-header clearfix">
+    <div class="col-xs-12 text-center">     
+        <a ng-click="select(1)" class="btn btn-success btn-sm">
+            <i class="glyphicon glyphicon-refresh"></i>刷新
+        </a>
+    </div>
+</div>
+<div class="mt-5">
+    <div class="table-header">
+        设备类型管理
+        <a href="javascript:;" class="f-r" style="padding-right:20px;text-decoration:underline;color:#fff">
+            <i class="fa fa-download"></i>导出
+        </a>
+    </div>
+    <table class="table table-striped table-bordered table-hover table-condensed table-responsive
+">
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>类型名称</th>
+                <th>标签颜色</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in service.devicetypeData">
+                <td ng-bind="item.iddevicetype"></td>
+                <td ng-bind="item.typename"></td>              
+                <td>
+                <td>
+                    <label class="label" ng-bind="item.typename" style="background-color:{{item.labelclass}}"></label>
+                </td>                  
+
+                <td>
+                    <a href="javascript:;" title="编辑" class="green top-5" ng-click="updateInfo(item)">
+                        <i class="glyphicon glyphicon-pencil fa-lg"></i>
+                    </a>
+                    <a href="javascript:;" title="删除" class="red top-5" ng-click="del(item)">
+                        <i class="glyphicon glyphicon-trash fa-lg"></i>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="text-right">共<b class="blue" ng-bind="length(service.privateDateObj.devicetypeData)"></b>条</div>
+</div>
+<script type="text/ng-template" id="Eimdevice/Devicetype/openmodal">
+    <div class="modal-header clearfix">
+        <h4 class="modal-title f-l">{{Source.title}}</h4>
+        <a href="javascript:;" class="closebtn" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+    <form name="Form" class="container-fluid" verify-scope>
+        <table class="table" style="margin-bottom:8px;">           
+            <tr>
+                <td class="text-right"><b class="c-red">*</b>设备名称</td>
+                <td colspan="3"><input style="width:100%;" type="text" ng-model="Source.selectItem.typename" /></td>
+            </tr>
+            <tr>
+                <td class="text-right"><b class="c-red">*</b>标签颜色</td>
+                <td colspan="3">
+                    <a href="javascript:;" style="display:block;width:1em;height:1em;"  class="colorpick" colorpicker ng-model="Source.selectItem.labelclass" ng-style="{'background-color':Source.selectItem.labelclass?Source.selectItem.labelclass:'#5661c9'}"></a>
+                </td>
+            </tr>          
+            <tr>
+                <td class="text-right">关联型号</td>
+                <td colspan="3">
+                    <ui-select multiple ng-model="Source.selectItem.__modeltypeid" style="width:100%;">
+                        <ui-select-match placeholder="请选择关联型号">
+                            <span ng-bind="$item.value.modelname" style="margin-right: 5px;">
+                            </span>
+                        </ui-select-match>
+                        <ui-select-choices repeat="item.value.idmodeltype  as (key,item) in service.privateDateObj.modeltypeData | filter: { value: { modelname: $select.search }}" style="max-height: 150px;">
+                            <div ng-bind-html="item.value.modelname | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </td>
+            </tr>
+        </table>
+    </form>   
+    <div class="modal-footer">
+        <button class="btn btn-primary btn-sm" ng-verify="control:'Form'" type="button" ng-click="save()">保存</button>
+        <button class="btn btn-warning btn-sm" type="button" ng-click="cancel()">取消</button>
+    </div>
+</script>

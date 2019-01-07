@@ -1,0 +1,273 @@
+﻿<extend name="angular-base.html" />
+<block name="headcss">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}angular-bootstrap-colorpicker/3.0.32/css/colorpicker.min.css">
+    <style>
+        .icon-box img {
+            width: 30px;
+        }
+    </style>
+</block>
+<block name="headjs">
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-sanitize/{$Think.const.ANGULAR_VERSION}angular-sanitize.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular-bootstrap-colorpicker/3.0.32/js/bootstrap-colorpicker-module.js"></script>
+    <script>
+        //初始化modal并定义service
+        appModuleInit(['ui.bootstrap', 'ui.grid', 'ui.grid.emptyBaseLayer', 'ui.grid.pagination', 'ui.grid.resizeColumns', 'ui.grid.autoResize', 'ngVerify', 'datePicker', 'ui.select', 'colorpicker.module', 'ngSanitize']);
+        //要在表格中显示的字段及名称，提取出来便于更改和查看
+        function columns(vm, uiGridConstants) {
+            return [{
+                name: 'image', displayName: 'app图标', enableFiltering: false,
+                cellTemplate: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                    return '<div class="icon-box" ng-bind-html="grid.appScope.iconPreview(grid, row, col, rowRenderIndex, colRenderIndex)"></div>';
+                }, cellClass: 'text-center'
+            },
+            {
+                name: 'name', displayName: '页面名称', enableFiltering: true,
+                menuItems: [{
+                    title: '检索',
+                    icon: 'ui-grid-icon-search',
+                    action: function () {
+                        vm.toggleFiltering(vm, uiGridConstants);
+                    }
+                }], cellClass: 'text-center'
+            },
+             {
+                 name: 'module', displayName: '所在域', enableFiltering: true,
+                 menuItems: [{
+                     title: '检索',
+                     icon: 'ui-grid-icon-search',
+                     action: function () {
+                         vm.toggleFiltering(vm, uiGridConstants);
+                     }
+                 }], cellClass: 'text-center'
+             },
+             {
+                 name: 'controller', displayName: '控制器', enableFiltering: true,
+                 menuItems: [{
+                     title: '检索',
+                     icon: 'ui-grid-icon-search',
+                     action: function () {
+                         vm.toggleFiltering(vm, uiGridConstants);
+                     }
+                 }], cellClass: 'text-center'
+             },
+             {
+                 name: 'function', displayName: '方法', enableFiltering: true,
+                 menuItems: [{
+                     title: '检索',
+                     icon: 'ui-grid-icon-search',
+                     action: function () {
+                         vm.toggleFiltering(vm, uiGridConstants);
+                     }
+                 }], cellClass: 'text-center'
+             },
+             { name: 'description', displayName: '页面描述', enableFiltering: false, cellClass: 'text-center' },
+             {
+                 name: 'opentype', displayName: '打开方式', enableFiltering: false, cellClass: 'text-center',
+                 cellTemplate: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                     return '<span class="label"   ng-style="grid.appScope.getLabelClass(grid, row,0)" ng-bind="grid.appScope.getLabelClass(grid, row,1)"></span>'
+                 }
+             },
+             {
+                 name: 'apptitle', displayName: '界面标题', enableFiltering: false,
+                 cellTemplate: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                     return '<div class="icon-box"  ng-bind-html="grid.appScope.titlePreview(grid, row, col, rowRenderIndex, colRenderIndex)"></div>';
+                 }, cellClass: 'text-left'
+             },
+             {
+                 name: 'appclass', displayName: 'divclass属性', enableFiltering: false,
+
+                 cellClass: 'text-center'
+             },
+             {
+                 name: 'appRefbtns', displayName: '关联按钮', enableFiltering: false, cellClass: 'text-center',
+                 cellTemplate: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                     return '<a class="addref top-5 ng-scope" title="建立页面与按钮关系" ng-click="grid.appScope.refbtns(grid, row, col, rowRenderIndex, colRenderIndex)" href="javascript:;"><i class="glyphicon glyphicon-resize-small"></i>&nbsp;(<span ng-bind="grid.appScope.getTypeRefSouceLength(row)"></span>)</a>'
+                 }
+             },
+             {
+                 name: 'group_type', displayName: '操作', enableFiltering: false, cellClass: 'text-left',
+                 cellTemplate: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                     return '<span ng-bind-html="grid.appScope.addorupdatebtns(grid, row, col, rowRenderIndex, colRenderIndex)"></span>'
+                 }
+             }];
+        }
+        //主控制器
+        appModule.controller('crmAppinfoController', ['$scope', 'i18nService', 'dataService', 'uiGridConstants', 'alert', function ($scope, i18nService, dataService, uiGridConstants, alert) {
+            // 国际化；
+            i18nService.setCurrentLang("zh-cn");
+            $scope.service = dataService;//要显示到页面上的数据源
+            //ui-grid改变高度方法
+            $scope.changeHeight = function () {
+                var newHeight = document.body.clientHeight - 115;
+                angular.element(document.getElementsByClassName('ui-grid')[0]).css('height', newHeight + 'px');
+            };
+            /*
+                查询页面（本页面使用）数据
+            */
+            $scope.select = function () {
+                $scope.service.postData(__URL + 'Crmuser/Appinfo/select_page_data', {}).then(function (data) {
+                    $scope.service.appinfoData = data;
+                    $scope.gridOptions.data = $scope.service.appinfoData;
+                    $scope.changeHeight();
+                    //此处查询关系和按钮数据
+                    $scope.refselectbtns();
+                    $scope.selectbtns();
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+            //显示到页面上的数据源
+            $scope.appinfoData = [];
+            //表格配置对象
+            $scope.gridOptions = publicControllerGridOptions($scope);
+            //显示、隐藏检索方法
+            $scope.toggleFiltering = function () {
+                $scope.gridOptions.enableFiltering = !$scope.gridOptions.enableFiltering;
+                $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
+            };
+            //表格列头
+            $scope.gridOptions.columnDefs = columns($scope, uiGridConstants);
+            //获取关联之后得名称
+            $scope.getTypeRefSouceLength = function (row, type) {
+                //按钮
+                if (refCount == undefined) {
+                    var refCount = 0;
+                    angular.forEach($scope.service.refbtnsData, function (value, key) {
+                        if (value.appid == row.entity.idappinfo) {
+                            refCount++;
+                        }
+                    });
+                    return refCount;
+                }
+            };
+            $scope.iconPreview = function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                return row.entity.image;
+            }
+            $scope.titlePreview = function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                return row.entity.image + row.entity.name;
+            }
+            //此处根据页面表中appinfoindex字段去筛选掉内置页面
+            $scope.addorupdatebtns = function(grid, row, col, rowRenderIndex, colRenderIndex){
+                return (row.entity.appinfindex == 1)?'<a href="javascript:;" class="green top-5" ng-show="grid.appScope.service.refedit" ng-click="grid.appScope.updateInfo(grid, row, col, rowRenderIndex, colRenderIndex)"><i class="glyphicon glyphicon-pencil bigger-120"></i></a>&nbsp;&nbsp;<a href="javascript:;" class="red top-5" ng-show="grid.appScope.service.refdel"  ng-click="grid.appScope.remove(grid, row, col, rowRenderIndex, colRenderIndex)"><i class="glyphicon glyphicon-trash bigger-120"></i></a> ':'';
+            }
+            //此处做打开方式的展示
+            $scope.getLabelClass = function (grid, row, status) {
+                //获取class
+                if (status == 0) {
+                    if (row.entity.opentype == 0) {
+                        return { "background-color": '#5661c9' }
+                    } else if (row.entity.opentype == 1) {
+                        return { "background-color": '#c95694' }
+                    }else{
+                        return { "background-color": '#075900' }
+                    }
+                } else if (status == 1) {
+                    //获取值
+                    if (row.entity.opentype == 0) {
+                        return '跟随统一设置';
+                    }else if(row.entity.opentype == 1){
+                        return '内部弹窗';
+                    } else if (row.entity.opentype == 2) {
+                        return '弹出浏览器新标签';
+                    }else{
+                        return '暂无设置';
+                    }
+                }
+            }
+            //刷新按钮
+            $scope.refresh = refresh;
+            //添加按钮
+            $scope.add = function () {
+                $scope.service.title = '新建页面';
+                $scope.modalHtml = __URL + 'Crmuser/Appinfo/openmodal';
+                $scope.modalController = 'modelAppinfoController';
+                $scope.service.selectItem = '';
+                publicControllerAdd($scope);
+            }
+            //修改按钮
+            $scope.updateInfo = function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                $scope.service.title = "修改页面";
+                $scope.modalHtml = __URL + 'Crmuser/Appinfo/openmodal';
+                $scope.modalController = 'modelAppinfoController';
+                $scope.service.selectItem = row.entity;
+                publicControllerUpdate($scope);
+            }
+            //删除按钮
+            $scope.remove = function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                $scope.service.title = '删除页面';
+                $scope.modalHtml = __URL + 'Crmuser/Appinfo/openmodal';
+                $scope.modalController = 'modelAppinfoController';
+                $scope.service.selectItem = row.entity;
+                publicControllerDel($scope);
+            }
+            //分配权限按钮
+            $scope.refbtns = function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                $scope.service.title = '分配页面';
+                $scope.modalHtml = __URL + 'Crmuser/Appinfo/openmodal';
+                $scope.modalController = 'modelAppinfoController';
+                $scope.service.selectItem = row.entity;
+                $scope.service.Action = 3;
+                publicControllerRef($scope);
+            }
+            /*
+            查询按钮数据
+            */
+            $scope.selectbtns = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                dataService.postData(__URL + 'Crmuser/Sysbtns/select_page_data', params).then(function (data) {
+                    $scope.service.btnsData = data;
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+            /*
+            查询与联系人关系数据
+            */
+            $scope.refselectbtns = function () {
+                var params = new URLSearchParams();
+                params.append('$json', true);
+                dataService.postData(__URL + 'Crmuser/RefmenuRefbtn/select_page_data', params).then(function (data) {
+                    $scope.service.refbtnsData = data;
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+            //页面加载完成后，查询数据
+            $scope.select();
+        }]);
+    </script>
+</block>
+<block name="pageContent">
+    <!--页头-->
+    <div class="page-header clearfix">
+        <h1 class="col-xs-3 text-left">
+            {$MenuName}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {$PageName}
+            </small>
+        </h1>
+        <div class="col-xs-4 text-center">
+            <page-btn></page-btn>
+        </div>
+    </div>
+    <!--快速检索-->
+    <div class="table-header clearfix">
+        <div class="col-xs-6">{$MenuName}<small><i class="ace-icon fa fa-angle-double-right"></i>{$PageName}</small></div>
+
+    </div>
+    <div>
+        <div ui-grid="gridOptions" ui-grid-empty-base-layer ui-grid-auto-resize ui-grid-pagination></div>
+    </div>
+</block>
+
+<block name="scriptTemplate">
+
+</block>
+
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.PAGE_URL}js/Crmuser/Appinfo/modal.js"></script>
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagebtn.js"></script>
+</block>

@@ -1,0 +1,303 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="{$Think.const.APP_PUBLIC}lib/html5.js"></script>
+    <script type="text/javascript" src="{$Think.const.APP_PUBLIC}lib/respond.min.js"></script>
+    <script type="text/javascript" src="{$Think.const.APP_PUBLIC}lib/PIE_IE678.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}bootstrap/css/bootstrap3.3.7.min.css">
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/ace.css" class="ace-main-stylesheet" id="main-ace-style" />
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/font-awesome4.7.0.css" />
+    <!-- text fonts -->
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ace/css/ace-fonts.css" />
+    <link href="{$Think.const.CSS_URL}EIMPublicTools.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}vue/axios.min0.17.0.js"></script>
+    <script type="text/javascript" src="{$Think.const.BOOTSTRAP_URL}angular/1.4.6/angular.min.js"></script>
+    <script src="{$Think.const.BOOTSTRAP_URL}ui-grid/ui-grid.min.js"></script>
+    <link rel="stylesheet" href="{$Think.const.BOOTSTRAP_URL}ui-grid/ui-grid.min.css" type="text/css">
+    <script>
+        var __URL = "__APP__/";
+        var _dt_pagelength = parseInt(("{$_SESSION['PagedataCount']}"));
+    </script>
+    <title>系统运行日志</title>
+</head>
+<body ng-app="">
+    <div id="main-container" class="main-container">
+        <div class="main-content">
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="page-header clearfix">
+                            <h1 class="col-xs-3 text-left">
+                                {$MenuName}
+                                <small>
+                                    <i class="ace-icon fa fa-angle-double-right"></i>
+                                    {$PageName}
+                                </small>
+                            </h1>
+                            <div class="col-xs-4 text-center">
+
+
+                            </div>
+                        </div>
+
+
+                        <div class="well well-sm">
+                            <div class="row text-right">
+                                <form action="__MODULE__/Logsystemfunction/index" method="post">
+                                    <div class="col-sm-2 text-right top-10">
+                                        <small>日期范围：</small>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input type="text" name="sTime" value="{$_POST['sTime']}" onfocus="WdatePicker({maxDate:'#F{ $dp.$D(\'txtetime\')||\'%y-%M-%d\'}'})" id="txtstime" class="form-control Wdate">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input type="text" name="eTime" value="{$_POST['eTime']}" onfocus="WdatePicker({minDate:'#F{ $dp.$D(\'txtstime\')}'})" id="txtetime" class="form-control Wdate">
+                                    </div>
+                                    <div class="col-sm-4 text-left">
+                                        <div class="btn-group">
+                                            {$_SESSION['operation_button']['btn100030']['btn_value']}
+                                            <!--<button type="button" class="btn btn-primary btn-sm" onclick="onExportClick();"><i class="Hui-iconfont Hui-iconfont-daochu"></i>&nbsp;导出</button>-->
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="table-header">
+                            系统日志 <small><i class="ace-icon fa fa-angle-double-right"></i>系统运行日志</small>
+                        </div>
+                        <div ng-controller="MainCtrl">                       
+                            <div ui-grid="gridOptions" class="grid" ui-grid-grouping  ui-grid-auto-resize ui-grid-exporter ui-grid-resize-columns ui-grid-pagination></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var app = angular.module('app', ['ui.grid', 'ui.grid.selection', 'ui.grid.edit', 'ui.grid.grouping',
+            'ui.grid.exporter', 'ui.grid.pagination', 'ui.grid.resizeColumns', 'ui.grid.autoResize', 'ui.grid.treeBase']);
+
+        app.controller('MainCtrl', ['$scope', 'i18nService', 'uiGridGroupingConstants', 'uiGridConstants', function ($scope, i18nService, uiGridGroupingConstants, uiGridConstants) {
+            // 国际化；
+            i18nService.setCurrentLang("zh-cn");
+
+            treeRowHeaderAlwaysVisible: false,
+            $scope.gridOptions = {
+
+                enableFiltering:true,//是否可筛选
+                enablePagination: true, //是否分页，默认为true
+                enablePaginationControls: true, //使用默认的底部分页
+                paginationPageSizes: [10, 15, 20, 50, 100, 500, 1000], //每页显示个数可选项
+                paginationCurrentPage: 1, //当前页码
+                paginationPageSize: 1000, //每页显示个数
+
+                enableSorting: true, //是否排序
+                useExternalSorting: false, //是否使用自定义排序规则
+                enableGridMenu: true, //是否显示grid 菜单
+                showGridFooter: true, //是否显示grid footer
+                enableHorizontalScrollbar: 1, //grid水平滚动条是否显示, 0-不显示  1-显示
+                enableVerticalScrollbar: 0, //grid垂直滚动条是否显示, 0-不显示  1-显示
+
+
+
+                //----------- 选中 ----------------------
+                enableFooterTotalSelected: true, // 是否显示选中的总数，默认为true, 如果显示，showGridFooter 必须为true
+                enableFullRowSelection: true, //是否点击行任意位置后选中,默认为false,当为true时，checkbox可以显示但是不可选中
+                enableRowHeaderSelection: true, //是否显示选中checkbox框 ,默认为true
+                enableRowSelection: true, // 行选择是否可用，默认为true;
+                enableSelectAll: true, // 选择所有checkbox是否可用，默认为true;
+                enableSelectionBatchEvent: true, //默认true
+                isRowSelectable: function (row) { //GridRow
+                    if (row.entity.age > 45) {
+                        row.grid.api.selection.selectRow(row.entity); // 选中行
+                    }
+                },
+                modifierKeysToMultiSelect: false,//默认false,为true时只能 按ctrl或shift键进行多选, multiSelect 必须为true;
+                multiSelect: true,// 是否可以选择多个,默认为true;
+                noUnselect: false,//默认false,选中后是否可以取消选中
+                selectionRowHeaderWidth: 30,//默认30 ，设置选择列的宽度；
+
+                //--------------导出----------------------------------
+                exporterAllDataFn: function () {
+                    return getPage(1, $scope.gridOptions.totalItems);
+                },
+                exporterCsvColumnSeparator: ',',
+                exporterCsvFilename: 'download.csv',
+                exporterFieldCallback: function (grid, row, col, value) {
+                    if (value == 50) {
+                        value = "可以退休";
+                    }
+                    return value;
+                },
+                exporterHeaderFilter: function (displayName) {
+                    return 'col: ' + name;
+                },
+                exporterHeaderFilterUseName: true,
+                exporterMenuCsv: true,
+                exporterMenuLabel: "Export",
+                exporterMenuPdf: true,
+                exporterOlderExcelCompatibility: false,
+                exporterPdfCustomFormatter: function (docDefinition) {
+                    docDefinition.styles.footerStyle = { bold: true, fontSize: 10 };
+                    return docDefinition;
+                },
+                exporterPdfFooter: {
+                    text: 'My footer',
+                    style: 'footerStyle'
+                },
+                exporterPdfDefaultStyle: {
+                    fontSize: 11, font: 'simblack' //font 设置自定义字体
+                },
+                exporterPdfFilename: 'download.pdf',
+                /* exporterPdfFooter : {
+                 columns: [
+                   'Left part',
+                   { text: 'Right part', alignment: 'right' }
+                 ]
+                },
+                或 */
+                exporterPdfFooter: function (currentPage, pageCount) {
+                    return currentPage.toString() + ' of ' + pageCount;
+                },
+                exporterPdfHeader: function (currentPage, pageCount) {
+                    return currentPage.toString() + ' of ' + pageCount;
+                },
+                exporterPdfMaxGridWidth: 720,
+                exporterPdfOrientation: 'landscape',//  'landscape' 或 'portrait' pdf横向或纵向
+                exporterPdfPageSize: 'A4',// 'A4' or 'LETTER'
+                exporterPdfTableHeaderStyle: {
+                    bold: true,
+                    fontSize: 12,
+                    color: 'black'
+                },
+                exporterPdfTableLayout: null,
+                exporterPdfTableStyle: {
+                    margin: [0, 5, 0, 15]
+                },
+                exporterSuppressColumns: ['buttons'],
+                exporterSuppressMenu: false,
+
+                //---------------api---------------------
+                onRegisterApi: function (gridApi) {
+                    $scope.gridApi = gridApi;
+                    //分页按钮事件
+                    gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
+                        if (getPage) {
+                            getPage(newPage, pageSize);
+                        }
+                    });
+                    //行选中事件
+                    $scope.gridApi.selection.on.rowSelectionChanged($scope, function (row, event) {
+                        if (row) {
+                            $scope.testRow = row.entity;
+                        }
+                    });
+                }
+
+            };
+
+            $scope.gridOptions.columnDefs = [
+              { name: 'id', width: 50, enableFiltering: true },
+              { name: 'name', width: 100, pinnedLeft: true, enableFiltering: true },
+              {
+                  name: 'age', width: 100, pinnedRight: true, enableFiltering: true ,
+                  grouping: { groupPriority: 2 },
+                  cellFilter: 'groupCompany1'
+              },
+              { name: 'address.street', width: 150, enableFiltering: true },
+              {
+                  name: 'address.city', width: 150,
+                  grouping: { groupPriority: 1 },
+                  cellFilter: 'groupCompany', enableFiltering: true
+              },
+              { name: 'address.state', width: 50, enableFiltering: true },
+              { name: 'address.zip', width: 50, enableFiltering: true },
+              { name: 'company', width: 100, enableFiltering: true },
+              { name: 'email', width: 100, enableFiltering: true },
+              { name: 'phone', width: 200, enableFiltering: true },
+              { name: 'about', width: 300, enableFiltering: true },
+              { name: 'friends[0].name', displayName: '1st friend', width: 150, enableFiltering: true },
+              { name: 'friends[1].name', displayName: '2nd friend', width: 150, enableFiltering: true },
+              { name: 'friends[2].name', displayName: '3rd friend', width: 150, enableFiltering: true },
+            ];
+
+
+
+            $scope.gridOptions.data = ;
+
+            var getPage = function (curPage, pageSize) {
+                var firstRow = (curPage - 1) * pageSize;
+                $scope.gridOptions.totalItems = $scope.gridOptions.data.length;
+                $scope.gridOptions.data = $scope.gridOptions.data.slice(firstRow, firstRow + pageSize);
+                //或者像下面这种写法
+                //$scope.myData = mydefalutData.slice(firstRow, firstRow + pageSize);
+            };
+
+            getPage(1, $scope.gridOptions.paginationPageSize);
+
+            $scope.randomSize = function () {
+                var newHeight = Math.floor(Math.random() * (300 - 100 + 1) + 300);
+                var newWidth = Math.floor(Math.random() * (600 - 200 + 1) + 200);
+
+                angular.element(document.getElementsByClassName('grid')[0]).css('height', newHeight + 'px');
+                angular.element(document.getElementsByClassName('grid')[0]).css('width', newWidth + 'px');
+            };
+        }]);
+
+        app.filter('groupCompany', function () {
+            var genderHash = {
+                'Herlong': '不清楚 ',
+                'Leyner': '不知道',
+                'Roland': '不了解',
+                'Connerton': '是哪里',
+                'Blairstown': '是哪里1',
+            };
+
+            return function (input) {
+                var result;
+                var match;
+                if (!input) {
+                    return '';
+                } else if (result = genderHash[input]) {
+                    return result;
+                } else if ((match = input.match(/(.+)( \(\d+\))/)) && (result = genderHash[match[1]])) {
+                    return result + match[2];
+                } else {
+                    return input;
+                }
+            };
+        });
+        app.filter('groupCompany1', function () {
+            var genderHash = {
+                38: '不清楚 ',
+                22: '不知道',
+                35: '不了解',
+                40: '是哪里',
+                55: '是哪里1',
+            };
+
+            return function (input) {
+                var result;
+                var match;
+                if (!input) {
+                    return '';
+                } else if (result = genderHash[input]) {
+                    return result;
+                } else if ((match = input.match(/(.+)( \(\d+\))/)) && (result = genderHash[match[1]])) {
+                    return result + match[2];
+                } else {
+                    return input;
+                }
+            };
+        });
+
+    </script>
+</body>
+</html>

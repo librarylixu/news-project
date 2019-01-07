@@ -1,0 +1,199 @@
+<extend name="angular-base.html" />
+<block name="headcss">
+
+</block>
+<block name="headjs">
+    <script>
+        //文件路径
+        var __FilePath = "{$FilePath}";
+    </script>
+    <script src="{$Think.const.BOOTSTRAP_URL}angular-sanitize/{$Think.const.ANGULAR_VERSION}angular-sanitize.min.js"></script>
+    <script>
+        //初始化modal并定义service
+        appModuleInit(['ui.bootstrap', 'ui.grid', 'ui.grid.emptyBaseLayer', 'ui.grid.selection', 'ui.grid.pagination', 'ui.grid.resizeColumns', 'ui.grid.autoResize', 'ngVerify', 'datePicker', 'ui.select', 'ngSanitize']);
+        //要在表格中显示的字段及名称，提取出来便于更改和查看
+        function columns(vm, uiGridConstants) {
+            return [{
+                name: 'idproduct', displayName: '上传状态', enableFiltering: false, cellClass: 'text-center',
+                cellTemplate: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                    return '<span ng-bind-html="grid.appScope.saveStatus(row)"></span>';
+                }
+            },
+              {
+                  name: 'name', displayName: '姓名', enableFiltering: true,
+                  menuItems: [{
+                      title: '检索',
+                      icon: 'ui-grid-icon-search',
+                      action: function () {
+                          vm.toggleFiltering(vm, uiGridConstants);
+                      }
+                  }], cellClass: 'text-center', cellTemplate: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                      return '<span uib-popover="{{row.entity.name}}" popover-trigger="\'mouseenter\'" popover-placement="top-left" popover-append-to-body="true" style="white-space:nowrap;">{{row.entity.name}}</span>';
+                  }
+              },
+     { name: 'phone', displayName: '联系电话', enableFiltering: false, cellClass: 'text-center' },
+     { name: 'mobilephone', displayName: '手机', enableFiltering: false, cellClass: 'text-center' }
+            ];
+        }
+        //主控制器
+        appModule.controller('crmContactpreviewController', ['$scope', 'i18nService', 'dataService', 'uiGridConstants', 'alert', function ($scope, i18nService, dataService, uiGridConstants, alert) {
+
+            // 国际化；
+            i18nService.setCurrentLang("zh-cn");
+            $scope.service = dataService;//要显示到页面上的数据源
+            //ui-grid改变高度方法
+            $scope.changeHeight = function () {
+                var newHeight = document.body.clientHeight - 115;
+                angular.element(document.getElementsByClassName('ui-grid')[0]).css('height', newHeight + 'px');
+            };
+            /*
+                查询用户（本页面使用）数据
+            */
+            $scope.select = function () {
+                var params = new URLSearchParams();
+                params.append('fileid', __FilePath);
+                dataService.postData(__URL + 'Crmsetting/Annex/readExcel', params).then(function (data) {
+
+                    $scope.service.customerinfopreviewsData = [];
+                    angular.forEach(data.value, function (value, key) {
+                        //数据键名
+                        if (key == 0) {
+                            $scope.columns = value;
+                        }
+                        //真正数据，没有key的数据
+                        if (key >= 1) {
+                            var data_obj = {};
+                            //加key
+                            angular.forEach(value, function (val, k) {
+                                data_obj[$scope.columns[k]] = val;
+                            });
+                            //组建最后表格格式的数据
+                            $scope.service.customerinfopreviewsData.push(data_obj);
+                        }
+                    });
+                    //赋值给表格
+                    $scope.gridOptions.data = $scope.service.customerinfopreviewsData;
+                    $scope.changeHeight();
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+            //表格配置对象
+            $scope.gridOptions = publicControllerGridOptions($scope);
+            $scope.gridOptions.enableFullRowSelection = true, //是否点击行任意位置后选中,默认为false,当为true时，checkbox可以显示但是不可选中
+            //$scope.gridOptions.selectionRowHeaderWidth= 30,//默认30 ，设置选择列的宽度；
+            //表格列头
+            $scope.gridOptions.columnDefs = columns($scope, uiGridConstants);
+            //显示、隐藏检索方法
+            $scope.toggleFiltering = function () {
+                $scope.gridOptions.enableFiltering = !$scope.gridOptions.enableFiltering;
+                $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
+            };
+            //仅用作了附加默认值做判断使用，手机、紧急电话、现居地址为空则是undefined的情况
+            $scope.defaultvalue = function (value) {
+                if (value == "undefined") {
+                    var html = '暂无';
+                } else {
+                    var html = value;
+                }
+                return html;
+            }
+            $scope.saveStatus = function (row) {
+                if (row.entity.idcontact) {
+                    return '<i class="fa fa-check green bigger-120"></i>'
+                } else {
+                    return '<i class="fa fa-close red bigger-120"></i>'
+                }
+
+            }
+            //保存选项按钮
+            //type  0表示保存所有数据 1表示保存选中的数据 2表示单条数据保存
+            $scope.save = function (type, rowData) {
+                //判断是否已添加，
+
+                //已选数据
+                var currentSelection = [];
+                if (type == 0) {
+                    currentSelection = $scope.service.customerinfopreviewsData;
+                } else if (type == 1) {
+                    currentSelection = $scope.gridApi.selection.getSelectedRows();
+                    if (currentSelection.length == 0) {
+                        alert.show('没选择任何数据', '批量添加');
+                        return;
+                    }
+                } else if (type == 2) {
+                    $scope.addCustomerinfo(rowData.entity, 2);
+                    alert.show('导入成功', '批量添加');
+                    return;
+                }
+                if ($scope.import_result.length > 0 && $scope.import_result.indexOf("no") < 0 && $scope.import_result.length == currentSelection.length) {
+                    alert.show('请勿重复保存', '批量添加');
+                    return;
+                }
+                //console.log(currentSelection);
+                $scope.import_result = [];
+                //循环添加所有数据数据库
+                for (var i = 0; i < currentSelection.length; i++) {
+                    if (!currentSelection[i].idcontact) {
+                        $scope.addCustomerinfo(currentSelection[i]);
+                    }                                     
+                }
+            }
+            $scope.import_result = [];//记录保存结果
+            $scope.addCustomerinfo = function (contact) {
+                var params = new URLSearchParams();
+                //组建每条数据的参数
+                angular.forEach(contact, function (value, key) {
+                    params.append(key, value);
+                });
+                dataService.postData(__URL + "Crmcustomerinfo/Contact/add_page_data", params).then(function (data) {
+                    //当添加失败时，
+                    if (data < 0) {
+                        errData.push(contact);
+                        console.log(contact);
+                        $scope.import_result.push("no");
+                        return;
+                    } else if (data > 0) {
+                        contact.idcontact = data;
+                        $scope.import_result.push(data.toString());
+                    }
+                }, function (error) {
+                    console.log(error);
+                });
+            }
+
+            //页面加载完成后，查询数据
+            $scope.select();
+        }]);
+    </script>
+</block>
+<block name="pageContent">
+    <!--页头-->
+    <div class="page-header clearfix">
+        <h1 class="col-xs-3 text-left">
+            {$MenuName}
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                {$PageName}
+            </small>
+        </h1>
+        <div class="col-xs-4 text-center">
+            <button type="button" ng-click="save(0)" class="btn btn-sm btn-success">全部保存</button>
+            <button type="button" ng-click="save(1)" class="btn btn-sm btn-success">保存已选项</button>
+        </div>
+    </div>
+    <!--快速检索-->
+    <div class="table-header clearfix">
+        <div class="col-xs-6">{$MenuName}<small><i class="ace-icon fa fa-angle-double-right"></i>{$PageName}</small></div>
+    </div>
+    <div>
+        <div ui-grid="gridOptions" ui-grid-empty-base-layer ui-grid-selection ui-grid-auto-resize ui-grid-resize-columns ui-grid-pagination></div>
+    </div>
+</block>
+<block name="scriptTemplate">
+
+</block>
+
+<block name="footjs">
+    <script type="text/javascript" src="{$Think.const.JS_URL}directive.pagebtn.js"></script>
+</block>

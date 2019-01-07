@@ -1,0 +1,13 @@
+﻿<div ng-controller="ruleRefugroupController">
+    <ui-select multiple ng-model="Source.selectItem.refugroupData" on-select="refugroupSave($item, 0)" on-remove="refugroupSave($item, 1)">
+        <ui-select-match>
+            <span ng-bind="$item.groupname">
+            </span>
+        </ui-select-match>
+        <ui-select-choices repeat="item in service.usergroupArrData track by $index">
+            <div ng-bind-html="item.groupname"></div>
+        </ui-select-choices>
+    </ui-select>
+</div>
+
+

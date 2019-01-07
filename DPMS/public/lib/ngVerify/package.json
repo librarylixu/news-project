@@ -1,0 +1,25 @@
+{
+  "name": "ng-verify",
+  "version": "1.5.4",
+  "description": "Angularjs form validation component",
+  "main": "js/ngVerify.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keyword":[
+    "angularjs",
+    "plugin",
+    "validation",
+    "verify"
+  ],
+  "author": "Moer",
+  "license": "ISC",
+  "devDependencies": {
+    "browser-sync": "^2.10.1",
+    "gulp": "^3.9.0",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^2.3.1",
+    "gulp-uglify": "^1.5.3"
+  }
+}

@@ -1,0 +1,60 @@
+﻿<!--页头-->
+<div class="page-header clearfix">
+
+    <div class="col-xs-12 text-center">
+        <a ng-click="btn_add()" class="btn btn-success btn-sm">
+            <i class="glyphicon glyphicon-plus"></i>添加
+        </a>
+        <a ng-click="btn_refresh()" class="btn btn-success btn-sm">
+            <i class="glyphicon glyphicon-refresh"></i>刷新
+        </a>
+
+    </div>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>设备名称</th>
+            <th>设备状态</th>
+            <th>设备IP</th>
+            <th>主要联系人</th>
+            <th>关联用户组</th>
+            <th>备注</th>
+            <th>打开会话</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="(key,item) in service.assetsdeviceData">
+
+            <td ng-bind="item.devicename"></td>
+            <td>
+                <span class="label label-warning" ng-if="item.sessionstatus=='1'">忙碌</span>
+                <span class="label label-success" ng-if="item.sessionstatus=='0'">空闲</span>
+            </td>
+            <td ng-bind="item.ipaddress"></td>
+            <td ng-bind="item.contactpeople"></td>
+            <td>
+                <span ng-repeat="group in (item.refugroup?item.refugroup:[])" class="label label-info left-5" ng-bind="service.usergroupData[group].groupname"></span>
+                <a href="javascript:;" ng-click="btn_refgroup(item)" title="关联用户组"><i class="glyphicon glyphicon-plus green"></i></a>
+            </td>
+            <td ng-bind="item.remark"></td>
+            <td>
+                <a href="javascript:;" 
+                   ng-repeat="type in (item.devicesessiontypeids?item.devicesessiontypeids.split(','):[])"
+                   title="{{service.devicesessiontypeData[type].typename}}"
+                   ng-click="btn_open_session(item);">
+                    <img ng-attr-src="../../../DPMS/public/images/sessionIcon/{{service.devicesessiontypeData[type].icon}}" />
+                </a>
+            </td>
+            <td>
+                <a href="javascript:;" title="编辑" class="green top-5" ng-click="btn_update(item)">
+                    <i class="fa fa-pencil fa-lg"></i>
+                </a>
+                <a href="javascript:;" title="删除" class="red top-5" ng-click="btn_del(item)">
+                    <i class="fa fa-trash fa-lg"></i>
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
